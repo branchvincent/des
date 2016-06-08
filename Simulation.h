@@ -76,7 +76,7 @@ class Simulation
 *																			*
 *	Function:	setup														*
 *																			*
-*	Purpose:	To  					*
+*	Purpose:	To setup a simulation by adding tasks to the queue			*
 *																			*
 ****************************************************************************/
 
@@ -109,7 +109,7 @@ void Simulation::setup()
 *																			*
 *	Function:	run															*
 *																			*
-*	Purpose:	To  					*
+*	Purpose:	To run the simulation by completing tasks in the queue		*
 *																			*
 ****************************************************************************/
 
@@ -135,7 +135,8 @@ void Simulation::run()
 *																			*
 *	Function:	genArrTime													*
 *																			*
-*	Purpose:	To  					*
+*	Purpose:	To generate an arrival time based on the specified 			*
+*				distribution							 					*
 *																			*
 ****************************************************************************/
 
@@ -150,7 +151,8 @@ int Simulation::genArrTime(double lambda)
 *																			*
 *	Function:	genSerTime													*
 *																			*
-*	Purpose:	To  					*
+*	Purpose:	To generate a service time based on the specified			* 
+*				distribution 												*
 *																			*
 ****************************************************************************/
 
