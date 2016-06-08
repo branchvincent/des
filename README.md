@@ -1,3 +1,0 @@
-# des
-
-Descrete Event Simulation
