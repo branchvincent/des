@@ -24,6 +24,10 @@
 
 using namespace std;
 
+// Enumerated type
+
+//enum u = {};
+
 // Global seed array (placeholder)
 
 int seedArr[50];
@@ -52,10 +56,11 @@ class Simulation
 //	Data members
 
 	private:
-		int simTime;				// simulation time
-		int endTime;				// end time
-		list<Task*> taskList;		// task list
-		Operator op;				// operators		
+		int simTime;			// simulation time
+		int endTime;			// end time
+		list<Task*> taskList;	// task list
+		Operator op;			// operators
+		list<list<int>> util;	// utilization
 };
 
 /****************************************************************************
@@ -124,7 +129,6 @@ void Simulation::run()
 	
 //	Process all events in the list
 
-	int i = 0;
 	while(it != taskList.end())
 	{
 		task = *it;
@@ -139,7 +143,6 @@ void Simulation::run()
 			op.addTask(task);
 			simTime = arrTime;	
 			it++;
-			i++;
 		}
 		
 	//	Process depature, if next event
