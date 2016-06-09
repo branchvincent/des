@@ -6,8 +6,10 @@ using namespace std;
 
 int main() 
 {
-	Task t(10,1);
+	Task t('B',1);
 	cout << t << endl;
-	
+	t.setSerTime(200);
+	cout << t << endl;
+
 	return 0;
 }

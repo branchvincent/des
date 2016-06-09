@@ -49,7 +49,7 @@ class Time
 	
 	//	Constructors
 	
-		Time(const int& t = 0) {simTime = t;} 
+		Time() : simTime(), simPhase() {} 
 
 //	Data members
 
@@ -57,5 +57,19 @@ class Time
 		int simTime;		// Simulation time
 		phase simPhase;		// Phase
 };
+
+/****************************************************************************
+*																			*
+*	Function:	add															*
+*																			*
+*	Purpose:	To add specified time to the simulation time				*
+*																			*
+****************************************************************************/
+
+void Time::add(int t)
+{
+	simTime += t;
+	if (simTime >
+}
 
 #endif

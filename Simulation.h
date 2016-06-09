@@ -16,18 +16,17 @@
 #include <iostream>
 #include <string>
 #include <queue>
-#include <random>
 #include <cstdlib>
 #include <ctime>
+#include <list>
 #include "Task.h"
+#include "Operator.h"
 
 using namespace std;
 
-// Global variables
+// Global seed array (placeholder)
 
-double Lambda = 0.1;
-int Mean = 1;
-int Sigma = 1;
+int seedArr[50];
 
 /****************************************************************************
 *																			*
@@ -40,68 +39,67 @@ class Simulation
 //	Public member functions
 
 	public:
-
-	//	Inspectors
-
-//		int getArr() const {return arrTime;}
-//		int& getArr() {return arrTime;}
-//		int getSer() const {return serTime;}
-//		int& getSer() {return serTime;}
+		
+	//	Constructors
+	
+		Simulation(int t) : simTime(0), endTime(t), taskList(), op() {}
 
 	//	Other member functions
 
-		void setup();
+		void genTasks();
 		void run();
-		int genArrTime(double lambda);
-		int genSerTime(int mean, int sigma);
-		
-//	Private member functions
-
-	//private:
 	
-	//	Constructors
-	
-		Simulation(int t) : simTime(0), taskQueue() {endTime = t;}
-
 //	Data members
 
 	private:
-		int simTime;
-		int endTime;
-		queue<Task*> taskQueue;
-		
+		int simTime;				// simulation time
+		int endTime;				// end time
+		list<Task*> taskList;		// task list
+		Operator op;				// operators		
 };
 
 /****************************************************************************
 *																			*
-*	Function:	setup														*
+*	Function:	genTasks													*
 *																			*
-*	Purpose:	To setup a simulation by adding tasks to the queue			*
+*	Purpose:	To setup a simulation by generatings tasks					*
 *																			*
 ****************************************************************************/
 
-void Simulation::setup()
+void Simulation::genTasks()
 {
-	srand(time(0));
-	int arrTime = 0;
-	int serTime = genSerTime(Mean, Sigma);
-	Task* initTask = new Task(arrTime, serTime);
-	taskQueue.push(initTask);
-	cout << "Task arriving at " << arrTime << endl;
+//	Randomly fill seed array
+
+	for (int i = 0; i < 50; i++)
+		seedArr[i] = 150*i;
 	
-	arrTime += genArrTime(Lambda);
-	serTime = genSerTime(Mean, Sigma);
+//	Create first task
+
+	Task* task = new Task('A', 0, seedArr[0]);
+	int arrTime = task->getArrTime();
+	int i = 1;
 	
+//	Add tasks to list while time is left
+
 	while (arrTime < endTime)
 	{
-		Task* task = new Task(arrTime, serTime);
-		taskQueue.push(task);
-		cout << "Task arriving at " << arrTime << endl;
-		arrTime += genArrTime(Lambda);
-		serTime = genSerTime(Mean, Sigma);
-
+		taskList.push_back(task);
+		task = new Task('A', arrTime, seedArr[i]);
+		arrTime = task->getArrTime();
+		i++;
 	}
-			
+	
+//	Output list (debugging purposes)
+	
+	cout << "Task List" << endl;
+	i = 0;
+	for (list<Task*>::iterator it = taskList.begin(); it != taskList.end(); it++)
+	{
+		cout << "Task " << i << " = " << **it;
+		i++;
+	}
+	cout << endl;
+
 	return;
 }
 
@@ -109,58 +107,62 @@ void Simulation::setup()
 *																			*
 *	Function:	run															*
 *																			*
-*	Purpose:	To run the simulation by completing tasks in the queue		*
+*	Purpose:	To run the simulation by completing the generated tasks		*
 *																			*
 ****************************************************************************/
 
 void Simulation::run()
 {
-	setup();
+//	Generate tasks and initiliaze variables
+
+	genTasks();
+	list<Task*>::iterator it = taskList.begin();
+	int arrTime;
+	int depTime;
+	Task* task;
+	cout << "Beginning simulation..." << endl;
 	
-	while(!taskQueue.empty() && simTime < endTime) 
+//	Process all events in the list
+
+	int i = 0;
+	while(it != taskList.end())
 	{
-		Task* nextTask = taskQueue.front();
-		taskQueue.pop();
-		int arrTime = nextTask->getArr();
-		int serTime = nextTask->getSer();
-		simTime = max(simTime, arrTime);
-		cout << "Tasking starting at " << simTime << endl;
-		simTime += serTime;
-		cout << "Tasking leaving at " << simTime << endl;
-		delete nextTask;
+		task = *it;
+		arrTime = task->getArrTime();
+		depTime = op.getDepTime();
+	
+	//	Process arrival, if next event
+
+		if (arrTime < depTime || depTime == -1)
+		{
+			cout << "Task arriving at " << arrTime << endl;
+			op.addTask(task);
+			simTime = arrTime;	
+			it++;
+			i++;
+		}
+		
+	//	Process depature, if next event
+	
+		else 
+		{
+			cout << "Task departing at " << depTime << endl;
+			op.makeFree();
+			simTime = depTime;
+		}
 	}
-}
+	
+//	Ensure operator completes all tasks in queue
 
-/****************************************************************************
-*																			*
-*	Function:	genArrTime													*
-*																			*
-*	Purpose:	To generate an arrival time based on the specified 			*
-*				distribution							 					*
-*																			*
-****************************************************************************/
-
-int Simulation::genArrTime(double lambda)
-{
-	default_random_engine generator(rand());
-	exponential_distribution<double> dist(lambda); 
-	return dist(generator);
-}
-
-/****************************************************************************
-*																			*
-*	Function:	genSerTime													*
-*																			*
-*	Purpose:	To generate a service time based on the specified			* 
-*				distribution 												*
-*																			*
-****************************************************************************/
-
-int Simulation::genSerTime(int mean, int sigma)
-{
-	default_random_engine generator(rand());
-	lognormal_distribution<double> dist(mean,sigma);
-	return dist(generator);
+	while (!op.isQueueEmpty() || op.isBusy())
+	{
+		depTime = op.getDepTime();
+		cout << "Task departing at " << depTime << endl;
+		op.makeFree();
+		simTime = depTime;
+	}
+	
+	return;
 }
 
 #endif
