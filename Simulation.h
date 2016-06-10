@@ -14,6 +14,7 @@
 #define SIMULATION_H
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <queue>
 #include <cstdlib>
@@ -21,12 +22,15 @@
 #include <list>
 #include "Task.h"
 #include "Operator.h"
+#include <vector>
 
 using namespace std;
 
 // Enumerated type
 
 //enum u = {};
+//typedef list<list<int>> util;	
+typedef vector< vector<int> > matrix;
 
 // Global seed array (placeholder)
 
@@ -46,12 +50,13 @@ class Simulation
 		
 	//	Constructors
 	
-		Simulation(int t) : simTime(0), endTime(t), taskList(), op() {}
+		Simulation(int t) : simTime(0), endTime(t), taskList(), op(), util() {}
 
 	//	Other member functions
 
 		void genTasks();
 		void run();
+		void outputData(string filePath);
 	
 //	Data members
 
@@ -60,7 +65,7 @@ class Simulation
 		int endTime;			// end time
 		list<Task*> taskList;	// task list
 		Operator op;			// operators
-		list<list<int>> util;	// utilization
+		matrix util;			// utilization
 };
 
 /****************************************************************************
@@ -104,6 +109,13 @@ void Simulation::genTasks()
 		i++;
 	}
 	cout << endl;
+	
+// 	Test utilization 
+
+	util.resize(2*taskList.size(), vector<int>(2,0));
+	cout << "Time, " << "wasBusy" << endl;
+	for (int i = 0; i < 2*taskList.size(); i++)
+		cout << util[i][0] << ", " << util[i][1] << endl;
 
 	return;
 }
@@ -128,7 +140,8 @@ void Simulation::run()
 	cout << "Beginning simulation..." << endl;
 	
 //	Process all events in the list
-
+	
+	int i = 0;											// delete
 	while(it != taskList.end())
 	{
 		task = *it;
@@ -139,32 +152,89 @@ void Simulation::run()
 
 		if (arrTime < depTime || depTime == -1)
 		{
-			cout << "Task arriving at " << arrTime << endl;
+		//	Determine previous state and record utilization
+		
+			simTime = arrTime;
+			
+			if (!op.isBusy())
+			{
+				util[i][0] = simTime; 
+				util[i][1] = 0;
+			}
+			else 
+				util[i][0] = -1; 
+
+		//	Update state
+		
+			cout << "Task arriving at " << simTime << endl;
 			op.addTask(task);
-			simTime = arrTime;	
 			it++;
 		}
-		
 	//	Process depature, if next event
 	
 		else 
 		{
-			cout << "Task departing at " << depTime << endl;
-			op.makeFree();
+		//	Record utilization
+		
 			simTime = depTime;
+			util[i][0] = simTime; 
+			util[i][1] = 1;
+		
+		//	Update state
+		
+			cout << "Task departing at " << simTime << endl;
+			op.makeFree();
 		}
+		i++;										// delete
 	}
-	
+		
 //	Ensure operator completes all tasks in queue
 
 	while (!op.isQueueEmpty() || op.isBusy())
 	{
-		depTime = op.getDepTime();
-		cout << "Task departing at " << depTime << endl;
+	//	Record utilization
+		
+		simTime = op.getDepTime();
+		util[i][0] = simTime; 
+		util[i][1] = 1;
+		
+	//	Update state
+	
+		cout << "Task departing at " << simTime << endl;
 		op.makeFree();
-		simTime = depTime;
+		i++;
 	}
 	
+	for (int i = 0; i < 2*taskList.size(); i++)
+		if (util[i][0] != -1)
+			cout << util[i][0] << ", " << util[i][1] << endl;
+		
+	return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	outputData													*
+*																			*
+*	Purpose:	To output the utilization data to the specified filepath 	*
+*																			*
+****************************************************************************/
+
+void Simulation::outputData(string filePath)
+{
+	ofstream fout(filePath);
+	if (!fout)
+	{
+		cerr << "Failed to open output file.";
+		exit(1);
+	}
+	
+	fout << "Time (s), Utilization" << endl;
+	
+	for (int i = 0; i < 2*taskList.size(); i++)
+		if (util[i][0] != -1)
+			fout << util[i][0] << ", " << util[i][1] << endl;
+		
 	return;
 }
 

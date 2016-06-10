@@ -21,5 +21,8 @@ int main()
 	op.startNextTask(5);
 	cout << op << endl;
 	
+	for (int i = 0; i < 4900000; i++)
+		Operator op;
+	
 	return 0;
 }

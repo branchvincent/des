@@ -43,6 +43,7 @@ class Operator
 		bool isQueueEmpty() const {return taskQueue.empty();}
 		int getDepTime() const {return depTime;}
 		int& getDepTime() {return depTime;}
+		Task* getCurrTask() {return taskQueue.front();} 
 		
 	//	Mutators
 	
