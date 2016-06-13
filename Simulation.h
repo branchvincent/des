@@ -30,11 +30,15 @@ using namespace std;
 
 //enum u = {};
 //typedef list<list<int>> util;	
+//typedef list<Task*> List;
 typedef vector< vector<int> > matrix;
+bool taskComparison (Task* t1, Task* t2) 
+	{return t1->getArrTime() < t2->getArrTime();}
 
-// Global seed array (placeholder)
+// Global variables
 
-int seedArr[50];
+int SEED = 0;
+char TYPE[] = {'A','B','C','D','E','F'};
 
 /****************************************************************************
 *																			*
@@ -54,7 +58,8 @@ class Simulation
 
 	//	Other member functions
 
-		void genTasks();
+		void genTasks(char type);
+		void setup();
 		void run();
 		void outputData(string filePath);
 	
@@ -72,50 +77,61 @@ class Simulation
 *																			*
 *	Function:	genTasks													*
 *																			*
-*	Purpose:	To setup a simulation by generatings tasks					*
+*	Purpose:	To generate tasks of the specified type						*
 *																			*
 ****************************************************************************/
 
-void Simulation::genTasks()
+void Simulation::genTasks(char type)
 {
-//	Randomly fill seed array
-
-	for (int i = 0; i < 50; i++)
-		seedArr[i] = 150*i;
-	
 //	Create first task
 
-	Task* task = new Task('A', 0, seedArr[0]);
+	srand(SEED);
+	list<Task*> tmpList; 
+	Task* task = new Task(type, 0, rand());
 	int arrTime = task->getArrTime();
-	int i = 1;
 	
 //	Add tasks to list while time is left
 
 	while (arrTime < endTime)
 	{
-		taskList.push_back(task);
-		task = new Task('A', arrTime, seedArr[i]);
+		tmpList.push_back(task);
+		task = new Task(type, arrTime, rand());
 		arrTime = task->getArrTime();
-		i++;
 	}
 	
+//	Merge new list with task list
+
+	taskList.merge(tmpList, taskComparison);
+
+	return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	setup														*
+*																			*
+*	Purpose:	To setup a simulation by generating all tasks				*
+*																			*
+****************************************************************************/
+
+void Simulation::setup()
+{
+	for (int i = 0; i < 2; i++)
+		genTasks(TYPE[i]);
+
 //	Output list (debugging purposes)
 	
-	cout << "Task List" << endl;
-	i = 0;
+	cout << "Task List" << endl; int i = 0;
 	for (list<Task*>::iterator it = taskList.begin(); it != taskList.end(); it++)
-	{
-		cout << "Task " << i << " = " << **it;
-		i++;
-	}
+		cout << "Task " << i++ << " = " << **it;
 	cout << endl;
 	
 // 	Test utilization 
 
 	util.resize(2*taskList.size(), vector<int>(2,0));
-	cout << "Time, " << "wasBusy" << endl;
-	for (int i = 0; i < 2*taskList.size(); i++)
-		cout << util[i][0] << ", " << util[i][1] << endl;
+//	cout << "Time, " << "wasBusy" << endl;
+//	for (int i = 0; i < 2*taskList.size(); i++)
+//		cout << util[i][0] << ", " << util[i][1] << endl;
 
 	return;
 }
@@ -132,7 +148,7 @@ void Simulation::run()
 {
 //	Generate tasks and initiliaze variables
 
-	genTasks();
+	setup();
 	list<Task*>::iterator it = taskList.begin();
 	int arrTime;
 	int depTime;

@@ -23,8 +23,8 @@ using namespace std;
 
 double arrA = 0.1;
 int serA[2] = {1,1};
-int arrB[2] = {5,3};
-int serB[2] = {3,2};
+double arrB = 0.01;
+int serB[2] = {1,1};
 
 /****************************************************************************
 *																			*
@@ -108,16 +108,15 @@ int Task::genArrTime(char type, int prevArrTime, int seed)
 		case 'A': 
 		{
 			double lambda = arrA;
-			exponential_distribution<double> dist(arrA);
+			exponential_distribution<double> dist(lambda);
 			return dist(gen) + prevArrTime;
 		}
 	//	Type B
 	
 		case 'B': 
 		{
-			int mean = arrB[0];
-			int sigma = arrB[1];
-			normal_distribution<double> dist(mean, sigma);
+			double lambda = arrB;
+			exponential_distribution<double> dist(lambda);
 			return dist(gen) + prevArrTime;
 		}
 	//	Error message
@@ -160,7 +159,7 @@ int Task::genSerTime(char type, int seed)
 		{
 			int mean = serB[0];
 			int sigma = serB[1];
-			normal_distribution<double> dist(mean, sigma);
+			lognormal_distribution<double> dist(mean, sigma);
 			return dist(gen);
 		}
 	//	Error message
