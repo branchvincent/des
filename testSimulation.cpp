@@ -6,10 +6,9 @@ using namespace std;
 
 int main() 
 {
-	string file = "/Users/Branch/Desktop/run1.csv";
-	Simulation sim(200);
+	Simulation sim(100);		// 43200						
 	sim.run();
-	sim.outputData(file);
+	sim.outputData("/Users/Branch/Desktop/run1.csv");
 	
 	return 0;
 }
