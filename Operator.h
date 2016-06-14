@@ -20,6 +20,9 @@
 
 using namespace std;
 
+bool priorityComparison (Task* t1, Task* t2) 
+	{return t1->getPriority() < t2->getPriority();}
+
 /****************************************************************************
 *																			*
 *	Definition of Operator class											*
@@ -41,18 +44,18 @@ class Operator
 		bool isBusy() const {return busy;}
 		bool& isBusy() {return busy;}
 		bool isQueueEmpty() const {return taskQueue.empty();}
-		int getDepTime() const {return depTime;}
-		int& getDepTime() {return depTime;}
+		float getDepTime() const {return depTime;}
+		float& getDepTime() {return depTime;}
 		Task* getCurrTask() {return taskQueue.front();} 
 		
 	//	Mutators
 	
 		void makeBusy(int t) {busy = true; depTime = t;}
-		void makeFree() {busy = false; startNextTask(depTime);}
+		void makeFree() {busy = false; taskQueue.pop(); startNextTask(depTime);}
 		void setDepTime(int t) {depTime = t;}
 		void addTask(Task* task) 
 			{taskQueue.push(task); if (!busy) startNextTask(task->getArrTime());}
-		void startNextTask(int startTime);
+		void startNextTask(float startTime);
 				
 	//	Other member functions
 
@@ -61,8 +64,9 @@ class Operator
 //	Data members
 
 	private:
-		bool busy;					// is operator busy
-		int depTime;				// task depature time	
+//		vector<Task*> currTasks;	// current tasks
+		bool busy;
+		float depTime;				// task depature time	
 		queue<Task*> taskQueue;		// task queue
 };
 
@@ -97,13 +101,12 @@ void Operator::output(ostream& out) const
 *																			*
 ****************************************************************************/
 
-void Operator::startNextTask(int startTime) 
+void Operator::startNextTask(float startTime) 
 {
 	if (!taskQueue.empty())
 	{
 		cout << "Task starting at " << startTime << endl;
 		Task* nextTask = taskQueue.front();
-		taskQueue.pop();
 		busy = true;
 		depTime = startTime + nextTask->getSerTime();
 	}

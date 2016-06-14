@@ -16,13 +16,11 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <queue>
-#include <cstdlib>
-#include <ctime>
-#include <list>
-#include "Task.h"
-#include "Operator.h"
 #include <vector>
+#include <list>
+#include "Operator.h"
+#include "Task.h"
+#include <time.h>
 
 using namespace std;
 
@@ -31,14 +29,16 @@ using namespace std;
 //enum u = {};
 //typedef list<list<int>> util;	
 //typedef list<Task*> List;
-typedef vector< vector<int> > matrix;
+typedef vector< vector<float> > Matrix;
 bool taskComparison (Task* t1, Task* t2) 
 	{return t1->getArrTime() < t2->getArrTime();}
 
 // Global variables
 
 int SEED = 0;
-char TYPE[] = {'A','B','C','D','E','F'};
+float procTime = 0;
+float totalTasks = 0;
+float waitTime = 0;
 
 /****************************************************************************
 *																			*
@@ -54,23 +54,25 @@ class Simulation
 		
 	//	Constructors
 	
-		Simulation(int t) : simTime(0), endTime(t), taskList(), op(), util() {}
+		Simulation(float t, int seed) : simTime(0), endTime(t), taskList(), op(), util() {} //SEED = seed;
 
 	//	Other member functions
 
-		void genTasks(char type);
+		void genTasks(int type);
 		void setup();
 		void run();
 		void outputData(string filePath);
+		void reportStats();
 	
 //	Data members
 
 	private:
-		int simTime;			// simulation time
-		int endTime;			// end time
+		float simTime;			// simulation time
+		float endTime;			// end time
 		list<Task*> taskList;	// task list
 		Operator op;			// operators
-		matrix util;			// utilization
+		Matrix util;			// utilization
+//		Phase phase;
 };
 
 /****************************************************************************
@@ -81,14 +83,14 @@ class Simulation
 *																			*
 ****************************************************************************/
 
-void Simulation::genTasks(char type)
+void Simulation::genTasks(int type)
 {
 //	Create first task
 
-	srand(SEED);
+	srand(SEED++);
 	list<Task*> tmpList; 
 	Task* task = new Task(type, 0, rand());
-	int arrTime = task->getArrTime();
+	float arrTime = task->getArrTime();
 	
 //	Add tasks to list while time is left
 
@@ -98,7 +100,14 @@ void Simulation::genTasks(char type)
 		task = new Task(type, arrTime, rand());
 		arrTime = task->getArrTime();
 	}
-	
+
+//	Output list (debugging purposes)
+
+//	cout << "Task List " << type << endl; int i = 0;
+//	for (list<Task*>::iterator it = tmpList.begin(); it != tmpList.end(); it++)
+//		cout << "Task " << i++ << " = " << **it << endl;
+//	cout << endl;
+
 //	Merge new list with task list
 
 	taskList.merge(tmpList, taskComparison);
@@ -116,19 +125,22 @@ void Simulation::genTasks(char type)
 
 void Simulation::setup()
 {
-	for (int i = 0; i < 2; i++)
-		genTasks(TYPE[i]);
+//	Generate all task and initialize utilization
+
+	for (int i = 0; i < 3; i++)
+		genTasks(i);
+		
+	util.resize(2*taskList.size(), vector<float>(3,0));
 
 //	Output list (debugging purposes)
 	
 	cout << "Task List" << endl; int i = 0;
 	for (list<Task*>::iterator it = taskList.begin(); it != taskList.end(); it++)
-		cout << "Task " << i++ << " = " << **it;
+		cout << "Task " << i++ << " = " << **it << endl;
 	cout << endl;
 	
 // 	Test utilization 
 
-	util.resize(2*taskList.size(), vector<int>(2,0));
 //	cout << "Time, " << "wasBusy" << endl;
 //	for (int i = 0; i < 2*taskList.size(); i++)
 //		cout << util[i][0] << ", " << util[i][1] << endl;
@@ -150,8 +162,9 @@ void Simulation::run()
 
 	setup();
 	list<Task*>::iterator it = taskList.begin();
-	int arrTime;
-	int depTime;
+	int type;
+	float arrTime;
+	float depTime;
 	Task* task;
 	cout << "Beginning simulation..." << endl;
 	
@@ -161,9 +174,10 @@ void Simulation::run()
 	while(it != taskList.end())
 	{
 		task = *it;
+		type = task->getType();
 		arrTime = task->getArrTime();
 		depTime = op.getDepTime();
-	
+		
 	//	Process arrival, if next event
 
 		if (arrTime < depTime || depTime == -1)
@@ -176,6 +190,7 @@ void Simulation::run()
 			{
 				util[i][0] = simTime; 
 				util[i][1] = 0;
+				util[i][2] = -1;
 			}
 			else 
 				util[i][0] = -1; 
@@ -193,8 +208,9 @@ void Simulation::run()
 		//	Record utilization
 		
 			simTime = depTime;
-			util[i][0] = simTime; 
+			util[i][0] = simTime;
 			util[i][1] = 1;
+			util[i][2] = (op.getCurrTask())->getType();
 		
 		//	Update state
 		
@@ -206,13 +222,17 @@ void Simulation::run()
 		
 //	Ensure operator completes all tasks in queue
 
-	while (!op.isQueueEmpty() || op.isBusy())
+	while (!op.isQueueEmpty()) // || op.isBusy())
 	{
 	//	Record utilization
 		
+		task = op.getCurrTask();
+		type = task->getType();
 		simTime = op.getDepTime();
+		
 		util[i][0] = simTime; 
 		util[i][1] = 1;
+		util[i][2] = task->getType();
 		
 	//	Update state
 	
@@ -220,11 +240,11 @@ void Simulation::run()
 		op.makeFree();
 		i++;
 	}
-	
-	for (int i = 0; i < 2*taskList.size(); i++)
-		if (util[i][0] != -1)
-			cout << util[i][0] << ", " << util[i][1] << endl;
 		
+//	for (int i = 0; i < 2*taskList.size(); i++)
+//		if (util[i][0] != -1)
+//			cout << util[i][0] << ", " << util[i][1] << ", " << util[i][2] << endl;
+	
 	return;
 }
 
@@ -241,15 +261,29 @@ void Simulation::outputData(string filePath)
 	ofstream fout(filePath);
 	if (!fout)
 	{
-		cerr << "Failed to open output file.";
+		cerr << "Failed to open output file. Exiting...";
 		exit(1);
 	}
 	
-	fout << "Time (s), Utilization" << endl;
+	fout << "Time (s), Utilization, Type" << endl;
 	
 	for (int i = 0; i < 2*taskList.size(); i++)
 		if (util[i][0] != -1)
-			fout << util[i][0] << ", " << util[i][1] << endl;
+			fout << util[i][0] << ", " << util[i][1] << ", " << util[i][2] << endl;
+		
+	return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	reportStats													*
+*																			*
+*	Purpose:	To report the statistics compiled for the simulation		*
+*																			*
+****************************************************************************/
+
+void Simulation::reportStats()
+{
 		
 	return;
 }
