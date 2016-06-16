@@ -38,25 +38,25 @@ def main():
 	for i in range(0,3):
 		tasks.append(processData(i))	
 	
-#	myColors = ['b','r','g']
-#	myLegend = ['A','B','C','D','E','F','G']
-#	t = np.linspace(0,sep*(N-1),N)
-#
-#	plt.figure("Utilization")
-#	plt.xlabel("Time (min)")
-#	plt.ylabel("Utilization (%)")
-#	
-#	for i in range(len(tasks)):
-#		plt.bar(t, tasks[i], 
-#			width = sep,
-#			bottom = np.sum(tasks[:i], axis = 0),
-#			color = myColors[i % len(myColors)])
-#	
-#	plt.ylim(0,110)
-#	plt.xlim(0,sep*N)
-#	plt.xticks(np.arange(0, sep*(N+1), sep))
-#	plt.legend(myLegend,loc='upper right')
-#	plt.savefig(outFile)
+	myColors = ['b','r','g']
+	myLegend = ['A','B','C','D','E','F','G']
+	t = np.linspace(0,sep*(N-1),N)
+
+	plt.figure("Utilization")
+	plt.xlabel("Time (min)")
+	plt.ylabel("Utilization (%)")
+	
+	for i in range(len(tasks)):
+		plt.bar(t, tasks[i], 
+			width = sep,
+			bottom = np.sum(tasks[:i], axis = 0),
+			color = myColors[i % len(myColors)])
+	
+	plt.ylim(0,110)
+	plt.xlim(0,sep*N)
+	plt.xticks(np.arange(0, sep*(N+1), sep))
+	plt.legend(myLegend,loc='upper right')
+	plt.savefig(outFile)
 
 #****************************************************************************
 #																			*

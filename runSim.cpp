@@ -26,9 +26,10 @@ int main()
 	srand(time(0));
 	for (int i = 0; i < N; i++)
 	{
-		Simulation sim(10,rand());		// 43200		
+		Simulation sim(90,rand());		// 43200		
 		sim.run();	
-		sim.outputData("/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/run.csv");
+//		sim.reportStats();
+//		sim.outputData("/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/run.csv");
 	}
 
 	return 0;

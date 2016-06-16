@@ -33,7 +33,7 @@ class Task
 
 	//	Constructor
 		
-		Task(int tp, float prevArrTime, int seed);
+		Task(int tp, float prevArrTime, int seed, int phase);
 
 	//	Inspectors
 
@@ -45,16 +45,19 @@ class Task
 		float& getArrTime() {return arrTime;}
 		float getSerTime() const {return serTime;}
 		float& getSerTime() {return serTime;}
+		float getDepTime() const {return depTime;}
+		float& getDepTime() {return depTime;}
 
 	//	Mutators
 	
 		void setArrTime(float t) {arrTime = t;}
 		void setSerTime(float t) {serTime = t;}
+		void setDepTime(float t) {depTime = t;}
 
 	//	Other member functions
 
-		float genArrTime(float prevArrTime, int seed);
-		float genSerTime(int seed);
+		float genArrTime(float prevArrTime, int seed, int phase);
+		float genSerTime(int seed, int phase);
 		void output(ostream& out) const 
 			{cout << "(" << type << ", " << arrTime << ", " << serTime <<  ")";}
 
@@ -65,7 +68,7 @@ class Task
 		int priority;		// priority level
 		float arrTime;		// arrival time (min)
 		float serTime; 		// service time (min)
-//		float depTime;		// depature time (min)
+		float depTime;		// depature time (min)
 };
 
 //	Operators
@@ -81,12 +84,12 @@ ostream& operator<<(ostream& out, const Task t) {t.output(out); return out;}
 *																			*
 ****************************************************************************/
 
-Task::Task(int tp, float prevArrTime, int seed)
+Task::Task(int tp, float prevArrTime, int seed, int phase)
 {
 	type = tp;
-	arrTime = genArrTime(prevArrTime, seed);
-	serTime = genSerTime(seed);
-//	depTime = -1;
+	arrTime = genArrTime(prevArrTime, seed, phase);
+	serTime = genSerTime(seed, phase);
+	depTime = -1;
 }
 
 /****************************************************************************
@@ -98,7 +101,7 @@ Task::Task(int tp, float prevArrTime, int seed)
 *																			*
 ****************************************************************************/
 
-float Task::genArrTime(float prevArrTime, int seed)
+float Task::genArrTime(float prevArrTime, int seed, int phase)
 {
 	default_random_engine gen(seed);
 	
@@ -213,7 +216,7 @@ float Task::genArrTime(float prevArrTime, int seed)
 *																			*
 ****************************************************************************/
 
-float Task::genSerTime(int seed)
+float Task::genSerTime(int seed, int phase)
 {
 	default_random_engine gen(seed);
 	

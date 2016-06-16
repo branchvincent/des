@@ -37,24 +37,24 @@ class Operator
 		
 	//	Constructor
 	
-		Operator() : busy(), depTime(-1), taskQueue() {}
+		Operator() : currTasks(NULL), taskQueue() {}
 		
 	//	Inspectors
 
-		bool isBusy() const {return busy;}
-		bool& isBusy() {return busy;}
+		bool isBusy() const {return currTasks != NULL;}
+//		bool& isBusy() {return currTasks != NULL;}
 		bool isQueueEmpty() const {return taskQueue.empty();}
-		float getDepTime() const {return depTime;}
-		float& getDepTime() {return depTime;}
-		Task* getCurrTask() {return taskQueue.front();} 
+//		bool& isQueueEmpty() {return taskQueue.empty();}
+		int tasksLeft() const {return taskQueue.size();}
+//		int& tasksLeft() {return taskQueue.size();}
+//		float getDepTime() const {return currTasks->getDepTime();}
+//		float& getDepTime() {return currTasks->getDepTime();}
+		Task* getCurrTask() {return currTasks;} 
 		
 	//	Mutators
 	
-		void makeBusy(int t) {busy = true; depTime = t;}
-		void makeFree() {busy = false; taskQueue.pop(); startNextTask(depTime);}
-		void setDepTime(int t) {depTime = t;}
-		void addTask(Task* task) 
-			{taskQueue.push(task); if (!busy) startNextTask(task->getArrTime());}
+		void makeIdle(); 
+		void addTask(Task* task);
 		void startNextTask(float startTime);
 				
 	//	Other member functions
@@ -64,9 +64,7 @@ class Operator
 //	Data members
 
 	private:
-//		vector<Task*> currTasks;	// current tasks
-		bool busy;
-		float depTime;				// task depature time	
+		Task* currTasks;			// current tasks
 		queue<Task*> taskQueue;		// task queue
 };
 
@@ -76,21 +74,41 @@ ostream& operator<<(ostream& out, const Operator op) {op.output(out); return out
 
 /****************************************************************************
 *																			*
-*	Function:	output														*
+*	Function:	makeIdle													*
 *																			*
-*	Purpose:	To output an operator										*
+*	Purpose:	To finish the current task and move to the next one, if		* 
+*				applicable													*
 *																			*
 ****************************************************************************/
 
-void Operator::output(ostream& out) const 
+void Operator::makeIdle() 
 {
-	if (busy)
-		cout << "Operator is busy until ";
-	else
-		cout << "Operator is not busy until ";
-	
-	cout << depTime << " and has " << taskQueue.size() << " tasks in queue." << endl;  
-	
+	if (!taskQueue.empty())
+	{
+		float depTime = currTasks->getDepTime(); 
+		currTasks = NULL; 
+		taskQueue.pop(); 
+		startNextTask(depTime);
+	}
+		
+	return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	addTask														*
+*																			*
+*	Purpose:	To enqeue the specified task								*
+*																			*
+****************************************************************************/
+
+void Operator::addTask(Task* task) 
+{
+	taskQueue.push(task); 
+	if (currTasks == NULL) 
+		startNextTask(task->getArrTime());
+		
+	return;
 }
 
 /****************************************************************************
@@ -107,13 +125,31 @@ void Operator::startNextTask(float startTime)
 	{
 		cout << "Task starting at " << startTime << endl;
 		Task* nextTask = taskQueue.front();
-		busy = true;
-		depTime = startTime + nextTask->getSerTime();
+		currTasks = nextTask;
+		float serTime = currTasks->getSerTime();
+		currTasks->setDepTime(startTime + serTime);
 	}
-	else
-		depTime = -1;
 		
 	return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	output														*
+*																			*
+*	Purpose:	To output an operator										*
+*																			*
+****************************************************************************/
+
+void Operator::output(ostream& out) const 
+{
+	if (currTasks != NULL)
+		cout << "Operator is busy until " << currTasks->getDepTime();
+	else
+		cout << "Operator is not busy";
+	
+	cout << " and has " << taskQueue.size() << " tasks in queue." << endl;  
+	
 }
 
 #endif
