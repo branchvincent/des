@@ -19,17 +19,51 @@
 
 using namespace std;
 
+// Global variables
+
+string filePath = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/run.csv";
+typedef vector< vector<float> > Matrix;
+int intSize = 10;
+int numRuns = 1;
+
 int main() 
 {
-	int N = 1;
+//	Initialize variables
 
 	srand(time(0));
-	for (int i = 0; i < N; i++)
+	int endTime = 90;
+	int numInts = endTime/intSize;
+	int numTypes = 9;
+	Matrix util(numInts, vector<float>(numTypes,0));
+	
+//	Open output stream
+
+	ofstream fout(filePath);
+	if (!fout)
 	{
-		Simulation sim(90,rand());		// 43200		
+		cerr << "Failed to open output file. Exiting...";
+		exit(1);
+	}
+
+//	Run simulations for specified times
+
+	for (int i = 0; i < numRuns; i++)
+	{
+		Simulation sim(endTime,rand());		// 43200		
 		sim.run();	
+		sim.processData(util,intSize);
 //		sim.reportStats();
-//		sim.outputData("/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/run.csv");
+	}
+	
+	int interval = intSize;
+	fout << "Time (min), Utilization by Type" << endl;
+	for (int i = 0; i < util.size(); i++)
+	{
+		fout << interval << ", ";
+		for (int j = 0; j < util[i].size(); j++)
+			fout << util[i][j]/numRuns << ", ";
+		fout << endl;
+		interval += intSize;
 	}
 
 	return 0;

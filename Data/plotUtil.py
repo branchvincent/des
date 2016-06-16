@@ -1,6 +1,6 @@
 #****************************************************************************
 #																			*
-#	File:		plot.py														*
+#	File:		plotUtil.py													*
 #																			*
 #	Author:		Branch Vincent												*
 #																			*
@@ -15,14 +15,16 @@
 from __future__ import nested_scopes,generators,division,absolute_import,with_statement,print_function
 import matplotlib.pyplot as plt
 import numpy as np
+import operator
 import math
 import csv
 
 # Global variables
 
-N = 10.
+N = 9.
 inFile = '/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/run.csv'
 outFile = '/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/graph.pdf'
+sep = 10
 
 #****************************************************************************
 #																			*
@@ -34,14 +36,22 @@ outFile = '/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/gr
 
 def main():
 	
+	np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
+
 	tasks = []
-	for i in range(0,3):
-		tasks.append(processData(i))	
+	x,y,z = [],[],[]
+	x,y,z = getData()
 	
+	tasks.append(x)
+	tasks.append(y)
+	tasks.append(z)
+
+		
 	myColors = ['b','r','g']
 	myLegend = ['A','B','C','D','E','F','G']
 	t = np.linspace(0,sep*(N-1),N)
-
+	print(t)
+	
 	plt.figure("Utilization")
 	plt.xlabel("Time (min)")
 	plt.ylabel("Utilization (%)")
@@ -56,6 +66,8 @@ def main():
 	plt.xlim(0,sep*N)
 	plt.xticks(np.arange(0, sep*(N+1), sep))
 	plt.legend(myLegend,loc='upper right')
+	plt.plot((30, 30), (0, 110), 'm--')
+	plt.plot((60, 60), (0, 110), 'm--')
 	plt.savefig(outFile)
 
 #****************************************************************************
@@ -71,74 +83,13 @@ def getData():
 	header = next(reader)
 	x,y,z = [],[],[]
 	for row in reader:
-#		if int(row[2]) == tp or int(row[2]) == -1:
-		x.append(float(row[0]))
-		y.append(int(row[1]))
-		z.append(int(row[2]))
+		x.append(float(row[1]))
+		y.append(float(row[2]))
+		z.append(float(row[3]))
 	return x,y,z
 
 def roundup(x):
 	return int(math.ceil(x/10.0))*10
-	
-#****************************************************************************
-#																			*
-#	Function:	processData													*
-#																			*
-#	Purpose:	To process utilization data of the specified type			*
-#																			*
-#****************************************************************************
-
-def processData(tp):
-	global sep
-	time, util, type = getData()
-	sep = roundup(time[-1])/N
-	results = []
-	beginInt = 0
-	endInt = sep
-	
-	while endInt <= sep*N:
-		i = 0
-		busy = 0
-#		print("Interval: (%d, %d)" %(beginInt,endInt))
-		
-		while i != len(time) and time[i] <= beginInt:
-			i = i + 1
-#		print("\t\t i = %d, busy = %.2f" %(i,busy))					# 1
-		
-		if i == len(time):
-			results.append(busy/sep*100)
-#			print("\t\t Reached end.")
-
-		else:
-			if time[i] >= endInt and util[i] == 1 and type[i] == tp:
-				busy = sep
-#			print("\t\t i = %d, busy = %.2f" %(i,busy))				# 2
-
-			if util[i] == 1 and time[i] < endInt and type[i] == tp:
-				busy = busy + time[i] - beginInt
-			i = i + 1
-#			print("\t\t i = %d, busy = %.2f" %(i,busy))				# 3
-
-			while i != len(time) and time[i] < endInt:
-				if util[i] == 1 and type[i] == tp:
-					busy = busy + time[i] - time[i-1]
-				i = i+1
-#			print("\t\t i = %d, busy = %.2f" %(i,busy))				# 4
-				
-			if i != len(time) and time[i-1] < endInt and util[i] == 1 and type[i] == tp:
-				busy = busy + endInt - time[i-1]
-#			print("\t\t i = %d, busy = %.2f" %(i,busy))				# 5
-
-			results.append(busy/sep*100)
-
-		beginInt = beginInt + sep
-		endInt = endInt + sep
-#		print("\t\t i = %d, busy = %.2f" %(i,busy))					# 6
-	
-#	for i in range(0,len(time)):
-#			print("(Time, Util): (%.2f, %d)" %(time[i],util[i]))	
-	
-	return results
 
 # Forward declaration
 if __name__ == '__main__': main()

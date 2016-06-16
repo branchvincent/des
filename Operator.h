@@ -123,7 +123,7 @@ void Operator::startNextTask(float startTime)
 {
 	if (!taskQueue.empty())
 	{
-		cout << "Task starting at " << startTime << endl;
+//		cout << "\t Task starting at " << startTime << endl;
 		Task* nextTask = taskQueue.front();
 		currTasks = nextTask;
 		float serTime = currTasks->getSerTime();
