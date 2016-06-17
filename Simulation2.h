@@ -34,12 +34,11 @@ bool taskComparison (Task* t1, Task* t2)
 // Global variables
 
 int SEED = 0;
+int intSize = 10;
 float processTimes[9] = {0};
 float totalTasks[9] = {0};
 float waitTimes[9] = {0};
-float totalSer = 0;
-float totalT = 0;
-bool debug = false;
+bool debug = true;
 
 /****************************************************************************
 *																			*
@@ -59,14 +58,14 @@ class Simulation
 
 	//	Other member functions
 
+		void run();
 		void genTasks(int type);
 		void runPhase(int& i);
-		void run();
-		void processArrival(Task* task, float arrTime, int& i);
-		void processDepature(Task* task, float depTime, int& i);
+		void processArrival(list<Task*>::iterator& it);
+		void processDepature(Task* task, int& i);
 		void processData(Matrix& busy, int intSize);
-		void outputData(Matrix& busy, int intSize, string filePath);
-		void reportStats(float& x, float& y);
+		void outputData(string filePath);
+		void reportStats();
 	
 //	Data members
 
@@ -87,21 +86,28 @@ class Simulation
 *																			*
 ****************************************************************************/
 
-Simulation::Simulation(int t, int seed) : simTime(), phase(), taskList(), op(), util()
+Simulation::Simulation(int t, int seed) : simTime(), phase(), taskList(), op()
 {
 //	Check time duration
 	
-	if (t < 90) 
+	if (t < 90 || t%10 != 0) 
 	{
-		cerr << "Error: Simulation time is too short. Exiting..." << endl;
+		cerr << "Error: Simulation time is too short or not a multiple of 10. Exiting..." << endl;
 		exit(1);
 	}
 
-//	Set phase end times
+//	Set phase end times 
 
 	endTimes[0] = 30;
 	endTimes[1] = t - 30;
 	endTimes[2] = t;
+	
+//	Initialize utilization matrix
+	
+	int numInts = t/intSize;
+	util(numInts, vector<float>(10,0));
+	for (int i = 1; i < numInts; i++)
+			util[i][0] = util[i-1][0] + intSize; 
 
 //	Set seed
 	
@@ -109,6 +115,33 @@ Simulation::Simulation(int t, int seed) : simTime(), phase(), taskList(), op(), 
 		SEED = 0;
 	else
 		SEED = seed;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	run															*
+*																			*
+*	Purpose:	To run the simulation by completing the generated tasks		*
+*																			*
+****************************************************************************/
+
+void Simulation::run()
+{
+//	Run Phase 0 and update Phase 1 end time
+	
+	int j = 0;
+	cout << "Beginning simulation..." << endl;
+	runPhase(j);
+	endTimes[1] = endTimes[2] - 30;
+
+//	Run other phases
+	
+//	for (int i = 1; i < 3; i++)
+//		runPhase(j);
+	
+	cout << "Simulation completed." << endl;
+	
+	return;
 }
 
 /****************************************************************************
@@ -138,8 +171,6 @@ void Simulation::genTasks(int type)
 		tmpList.push_back(task);
 		processTimes[type] += serTime;
 		totalTasks[type]++;
-		totalT++;
-		totalSer += serTime;
 		
 	//	Get next task
 	
@@ -147,13 +178,6 @@ void Simulation::genTasks(int type)
 		arrTime = task->getArrTime();
 		serTime = task->getSerTime();
 	}
-
-//	Output list (debugging)
-
-//	cout << "Task List " << type << endl; int i = 0;
-//	for (list<Task*>::iterator it = tmpList.begin(); it != tmpList.end(); it++)
-//		cout << "Task " << i++ << " = " << **it << endl;
-//	cout << endl;
 
 //	Merge new list with task list
 
@@ -172,51 +196,48 @@ void Simulation::genTasks(int type)
 
 void Simulation::runPhase(int& i)
 {
-//	Generate tasks and initiliaze variables
+//	Generate all task types
 
-	for (int tp = 2; tp < 3; tp++)
+	for (int tp = 0; tp < 3; tp++)
 		genTasks(tp);
-	
-	cout << "Task List" << endl;
+
+//	debugging
+
+	cout << "Task List " << endl;
 	for (list<Task*>::iterator it = taskList.begin(); it != taskList.end(); it++)
 		cout << "Task = " << **it << endl;
 	cout << endl;
-	
-	util.resize(util.size() + 10*taskList.size(), vector<float>(3,0));
-	
+
+//	Initiliaze variables
+
 	list<Task*>::iterator it = taskList.begin();
 
 	Task* arrTask;
 	float arrTime;
-	
 	Task* depTask;
 	float depTime;
+	
+	float prevTime = 0;
 	
 //	Process all events in the task list
 	
 	cout << "Beginning Phase " << phase << "." << endl;
-	
+
 	while(it != taskList.end())
 	{
-	//	Get next arrival
+	//	Get next arrival and depature
 	
 		arrTask = *it;
 		arrTime = arrTask->getArrTime();
-		
-	//	Get next depature
-	
 		depTask = op.getCurrTask();
 		depTime = op.getDepTime();
-			
+				
 	//	Process next event
 
 		if (arrTime < depTime || depTime == -1)
-		{	
-			processArrival(arrTask, arrTime, i);
-			it++;
-		}
+			processArrival(it);
 		else 
-			processDepature(depTask, depTime, i);
+			processDepature(depTask, i);
 	}
 			
 //	Process remaining tasks in the queue
@@ -226,63 +247,17 @@ void Simulation::runPhase(int& i)
 	
 	while (!op.isQueueEmpty() && depTime <= endTimes[2])
 	{
-		processDepature(depTask, depTime, i);
+		processDepature(depTask, i);
+		
 		depTask = op.getCurrTask();
 		depTime = op.getDepTime();
 	}
 
 //	Clear task list for next phase
 	
-	cout << "Phase " << phase++ << " completed." << endl;
+	cout << "Phase " << phase++ << " completed." << endl << endl;
 	taskList.clear();
 
-//	Output utilization (debugging)
-	
-//	for (int i = 0; i < util.size(); i++)
-//		if (util[i][0] != -1)
-//			cout << util[i][0] << ", " << util[i][1] << ", " << util[i][2] << endl;
-
-	return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	run															*
-*																			*
-*	Purpose:	To run the simulation by completing the generated tasks		*
-*																			*
-****************************************************************************/
-
-void Simulation::run()
-{
-//	Run Phase 0 and update Phase 1 end time
-	
-	int j = 0;
-	cout << "Beginning simulation..." << endl;
-	runPhase(j);
-	endTimes[1] = endTimes[2] - 30;
-
-//	Run other phases
-	
-//	for (int i = 1; i < 3; i++)
-//		runPhase(j);
-	
-	cout << "Simulation completed." << endl;
-	
-//	Delete 0's
-
-	int i = util.size() - 1;
-	while (util[i][0] == 0)
-	{
-		util.pop_back();
-		i--;
-	}
-	
-//	Output util (debugging) 
-
-//	for (int i = 0; i < util.size(); i++)
-//		cout << util[i][0] << ", " << util[i][1] << ", " << util[i][2] << endl;
-	
 	return;
 }
 
@@ -294,26 +269,20 @@ void Simulation::run()
 *																			*
 ****************************************************************************/
 
-void Simulation::processArrival(Task* task, float arrTime, int& i)
+void Simulation::processArrival(list<Task*>::iterator& it)
 {
+cout << "\t Enter arrival." << endl;
+	
 //	Update time
 	
-	simTime = arrTime;
-		
-//	Determine previous state and record utilization
-
-	if (!op.isBusy())
-	{
-		util[i][0] = simTime; 
-		util[i][1] = 0;
-		util[i][2] = -1;
-		i++;
-	}
+	Task* task = *it;
+	simTime = task->getArrTime();
 
 //	Update state
 
-//	cout << "\t Task arriving at " << simTime << endl;
+	cout << "\t Task arriving at " << simTime << endl;
 	op.addTask(task);
+	it++;
 	
 	return;
 }
@@ -326,26 +295,55 @@ void Simulation::processArrival(Task* task, float arrTime, int& i)
 *																			*
 ****************************************************************************/
 
-void Simulation::processDepature(Task* task, float depTime, int& i)
+void Simulation::processDepature(Task* task, int& i)
 {
+	cout << "\t Enter depature." << endl;	
+
 //	Get task characteristics
 
 	float arrTime = task->getArrTime();
+	float depTime = task->getDepTime();
+	float serTime = task->getSerTime();
+	float begTime = depTime - serTime;
 	int type = task->getType();
 	
-//	Update time and record utilization
+//	Get interval times
+
+	cout << util.size() << endl;
+	cout << util[0].size() << endl;
+	
+	for (int k = 0; k < util.size(); k++) {
+		for (int j = 0; j < util[i].size(); j++)
+			cout << util[k][j] << " " << endl;
+		cout << endl;
+	}
+	
+	float beginInt = util[i][0];
+	float endInt = beginInt + intSize;
+	
+//	Update time
 	
 	simTime = depTime;
-	util[i][0] = simTime;
-	util[i][1] = 1;
-	util[i][2] = type;
-	i++;
+	
+//	Record utilization
+
+	int time = 0;
+	if (simTime >= endInt)
+	{
+		time = endInt - max(begTime, beginInt);
+		util[i++][type] += time/intSize * 100;
+	}
+	else 
+	{
+		time = simTime - max(begTime, beginInt);
+		util[i][type] += time/intSize * 100;
+	}
 
 //	Update state and stats
 	
-//	cout << "\t Task departing at " << simTime << endl;
+	cout << "\t Task departing at " << simTime << endl;
 	op.makeIdle();
-	waitTimes[type] += depTime - arrTime;
+	waitTimes[type] += begTime - arrTime;
 	
 	return;
 }
@@ -358,8 +356,10 @@ void Simulation::processDepature(Task* task, float depTime, int& i)
 *																			*
 ****************************************************************************/
 
-void Simulation::outputData(Matrix& busy, int intSize, string filePath)
+void Simulation::outputData(string filePath)
 {
+//	Check output file
+
 	ofstream fout(filePath);
 	if (!fout)
 	{
@@ -367,23 +367,20 @@ void Simulation::outputData(Matrix& busy, int intSize, string filePath)
 		exit(1);
 	}
 	
-//	fout << "Time (s), Utilization, Type" << endl;
-//	
-//	for (int i = 0; i < util.size(); i++)
-//		if (util[i][0] != -1)
-//			fout << util[i][0] << ", " << util[i][1] << ", " << util[i][2] << endl;
+//	Output header
 
-	int interval = 0;
-	fout << "Time (min), Utilization by Type" << endl;
-	for (int i = 0; i < busy.size(); i++)
+	fout << "Time (min) " << endl;
+	for (int i = 1; i < util[0].size(); i++)
+		fout << "Type " << i - 1 << ",";
+	
+//	Output data
+
+	for (int i = 0; i < util.size(); i++)
 	{
-		fout << interval << ", ";
-		for (int j = 0; j < busy[i].size(); j++)
-			fout << busy[i][j] << ", ";
-		fout << endl;
-		interval += intSize;
-	}
-		
+		for (int j = 0; j < util[i].size(); i++)
+			fout << util[i][j] << ",";
+		cout << endl;
+	}	
 	return;
 }
 
@@ -395,94 +392,14 @@ void Simulation::outputData(Matrix& busy, int intSize, string filePath)
 *																			*
 ****************************************************************************/
 
-void Simulation::reportStats(float& x, float& y)
+void Simulation::reportStats()
 {
 	for (int i = 0; i < 9; i++)
 	{
-//		cout << "Processing time for Type " << i << " = " << processTimes[i] << endl;
-//		cout << "Waiting time for Type " << i << " = " << waitTimes[i] << endl;
-//		cout << "Total task of Type " << i << " = " << totalTasks[i] << endl;
-		
-//		for (int i = 0; i < 9; i++)
-//			tmp += totalTasks[i];
-
-		x += totalT;
-		y += totalSer/totalT;
-					
-//		cout << "Total task of Type " << i << " = " << tmp << endl;
+		cout << "Processing time for Type " << i << " = " << processTimes[i] << endl;
+		cout << "Waiting time for Type " << i << " = " << waitTimes[i] << endl;
+		cout << "Total task of Type " << i << " = " << totalTasks[i] << endl;
 	}
-	return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	processData													*
-*																			*
-*	Purpose:	To process utilization data of the specified type			*
-*																			*
-****************************************************************************/
-
-void Simulation::processData(Matrix& busy, int intSize)
-{
-//	Initialize variables
-
-//	int N = endTimes[2]/intSize;
-	int beginInt = 0;
-	int endInt = intSize;
-//	Matrix busy(N, vector<float>(9,0));
-	int i = 0;
-	int j = 0;
-	float prevTime;
-	float currTime;
-	int utl;
-	int type;
-	float tmp;
-	
-//	for (int i = 0; i < util.size(); i++)
-//		cout << util[i][0] << ", " << util[i][1] << ", " << util[i][2] << endl;
-	
-//	Sequence through utilization
-
-	while (j != util.size())
-	{			
-	//	Update variables
-							
-		currTime = util[j][0];
-		utl = util[j][1];
-		type = util[j][2];
-		if (j == 0)
-			prevTime = -1;
-		else
-			prevTime = util[j-1][0];
-		 
-	//	Increment busy counter, if applicable
-	
-		if (currTime >= endInt)
-		{
-			if (utl == 1)
-			{
-				tmp = endInt - max(prevTime, (float)beginInt);
-				busy[i][type] += tmp/intSize * 100;
-				busy[i][9] += tmp/intSize * 100;
-			}
-			beginInt = endInt;
-			endInt += intSize;
-//			cout << "INTERVAL " << i << " DONE:  busy = " << busy[i][0] << endl;
-			i++;
-		}
-		else 
-		{
-			if (utl == 1)
-			{
-				tmp = currTime - max(prevTime, (float)beginInt);
-				busy[i][type] += tmp/intSize * 100;	
-				busy[i][9] += tmp/intSize * 100;
-			}
-			j++;
-//			cout << "\tbusy = " << busy[i][0] << endl;
-		}
-	}
-
 	return;
 }
 

@@ -20,12 +20,8 @@
 
 using namespace std;
 
-//	Functions
-
 bool priorityComparison (Task* t1, Task* t2) 
 	{return t1->getPriority() < t2->getPriority();}
-float getFatigueFactor(float time) 
-	{return 1 + (time/60 * 0.01);} 
 
 /****************************************************************************
 *																			*
@@ -85,10 +81,10 @@ ostream& operator<<(ostream& out, const Operator op) {op.output(out); return out
 *																			*
 ****************************************************************************/
 
-float Operator::getDepTime() 
+void Operator::getDepTime() 
 {
 	if (isBusy())
-		return currTasks->getDepTime();
+		return currTasks->getDeptTime();
 	else
 		return -1;
 }
@@ -148,8 +144,6 @@ void Operator::startNextTask(float startTime)
 		Task* nextTask = taskQueue.front();
 		currTasks = nextTask;
 		float serTime = currTasks->getSerTime();
-//		float fatFactor = getFatigueFactor(startTime);
-//		currTasks->setSerTime(serTime * fatFactor);
 		currTasks->setDepTime(startTime + serTime);
 	}
 		
@@ -174,7 +168,5 @@ void Operator::output(ostream& out) const
 	cout << " and has " << taskQueue.size() << " tasks in queue." << endl;  
 	
 }
-
-
 
 #endif

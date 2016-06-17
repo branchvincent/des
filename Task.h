@@ -111,7 +111,8 @@ float Task::genArrTime(float prevArrTime, int seed, int phase)
 	
 		case 0: 
 		{
-			priority = 5;
+			int prty[3] = {2, 3, 2}; 
+			priority = prty[phase];
 			float lambda = 10/30.;
 			exponential_distribution<float> dist(lambda);
 			return dist(gen) + prevArrTime;
@@ -121,8 +122,9 @@ float Task::genArrTime(float prevArrTime, int seed, int phase)
 	
 		case 1: 
 		{
-			priority = 6;
-			float lambda = 1/3.;											//	Placeholder (change to deterministic)
+			int prty[3] = {1, 2, 1}; 
+			priority = prty[phase];
+			float lambda = 1/3.;									//	Placeholder (change to deterministic)
 			exponential_distribution<float> dist(lambda);
 			return dist(gen) + prevArrTime;
 		}
@@ -131,7 +133,8 @@ float Task::genArrTime(float prevArrTime, int seed, int phase)
 		
 		case 2: 
 		{
-			priority = 4;
+			int prty[3] = {3, 6, 4}; 
+			priority = prty[phase];
 			float lambda = 10/30.;
 			exponential_distribution<float> dist(lambda);
 			return dist(gen) + prevArrTime;
@@ -141,7 +144,8 @@ float Task::genArrTime(float prevArrTime, int seed, int phase)
 		
 		case 3: 
 		{
-			priority = 1;
+			int prty[3] = {6, 1, 6}; 
+			priority = prty[phase];
 			float lambda = 0.1;													// No startup distribution
 			exponential_distribution<float> dist(lambda);
 			return dist(gen) + prevArrTime;
@@ -151,7 +155,8 @@ float Task::genArrTime(float prevArrTime, int seed, int phase)
 			
 		case 4: 
 		{
-			priority = 1;
+			int prty[3] = {6, 1, 6}; 
+			priority = prty[phase];
 			float lambda = 0.1;													// No startup
 			exponential_distribution<float> dist(lambda);
 			return dist(gen) + prevArrTime;
@@ -161,7 +166,8 @@ float Task::genArrTime(float prevArrTime, int seed, int phase)
 	
 		case 5: 
 		{
-			priority = 1;
+			int prty[3] = {6, 1, 6}; 
+			priority = prty[phase];
 			float lambda = 1/30.;
 			exponential_distribution<float> dist(lambda);
 			return dist(gen) + prevArrTime;
@@ -171,7 +177,8 @@ float Task::genArrTime(float prevArrTime, int seed, int phase)
 		
 		case 6: 
 		{
-			priority = 3;
+			int prty[3] = {4, 4, 5}; 
+			priority = prty[phase];
 			float lambda = 2/30.;
 			exponential_distribution<float> dist(lambda);
 			return dist(gen) + prevArrTime;
@@ -181,7 +188,8 @@ float Task::genArrTime(float prevArrTime, int seed, int phase)
 		
 		case 7: 
 		{
-			priority = 2;
+			int prty[3] = {5, 5, 3}; 
+			priority = prty[phase];
 			float lambda = 3/30.;
 			exponential_distribution<float> dist(lambda);
 			return dist(gen) + prevArrTime;
@@ -191,7 +199,8 @@ float Task::genArrTime(float prevArrTime, int seed, int phase)
 		
 		case 8: 
 		{
-			priority = 1;
+			int prty[3] = {6, 1, 6}; 
+			priority = prty[phase];
 			float lambda = 1/30.;
 			exponential_distribution<float> dist(lambda);
 			return dist(gen) + prevArrTime;

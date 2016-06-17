@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <string>
-#include "Simulation.h"
+#include "Simulation2.h"
 #include <time.h>
 #include <vector>
 
@@ -26,9 +26,8 @@ typedef vector< vector<vector<float> > > Matrix3D;
 void stdDev(vector<float>& data);
 void outputData(Matrix2D data, string filePath);
 
-string filePath1 = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/run1.csv";
-string filePath2 = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/run2.csv";
-int intSize = 30;
+string filePath = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/runTest.csv";
+//int intSize = 10;
 int numRuns = 1;
 
 /****************************************************************************
@@ -42,65 +41,29 @@ int main()
 //	Initialize variables
 
 	srand(time(0));
-	int endTime = 200;
-	int numInts = endTime/intSize;
+	int endTime = 90;
+	int numInts = endTime/10;
 	int numTypes = 9;
 	Matrix3D util(numRuns, vector<vector<float> >(numInts, vector<float>(numTypes,0)));
 //	Matrix2D util(numInts, vector<float>(numTypes + 1,0));
 	Matrix2D data(numInts, vector<float>(numRuns + 2,0));
 
-//	Open output stream
-
-//	ofstream fout(filePath);
-//	if (!fout)
-//	{
-//		cerr << "Failed to open output file. Exiting...";
-//		exit(1);
-//	}
-
 //	Run simulations for specified times
 
-	float ser = 0;
-	float tas = 0;
-	
 	for (int i = 0; i < numRuns; i++)
 	{
 		cout << "Run " << i << endl;
 		Simulation sim(endTime, rand());		// 43200		
 		sim.run();	
-		sim.processData(util[i], intSize);
-		
-//		for (int j = 0; j < numInts; j++)
-//			data[j][i] = util[i][j][9];
+		sim.outputData(filePath);
 		
 		for (int j = 0; j < numInts; j++)
-			data[j][i] = util[i][j][9]/100 * intSize;
-		
-		
-//		data[i] = stdDev()
-//		sim.outputData(util[i], intSize, filePath1);
-		sim.reportStats(tas, ser);
-		cout << endl;
+			data[j][i] = util[i][j][9];
 	}
-	
-	cout << tas/numRuns << endl;
-	cout << ser/numRuns << endl;
 	
 	for (int i = 0; i < data.size(); i++)
 		stdDev(data[i]);
-	
 	outputData(data, filePath2);
-	
-//	int interval = intSize;
-//	fout << "Time (min), Utilization by Type" << endl;
-//	for (int i = 0; i < util.size(); i++)
-//	{
-//		fout << interval << ", ";
-//		for (int j = 0; j < util[i].size(); j++)
-//			fout << util[i][j]/numRuns << ", ";
-//		fout << endl;
-//		interval += intSize;
-//	}
 
 	return 0;
 }
