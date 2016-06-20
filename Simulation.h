@@ -149,12 +149,14 @@ void Simulation::genTasks(int type)
 	}
 
 //	Output list (debugging)
-
-//	cout << "Task List " << type << endl; int i = 0;
-//	for (list<Task*>::iterator it = tmpList.begin(); it != tmpList.end(); it++)
-//		cout << "Task " << i++ << " = " << **it << endl;
-//	cout << endl;
-
+	
+	if (debug)
+	{
+		cout << "Task List " << type << endl; int i = 0;
+		for (list<Task*>::iterator it = tmpList.begin(); it != tmpList.end(); it++)
+			cout << "Task " << i++ << " = " << **it << endl;
+		cout << endl;
+	}
 //	Merge new list with task list
 
 	taskList.merge(tmpList, taskComparison);
@@ -174,21 +176,22 @@ void Simulation::runPhase(int& i)
 {
 //	Generate tasks and initiliaze variables
 
-	for (int tp = 2; tp < 3; tp++)
+	for (int tp = 0; tp < 3; tp++)
 		genTasks(tp);
 	
-	cout << "Task List" << endl;
-	for (list<Task*>::iterator it = taskList.begin(); it != taskList.end(); it++)
-		cout << "Task = " << **it << endl;
-	cout << endl;
+	if (debug)
+	{
+		cout << "Task List" << endl;
+		for (list<Task*>::iterator it = taskList.begin(); it != taskList.end(); it++)
+			cout << "Task = " << **it << endl;
+		cout << endl;
+	}
 	
 	util.resize(util.size() + 10*taskList.size(), vector<float>(3,0));
 	
 	list<Task*>::iterator it = taskList.begin();
-
 	Task* arrTask;
 	float arrTime;
-	
 	Task* depTask;
 	float depTime;
 	
@@ -238,9 +241,10 @@ void Simulation::runPhase(int& i)
 
 //	Output utilization (debugging)
 	
-//	for (int i = 0; i < util.size(); i++)
-//		if (util[i][0] != -1)
-//			cout << util[i][0] << ", " << util[i][1] << ", " << util[i][2] << endl;
+	if (debug)
+		for (int i = 0; i < util.size(); i++)
+			if (util[i][0] != -1)
+				cout << util[i][0] << ", " << util[i][1] << ", " << util[i][2] << endl;
 
 	return;
 }
@@ -264,8 +268,8 @@ void Simulation::run()
 
 //	Run other phases
 	
-//	for (int i = 1; i < 3; i++)
-//		runPhase(j);
+	for (int i = 1; i < 3; i++)
+		runPhase(j);
 	
 	cout << "Simulation completed." << endl;
 	
@@ -277,11 +281,12 @@ void Simulation::run()
 		util.pop_back();
 		i--;
 	}
-	
+		
 //	Output util (debugging) 
 
-//	for (int i = 0; i < util.size(); i++)
-//		cout << util[i][0] << ", " << util[i][1] << ", " << util[i][2] << endl;
+	if (debug)
+		for (int i = 0; i < util.size(); i++)
+			cout << util[i][0] << ", " << util[i][1] << ", " << util[i][2] << endl;
 	
 	return;
 }

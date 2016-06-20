@@ -20,12 +20,14 @@
 
 using namespace std;
 
-//	Functions
+//	Functions and definitions
 
-bool priorityComparison (Task* t1, Task* t2) 
-	{return t1->getPriority() < t2->getPriority();}
+bool comparePriority (Task* t1, Task* t2) 
+	{return t1->getPriority() > t2->getPriority();}
 float getFatigueFactor(float time) 
-	{return 1 + (time/60 * 0.01);} 
+	{return 1 + (time/60 * 0.01);}
+//typedef priority_queue<Task*,vector<Task*>,decltype(&comparePriority)> Queue;
+
 
 /****************************************************************************
 *																			*
@@ -41,7 +43,7 @@ class Operator
 		
 	//	Constructor
 	
-		Operator() : currTasks(NULL), taskQueue() {}
+		Operator() : currTasks(NULL), taskQueue() {} // taskQueue(&comparePriority)
 		
 	//	Inspectors
 
@@ -54,6 +56,7 @@ class Operator
 //		float getDepTime() const {return currTasks->getDepTime();}
 //		float& getDepTime() {return currTasks->getDepTime();}
 		Task* getCurrTask() {return currTasks;} 
+		Task* getTop() {return taskQueue.front();}
 		float getDepTime();
 		
 	//	Mutators
@@ -69,7 +72,7 @@ class Operator
 //	Data members
 
 	private:
-		Task* currTasks;			// current tasks
+		Task* currTasks;		// current tasks
 		queue<Task*> taskQueue;		// task queue
 };
 
@@ -119,7 +122,7 @@ void Operator::makeIdle()
 *																			*
 *	Function:	addTask														*
 *																			*
-*	Purpose:	To enqeue the specified task								*
+*	Purpose:	To enqueue the specified task								*
 *																			*
 ****************************************************************************/
 
@@ -144,12 +147,20 @@ void Operator::startNextTask(float startTime)
 {
 	if (!taskQueue.empty())
 	{
+	//	Get next task
+	
 //		cout << "\t Task starting at " << startTime << endl;
+//		currTasks = taskQueue.top();
 		Task* nextTask = taskQueue.front();
 		currTasks = nextTask;
+//		taskQueue.pop(); 
+
+	//	Update service and depature time
+		
 		float serTime = currTasks->getSerTime();
-//		float fatFactor = getFatigueFactor(startTime);
-//		currTasks->setSerTime(serTime * fatFactor);
+		float fatFactor = getFatigueFactor(startTime);
+		serTime *= fatFactor;
+		currTasks->setSerTime(serTime);
 		currTasks->setDepTime(startTime + serTime);
 	}
 		
@@ -174,7 +185,5 @@ void Operator::output(ostream& out) const
 	cout << " and has " << taskQueue.size() << " tasks in queue." << endl;  
 	
 }
-
-
 
 #endif

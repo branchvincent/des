@@ -28,7 +28,7 @@ void outputData(Matrix2D data, string filePath);
 
 string filePath1 = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/run1.csv";
 string filePath2 = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/run2.csv";
-int intSize = 30;
+int intSize = 10;
 int numRuns = 1;
 
 /****************************************************************************
@@ -42,7 +42,7 @@ int main()
 //	Initialize variables
 
 	srand(time(0));
-	int endTime = 200;
+	int endTime = 100;
 	int numInts = endTime/intSize;
 	int numTypes = 9;
 	Matrix3D util(numRuns, vector<vector<float> >(numInts, vector<float>(numTypes,0)));
@@ -69,22 +69,16 @@ int main()
 		Simulation sim(endTime, rand());		// 43200		
 		sim.run();	
 		sim.processData(util[i], intSize);
+
+		for (int j = 0; j < numInts; j++)
+			data[j][i] = util[i][j][9];
 		
 //		for (int j = 0; j < numInts; j++)
-//			data[j][i] = util[i][j][9];
+//			data[j][i] = util[i][j][9]/100 * intSize;
 		
-		for (int j = 0; j < numInts; j++)
-			data[j][i] = util[i][j][9]/100 * intSize;
-		
-		
-//		data[i] = stdDev()
 //		sim.outputData(util[i], intSize, filePath1);
-		sim.reportStats(tas, ser);
 		cout << endl;
 	}
-	
-	cout << tas/numRuns << endl;
-	cout << ser/numRuns << endl;
 	
 	for (int i = 0; i < data.size(); i++)
 		stdDev(data[i]);

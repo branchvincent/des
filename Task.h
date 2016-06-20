@@ -168,7 +168,7 @@ float Task::genArrTime(float prevArrTime, int seed, int phase)
 		{
 			int prty[3] = {6, 1, 6}; 
 			priority = prty[phase];
-			float lambda = 1/30.;
+			float lambda = 15/30.;
 			exponential_distribution<float> dist(lambda);
 			return dist(gen) + prevArrTime;
 		}
@@ -201,7 +201,7 @@ float Task::genArrTime(float prevArrTime, int seed, int phase)
 		{
 			int prty[3] = {6, 1, 6}; 
 			priority = prty[phase];
-			float lambda = 1/30.;
+			float lambda = 15/30.;
 			exponential_distribution<float> dist(lambda);
 			return dist(gen) + prevArrTime;
 		}	

@@ -26,19 +26,29 @@ int main()
 		cout << "Current task." << endl;
 	
 	cout << op << endl;
+		
+	Task* task1 = new Task(4, 0, 2, 0); 
+	Task* task2 = new Task(3, 0, 2, 0);
+	Task* task3 = new Task(2, 0, 2, 0);
+
+	cout << "Task 1:  " << *task1 << endl;
+//	cout << "Task 2:  " << *task2 << endl;
+//	cout << "Task 3:  " << *task3 << endl;
+
+	cout << task1 << endl;
+	op.addTask(task1);
+//	op.addTask(task2);
+//	op.addTask(task3);
+	
+	cout << op.getTop() << endl;
+	cout << op.getCurrTask() << endl;
 	
 	op.makeIdle();
-	cout << op << endl;
-		
-	Task* task = new Task(0, 0, 2);
-	op.addTask(task);
-	cout << op << endl;
+	cout << *op.getTop() << endl;
+
 	
 	op.startNextTask(5);
 	cout << op << endl;
-	
-//	for (int i = 0; i < 4900000; i++)
-//		Operator op;
 	
 	return 0;
 }
