@@ -31,24 +31,26 @@ int main()
 	Task* task2 = new Task(3, 0, 2, 0);
 	Task* task3 = new Task(2, 0, 2, 0);
 
-	cout << "Task 1:  " << *task1 << endl;
+//	cout << "Task 1:  " << *task1 << endl;
 //	cout << "Task 2:  " << *task2 << endl;
 //	cout << "Task 3:  " << *task3 << endl;
 
-	cout << task1 << endl;
+//	cout << task1 << endl;
 	op.addTask(task1);
-//	op.addTask(task2);
-//	op.addTask(task3);
-	
-	cout << op.getTop() << endl;
-	cout << op.getCurrTask() << endl;
+	op.addTask(task2);
+	op.addTask(task3);
 	
 	op.makeIdle();
-	cout << *op.getTop() << endl;
-
+		
+//	cout << op.getTop() << endl;
+	cout << *op.getCurrTask() << endl;
 	
-	op.startNextTask(5);
-	cout << op << endl;
+//	op.makeIdle();
+//	cout << *op.getTop() << endl;
+//
+//	
+//	op.startNextTask(5);
+//	cout << op << endl;
 	
 	return 0;
 }

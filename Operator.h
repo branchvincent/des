@@ -72,7 +72,7 @@ class Operator
 //	Data members
 
 	private:
-		Task* currTasks;		// current tasks
+		Task* currTasks;			// current tasks
 		queue<Task*> taskQueue;		// task queue
 };
 
@@ -107,11 +107,11 @@ float Operator::getDepTime()
 
 void Operator::makeIdle() 
 {
-	if (!taskQueue.empty())
+	if (isBusy())
 	{
 		float depTime = currTasks->getDepTime(); 
 		currTasks = NULL; 
-		taskQueue.pop(); 
+//		taskQueue.pop(); 
 		startNextTask(depTime);
 	}
 		
@@ -128,7 +128,12 @@ void Operator::makeIdle()
 
 void Operator::addTask(Task* task) 
 {
+//	Enqueue task
+
 	taskQueue.push(task); 
+	
+//	Start next task, if applicable
+
 	if (currTasks == NULL) 
 		startNextTask(task->getArrTime());
 		
@@ -149,11 +154,11 @@ void Operator::startNextTask(float startTime)
 	{
 	//	Get next task
 	
-//		cout << "\t Task starting at " << startTime << endl;
+		cout << "\t Task starting at " << startTime << endl;
 //		currTasks = taskQueue.top();
 		Task* nextTask = taskQueue.front();
 		currTasks = nextTask;
-//		taskQueue.pop(); 
+		taskQueue.pop(); 
 
 	//	Update service and depature time
 		
@@ -184,6 +189,7 @@ void Operator::output(ostream& out) const
 	
 	cout << " and has " << taskQueue.size() << " tasks in queue." << endl;  
 	
+	return;
 }
 
 #endif

@@ -40,7 +40,7 @@ const int numTypes = 9;
 float processTimes[9] = {0};
 float totalTasks[9] = {0};
 float waitTimes[9] = {0};
-bool debug = false;
+bool debug = true;
 Matrix rawData;
 
 /****************************************************************************
@@ -198,7 +198,7 @@ void Simulation::runPhase(int& uIndex)
 {
 //	Generate all task types
 
-	for (int tp = 0; tp < 3; tp++)
+	for (int tp = 0; tp < 9; tp++)
 		genTasks(tp);
 
 //	Initiliaze variables
@@ -245,7 +245,7 @@ void Simulation::runPhase(int& uIndex)
 	depTask = op.getCurrTask();
 	depTime = op.getDepTime();
 	
-	while (!op.isQueueEmpty() && depTime <= endTimes[2])
+	while (op.isBusy() && depTime <= endTimes[2])
 	{
 		processDepature(depTask, uIndex);
 		depTask = op.getCurrTask();

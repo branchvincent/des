@@ -25,12 +25,13 @@ using namespace std;
 typedef vector< vector<vector<float> > > Matrix3D;
 void stdDev(vector<float>& data);
 void outputData(Matrix data, string filePath);
+void outputData2(Matrix data, string filePath);
 
 // Global variables
 
 const string filePath = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/runTest.csv";
 const string filePath2 = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/runTests.csv";
-const int numRuns = 1;
+const int numRuns = 100;
 
 /****************************************************************************
 *																			*
@@ -59,7 +60,7 @@ int main()
 	//	Run simulation
 	
 		cout << "Run " << i << endl;
-		Simulation sim(endTime, rand());		// rand()		
+		Simulation sim(endTime, 0); //rand());		
 		sim.run();	
 	
 	//	Get stats
@@ -72,13 +73,13 @@ int main()
 		
 	//	Copy total utilization 
 
-//		for (int j = 0; j < numInts; j++)
-//			data[j][i] = util[i][j][10];
+		for (int j = 0; j < numInts; j++)
+			data[j][i] = util[i][j][10];
 	}
 	
-//	for (int i = 0; i < data.size(); i++)
-//		stdDev(data[i]);
-//	outputData(data, filePath2);
+	for (int i = 0; i < data.size(); i++)
+		stdDev(data[i]);
+//	outputData2(data, filePath2);
 
 	return 0;
 }
@@ -147,6 +148,48 @@ void outputData(Matrix data, string filePath)
 	{
 		fout << interval << ", ";
 		for (int j = numRuns; j < data[i].size(); j++)
+			fout << data[i][j] << ", ";
+		fout << endl;
+		interval += intSize;
+	}
+	
+	return;           
+}
+
+/****************************************************************************
+*																			*
+*	Function:	outputData2													*
+*																			*
+*	Purpose:	To output the average and standard deviation for the 		*
+*				utilization data											*
+*																			*
+****************************************************************************/
+
+void outputData2(Matrix data, string filePath)
+{
+//	Open file
+
+	ofstream fout(filePath);
+	if (!fout)
+	{
+		cerr << "Failed to open output file. Exiting...";
+		exit(1);
+	}
+	
+//	Output header
+
+	int interval = 0;
+	fout << "Interval,";
+	for (int i = 0; i < numRuns; i++)
+		fout << "Run " << i << ","; 
+	fout << "Mean, StdDev" << endl;
+
+//	Output data
+
+	for (int i = 0; i < data.size(); i++)
+	{
+		fout << interval << ", ";
+		for (int j = 0; j < data[i].size(); j++)
 			fout << data[i][j] << ", ";
 		fout << endl;
 		interval += intSize;

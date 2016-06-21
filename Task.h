@@ -33,7 +33,7 @@ class Task
 
 	//	Constructor
 		
-		Task(int tp, float prevArrTime, int seed, int phase);
+		Task(int tp, float prevArrTime, int seed, int phase, float traffLevel);
 
 	//	Inspectors
 
@@ -56,7 +56,8 @@ class Task
 
 	//	Other member functions
 
-		float genArrTime(float prevArrTime, int seed, int phase);
+		int getPriority(int phase);
+		float genArrTime(float prevArrTime, int seed, int phase, float traffLevel);
 		float genSerTime(int seed, int phase);
 		void output(ostream& out) const 
 			{cout << "(" << type << ", " << arrTime << ", " << serTime <<  ")";}
@@ -84,12 +85,56 @@ ostream& operator<<(ostream& out, const Task t) {t.output(out); return out;}
 *																			*
 ****************************************************************************/
 
-Task::Task(int tp, float prevArrTime, int seed, int phase)
+Task::Task(int tp, float prevArrTime, int seed, int phase, float traffLevel)
 {
+//	Check type 
+
+	if (tp < 0 || tp > 8)
+	{
+		cerr << "Error:  Incompatible task type. Exiting..." << endl;
+		exit(1);
+	}
+	
+//	Check phase
+
+	else if (phase < 0 || phase > 2)
+	{
+		cerr << "Error:  Incompatible phase. Exiting..." << endl;
+		exit(1):
+	}
+	
+//	Set task attributes
+
 	type = tp;
-	arrTime = genArrTime(prevArrTime, seed, phase);
+	priority = getPriority(phase);
+	arrTime = genArrTime(prevArrTime, seed, phase, traffLevel);
 	serTime = genSerTime(seed, phase);
 	depTime = -1;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	getPriority													*
+*																			*
+*	Purpose:	To return the priority based on the task type and specified *
+*				phase			 											*
+*																			*
+****************************************************************************/
+
+int Task::getPriority(int phase)
+{	
+	int prty[9][3] = {	{2, 3, 2},	// Communicating
+						{1, 2, 1}, 	// Exception handling
+						{3, 6, 4},	// Paperwork
+						{6, 1, 6},	// Maintenance of way
+						{6, 1, 6},	// Temp speed restriction
+						{6, 1, 6},	// Signal response management
+						{4, 4, 5},	// Monitoring inside
+						{5, 5, 3},	// Monitoring outisde
+						{6, 1, 6}	// Planning ahead
+					 };	
+					
+	return prty[type][phase];
 }
 
 /****************************************************************************
@@ -101,119 +146,48 @@ Task::Task(int tp, float prevArrTime, int seed, int phase)
 *																			*
 ****************************************************************************/
 
-float Task::genArrTime(float prevArrTime, int seed, int phase)
-{
+float Task::genArrTime(float prevArrTime, int seed, int phase, traffLevel)
+{	
+//	Distribution parameters
+
+	float lambda[9][3] = {	{1/3., 0.2, 1/3.},		// Communicating
+							{0, 0.1/30, 0.1/30}, 	// Exception handling				change 0 to determinisitic
+							{1/3., 1/30., 1/3.},	// Paperwork
+							{0, 0.05/30, 0.5/30},	// Maintenance of way
+							{0, 1/30., 0},			// Temp speed restriction
+							{1/30., 0.1, 1/15.},	// Signal response management
+							{1/15., 0.1, 0},		// Monitoring inside
+							{0.1, 0.2, 0.1},		// Monitoring outisde
+							{1/30., 1/15., 1/30.}	// Planning ahead
+					 	 };	
+		
+//	Tasks affected by traffic level
+
+	bool affByTraff[9][3] = {	{0, 1, 0},	// Communicating
+								{0, 1, 0}, 	// Exception handling
+								{0, 1, 1},	// Paperwork
+								{0, 1, 0},	// Maintenance of way
+								{0, 1, 0},	// Temp speed restriction
+								{0, 1, 0},	// Signal response management
+								{0, 0, 0},	// Monitoring inside
+								{0, 1, 0},	// Monitoring outisde
+								{0, 1, 0}	// Planning ahead
+					 		 };	
+
+//	Generated random interarrival time
+
 	default_random_engine gen(seed);
+	exponential_distribution<float> dist(lambda[type][phase]);
+	float interTime = dist(gen);
 	
-	switch (type)
-	{
-	//	Communicating
-	
-		case 0: 
-		{
-			int prty[3] = {2, 3, 2}; 
-			priority = prty[phase];
-			float lambda = 10/30.;
-			exponential_distribution<float> dist(lambda);
-			return dist(gen) + prevArrTime;
-		}
+//	Multiply by traffic level, if applicable 
+
+	if (affByTraff[type][phase])
+		interTime *= traffLevel;
 		
-	//	Exception Handling
-	
-		case 1: 
-		{
-			int prty[3] = {1, 2, 1}; 
-			priority = prty[phase];
-			float lambda = 1/3.;									//	Placeholder (change to deterministic)
-			exponential_distribution<float> dist(lambda);
-			return dist(gen) + prevArrTime;
-		}
-		
-	//	Paperwork
-		
-		case 2: 
-		{
-			int prty[3] = {3, 6, 4}; 
-			priority = prty[phase];
-			float lambda = 10/30.;
-			exponential_distribution<float> dist(lambda);
-			return dist(gen) + prevArrTime;
-		}
-		
-	//	Maintenance of Way
-		
-		case 3: 
-		{
-			int prty[3] = {6, 1, 6}; 
-			priority = prty[phase];
-			float lambda = 0.1;													// No startup distribution
-			exponential_distribution<float> dist(lambda);
-			return dist(gen) + prevArrTime;
-		}
-		
-	//	Temp Speed Restriction
-			
-		case 4: 
-		{
-			int prty[3] = {6, 1, 6}; 
-			priority = prty[phase];
-			float lambda = 0.1;													// No startup
-			exponential_distribution<float> dist(lambda);
-			return dist(gen) + prevArrTime;
-		}
-		
-	//	Signal Response Management
-	
-		case 5: 
-		{
-			int prty[3] = {6, 1, 6}; 
-			priority = prty[phase];
-			float lambda = 15/30.;
-			exponential_distribution<float> dist(lambda);
-			return dist(gen) + prevArrTime;
-		}
-		
-	//	Monitoring Inside
-		
-		case 6: 
-		{
-			int prty[3] = {4, 4, 5}; 
-			priority = prty[phase];
-			float lambda = 2/30.;
-			exponential_distribution<float> dist(lambda);
-			return dist(gen) + prevArrTime;
-		}
-		
-	//	Monitoring Outside
-		
-		case 7: 
-		{
-			int prty[3] = {5, 5, 3}; 
-			priority = prty[phase];
-			float lambda = 3/30.;
-			exponential_distribution<float> dist(lambda);
-			return dist(gen) + prevArrTime;
-		}	
-			
-	//	Planning Ahead
-		
-		case 8: 
-		{
-			int prty[3] = {6, 1, 6}; 
-			priority = prty[phase];
-			float lambda = 15/30.;
-			exponential_distribution<float> dist(lambda);
-			return dist(gen) + prevArrTime;
-		}	
-		
-	//	Error message
-	
-		default:
-		{
-			cerr << "Error:  Incompatible task type. Exiting..." << endl;
-			exit(1);
-		}
-	} 
+//	Return arrival time
+
+	return prevArrTime + dist(gen);
 }
 
 /****************************************************************************
