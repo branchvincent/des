@@ -33,20 +33,20 @@ class Task
 
 	//	Constructor
 		
-		Task(int tp, float prevArrTime, int seed, int phase, float traffLevel);
+		Task(int tp, float prevArrTime, int seed, int phase, float traffLevel = 1);
 
 	//	Inspectors
 
-		int getType() const {return type;}
-		int& getType() {return type;}
-		int getPriority() const {return priority;}
-		int& getPriority() {return priority;}
-		float getArrTime() const {return arrTime;}
-		float& getArrTime() {return arrTime;}
-		float getSerTime() const {return serTime;}
-		float& getSerTime() {return serTime;}
-		float getDepTime() const {return depTime;}
-		float& getDepTime() {return depTime;}
+//		int getType() const {return type;}
+		const int& getType() {return type;}
+//		int getPriority() const {return priority;}
+		const int& getPriority() {return priority;}
+//		float getArrTime() const {return arrTime;}
+		const float& getArrTime() {return arrTime;}
+//		float getSerTime() const {return serTime;}
+		const float& getSerTime() {return serTime;}
+//		float getDepTime() const {return depTime;}
+		const float& getDepTime() {return depTime;}
 
 	//	Mutators
 	
@@ -55,13 +55,21 @@ class Task
 		void setDepTime(float t) {depTime = t;}
 
 	//	Other member functions
-
-		int getPriority(int phase);
-		float genArrTime(float prevArrTime, int seed, int phase, float traffLevel);
-		float genSerTime(int seed, int phase);
+	
 		void output(ostream& out) const 
 			{cout << "(" << type << ", " << arrTime << ", " << serTime <<  ")";}
+			
+//	Private member functions
 
+	private:
+		
+	//	Used by constructor
+	
+		int getPriority(int phase);
+		float genArrTime(float prevArrTime, int seed, int phase, float traffLevel);
+		float genSerTime(int seed);
+		float genRandNum(char distType, int seed, float arg1, float arg2 = 0);
+	
 //	Data members
 
 	private:
@@ -100,7 +108,7 @@ Task::Task(int tp, float prevArrTime, int seed, int phase, float traffLevel)
 	else if (phase < 0 || phase > 2)
 	{
 		cerr << "Error:  Incompatible phase. Exiting..." << endl;
-		exit(1):
+		exit(1);
 	}
 	
 //	Set task attributes
@@ -108,7 +116,7 @@ Task::Task(int tp, float prevArrTime, int seed, int phase, float traffLevel)
 	type = tp;
 	priority = getPriority(phase);
 	arrTime = genArrTime(prevArrTime, seed, phase, traffLevel);
-	serTime = genSerTime(seed, phase);
+	serTime = genSerTime(seed);
 	depTime = -1;
 }
 
@@ -123,16 +131,19 @@ Task::Task(int tp, float prevArrTime, int seed, int phase, float traffLevel)
 
 int Task::getPriority(int phase)
 {	
-	int prty[9][3] = {	{2, 3, 2},	// Communicating
-						{1, 2, 1}, 	// Exception handling
-						{3, 6, 4},	// Paperwork
-						{6, 1, 6},	// Maintenance of way
-						{6, 1, 6},	// Temp speed restriction
-						{6, 1, 6},	// Signal response management
-						{4, 4, 5},	// Monitoring inside
-						{5, 5, 3},	// Monitoring outisde
-						{6, 1, 6}	// Planning ahead
-					 };	
+//	Priority array (task types vs. phases)
+
+						//	P0,	P1,	P2
+	int prty[9][3] = 	{	{2, 3, 	2},		// Communicating
+							{1, 2, 	1}, 	// Exception handling
+							{3,	6, 	4},		// Paperwork
+							{6, 1, 	6},		// Maintenance of way
+							{6, 1, 	6},		// Temp speed restriction
+							{6, 1, 	6},		// Signal response management
+							{4, 4, 	5},		// Monitoring inside
+							{5, 5, 	3},		// Monitoring outisde
+							{6, 1, 	6}		// Planning ahead
+					 	};	
 					
 	return prty[type][phase];
 }
@@ -146,48 +157,48 @@ int Task::getPriority(int phase)
 *																			*
 ****************************************************************************/
 
-float Task::genArrTime(float prevArrTime, int seed, int phase, traffLevel)
+float Task::genArrTime(float prevArrTime, int seed, int phase, float traffLevel)
 {	
-//	Distribution parameters
+//	Exponential distribution parameters (task types vs. phases)
 
-	float lambda[9][3] = {	{1/3., 0.2, 1/3.},		// Communicating
-							{0, 0.1/30, 0.1/30}, 	// Exception handling				change 0 to determinisitic
-							{1/3., 1/30., 1/3.},	// Paperwork
-							{0, 0.05/30, 0.5/30},	// Maintenance of way
-							{0, 1/30., 0},			// Temp speed restriction
-							{1/30., 0.1, 1/15.},	// Signal response management
-							{1/15., 0.1, 0},		// Monitoring inside
-							{0.1, 0.2, 0.1},		// Monitoring outisde
-							{1/30., 1/15., 1/30.}	// Planning ahead
-					 	 };	
+							//	P0,		P1,		P2
+	float lambda[9][3] = 	{	{1/3., 	0.2, 	1/3.},		// Communicating
+								{0, 	.1/30, 	.1/30}, 	// Exception handling		*change 0 to determinisitic
+								{1/3., 	1/30., 	1/3.},		// Paperwork
+								{0, 	.05/30, .5/30},		// Maintenance of way
+								{0, 	1/30., 	0},			// Temp speed restriction
+								{1/30., 0.1, 	1/15.},		// Signal response management
+								{1/15., 0.1, 	0},			// Monitoring inside
+								{0.1, 	0.2, 	0.1},		// Monitoring outisde
+								{1/30., 1/15., 1/30.}		// Planning ahead
+					 	 	};	
 		
-//	Tasks affected by traffic level
+//	Tasks affected by traffic level (task types vs. phases)
 
-	bool affByTraff[9][3] = {	{0, 1, 0},	// Communicating
-								{0, 1, 0}, 	// Exception handling
-								{0, 1, 1},	// Paperwork
-								{0, 1, 0},	// Maintenance of way
-								{0, 1, 0},	// Temp speed restriction
-								{0, 1, 0},	// Signal response management
-								{0, 0, 0},	// Monitoring inside
-								{0, 1, 0},	// Monitoring outisde
-								{0, 1, 0}	// Planning ahead
-					 		 };	
+								//	P0, P1,	P2
+	bool affByTraff[9][3] = 	{	{0,	1,	0},		// Communicating
+									{0, 1, 	0}, 	// Exception handling
+									{0, 1, 	1},		// Paperwork
+									{0, 1, 	0},		// Maintenance of way
+									{0, 1, 	0},		// Temp speed restriction
+									{0, 1, 	0},		// Signal response management
+									{0, 0, 	0},		// Monitoring inside
+									{0, 1, 	0},		// Monitoring outisde
+									{0, 1, 	0}		// Planning ahead
+					 		 	};	
 
-//	Generated random interarrival time
+//	Generate random interarrival time
 
-	default_random_engine gen(seed);
-	exponential_distribution<float> dist(lambda[type][phase]);
-	float interTime = dist(gen);
+	float interArrTime = genRandNum('E', seed, lambda[type][phase]);
 	
 //	Multiply by traffic level, if applicable 
 
-	if (affByTraff[type][phase])
-		interTime *= traffLevel;
+	if (affByTraff[type][phase]) 
+		interArrTime *= traffLevel;
 		
 //	Return arrival time
 
-	return prevArrTime + dist(gen);
+	return prevArrTime + interArrTime;
 }
 
 /****************************************************************************
@@ -199,106 +210,73 @@ float Task::genArrTime(float prevArrTime, int seed, int phase, traffLevel)
 *																			*
 ****************************************************************************/
 
-float Task::genSerTime(int seed, int phase)
+float Task::genSerTime(int seed)
 {
-	default_random_engine gen(seed);
-	
+//	Generate service time, based on type
+
 	switch (type)
 	{
-		
-	//	Communicating
-		
-		case 0: 
+//		case 0:	return genRandNum('L', seed, -1.6670796, 0.74938004);			// Communicating
+		case 0:	return genRandNum('E', seed, 0.133);				// Communicating
+		case 1:	return genRandNum('L', seed, 0.980297, 1.389685);	// Exception handling
+		case 2: return genRandNum('U', seed, 0.05, 2);				// Paperwork	
+		case 3: return genRandNum('U', seed, 0.167, 1);				// Maintenance of way
+		case 4:	return genRandNum('U', seed, 0.1, 0.5);				// Temp speed restriction
+		case 5:	return genRandNum('U', seed, 0.1, 0.5);				// Signal response management
+		case 6:	return genRandNum('E', seed, 0.133);				// Monitoring inside
+		case 7:	return genRandNum('E', seed, 0.1);					// Monitoring outside
+		case 8:	return genRandNum('E', seed, 0.33);					// Planning ahead
+	}
+}
+
+/****************************************************************************
+*																			*
+*	Function:	genRandNum													*
+*																			*
+*	Purpose:	To generate a random number based on the specified 			*
+*				distribution type and seed									*
+*																			*
+****************************************************************************/
+
+float Task::genRandNum(char distType, int seed, float arg1, float arg2)
+{
+//	Initialize generator
+
+	default_random_engine gen(seed);
+	
+//	Return random number, based on distribution type
+
+	switch (distType)
+	{
+	//	Exponential
+	
+		case 'E': 
 		{
-			float min = 0.033;
-			float mode = 0.133;
-			float max = 0.2167;
-			lognormal_distribution<double> dist(mode, max);				// change to triangular
+			exponential_distribution<float> dist(arg1);			// args = lambda
 			return dist(gen);
 		}
 		
-	//	Exception Handling
+	//	Lognormal
 	
-		case 1: 
+		case 'L': 
+		{
+			lognormal_distribution<double> dist(arg1, arg2);	// args = mean, stddev
+			return dist(gen);
+		}
+		
+	//	Uniform
+	
+		case 'U': 
 		{	
-			int mean = 0;
-			int sigma = 1;
-			lognormal_distribution<float> dist(mean, sigma);			// changed parameters
+			uniform_real_distribution<float> dist(arg1, arg2);	// args = min, max
 			return dist(gen);
 		}
-		
-	//	Paperwork
-		
-		case 2: 
-		{
-			float min = 0.05;
-			float max = 2;
-			uniform_real_distribution<float> dist(min, max);
-			return dist(gen);
-		}
-		
-	//	Maintenance of Way
-		
-		case 3: 
-		{
-			float min = 0.167;
-			float max = 1;
-			uniform_real_distribution<float> dist(min, max);
-			return dist(gen);
-		}
-		
-	//	Temp Speed Restriction
-			
-		case 4: 
-		{
-			float min = 0.1;
-			float max = 0.5;
-			uniform_real_distribution<float> dist(min, max);
-			return dist(gen);
-		}
-		
-	//	Signal Response Management
-	
-		case 5: 
-		{
-			float min = 0.1;
-			float max = 0.5;
-			uniform_real_distribution<float> dist(min, max);
-			return dist(gen);
-		}
-		
-	//	Monitoring Inside
-		
-		case 6: 
-		{
-			float lambda = 0.1;
-			exponential_distribution<float> dist(lambda);
-			return dist(gen);
-		}
-		
-	//	Monitoring Outside
-		
-		case 7: 
-		{
-			float lambda = 0.133;
-			exponential_distribution<float> dist(lambda);
-			return dist(gen);
-		}	
-			
-	//	Planning Ahead
-		
-		case 8: 
-		{
-			float lambda = 0.33;
-			exponential_distribution<float> dist(lambda);
-			return dist(gen);
-		}	
 		
 	//	Error message
 	
 		default:
 		{
-			cerr << "Error:  Incompatible task type. Exiting..." << endl;
+			cerr << "Error:  Incompatible distribution type. Exiting..." << endl;
 			exit(1);
 		}
 	}

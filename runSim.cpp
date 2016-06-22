@@ -11,25 +11,27 @@
 *																			*
 ****************************************************************************/
 
+// Header files
+
 #include <iostream>
 #include <string>
 #include "Simulation.h"
-#include <time.h>
-#include <vector>
 
 using namespace std;
 
-// Function protypes and definitions
+// Function prototypes and definitions
 
-typedef vector< vector<float> > Matrix2D;
+//typedef vector< vector<float> > Matrix2D;
 typedef vector< vector<vector<float> > > Matrix3D;
 void stdDev(vector<float>& data);
-void outputData(Matrix2D data, string filePath);
+void outputBatchUtil(Matrix data, string filePath);
 
-string filePath1 = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/run1.csv";
-string filePath2 = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/run2.csv";
-int intSize = 10;
-int numRuns = 1;
+// Global variables
+
+const string singleRunFile = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/singleRun.csv";
+const string batchRunFile = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/batchRun.csv";
+const int numRuns = 100;
+const bool output = false;
 
 /****************************************************************************
 *																			*
@@ -42,59 +44,53 @@ int main()
 //	Initialize variables
 
 	srand(time(0));
-	int endTime = 100;
+	int endTime = 90;
 	int numInts = endTime/intSize;
-	int numTypes = 9;
-	Matrix3D util(numRuns, vector<vector<float> >(numInts, vector<float>(numTypes,0)));
-//	Matrix2D util(numInts, vector<float>(numTypes + 1,0));
-	Matrix2D data(numInts, vector<float>(numRuns + 2,0));
-
-//	Open output stream
-
-//	ofstream fout(filePath);
-//	if (!fout)
-//	{
-//		cerr << "Failed to open output file. Exiting...";
-//		exit(1);
-//	}
-
+	Matrix3D util(numRuns, vector<vector<float> >(numInts, vector<float>(numTypes + 2,0)));
+	Matrix data(numInts, vector<float>(numRuns + 2,0));
+	Matrix stats(numRuns, vector<float>(numTypes + 2,0));
+		
+	float processTimes[9];
+	float waitTimes[9];
+	int totalTasks[9];
+	
 //	Run simulations for specified times
 
-	float ser = 0;
-	float tas = 0;
-	
 	for (int i = 0; i < numRuns; i++)
 	{
+	//	Run simulation
+	
 		cout << "Run " << i << endl;
-		Simulation sim(endTime, rand());		// 43200		
+		Simulation sim(endTime, rand());	
 		sim.run();	
-		sim.processData(util[i], intSize);
+	
+	//	Get stats
+	
+//		cout << endl;
+//		sim.getStats(processTimes, waitTimes, totalTasks);
+//		cout << endl;
+		sim.getUtil(util[i]);
+		
+	//	Copy total utilization 
 
 		for (int j = 0; j < numInts; j++)
-			data[j][i] = util[i][j][9];
-		
-//		for (int j = 0; j < numInts; j++)
-//			data[j][i] = util[i][j][9]/100 * intSize;
-		
-//		sim.outputData(util[i], intSize, filePath1);
-		cout << endl;
+			data[j][i] = util[i][j][10];
+			
+	//	Output data, if applicable
+
+		if (output && numRuns == 1)
+			sim.outputUtil(singleRunFile);
 	}
 	
+//	Calculate mean and standard deviation
+
 	for (int i = 0; i < data.size(); i++)
 		stdDev(data[i]);
 	
-	outputData(data, filePath2);
-	
-//	int interval = intSize;
-//	fout << "Time (min), Utilization by Type" << endl;
-//	for (int i = 0; i < util.size(); i++)
-//	{
-//		fout << interval << ", ";
-//		for (int j = 0; j < util[i].size(); j++)
-//			fout << util[i][j]/numRuns << ", ";
-//		fout << endl;
-//		interval += intSize;
-//	}
+//	Output data, if applicable
+
+	if (output && numRuns != 1)		
+		outputBatchUtil(data, batchRunFile);
 
 	return 0;
 }
@@ -103,21 +99,28 @@ int main()
 *																			*
 *	Function:	stdDev														*
 *																			*
-*	Purpose:	To calculate the standard deviation of the specified array	*
+*	Purpose:	To calculate the mean and standard deviation for the 		*
+*				specified array												*
 *																			*
 ****************************************************************************/
 
 void stdDev(vector<float>& data)
 {
+//	Initialize variables
+
 	int N = numRuns;
 	float mean = 0;
 	float devSum = 0;
-	
+
+//	Calculate mean
+
 	for (int i = 0; i < N; i++)
 		mean += data[i];
 	mean /= N;
 	data[N] = mean;
 	
+//	Calculate standard deviation
+
 	for (int i = 0; i < N; i++)
 		devSum += (data[i] - mean) * (data[i] - mean);
 	data[N + 1] = sqrt(devSum/(N-1));
@@ -127,14 +130,17 @@ void stdDev(vector<float>& data)
 
 /****************************************************************************
 *																			*
-*	Function:	outputData													*
+*	Function:	outputBatchUtil												*
 *																			*
-*	Purpose:	To output the average and stddev of the utilization data	*
+*	Purpose:	To output the utilization data for all the runs, including 	*
+*				the average and standard deviation 							*
 *																			*
 ****************************************************************************/
 
-void outputData(Matrix2D data, string filePath)
+void outputBatchUtil(Matrix data, string filePath)
 {
+//	Open file
+
 	ofstream fout(filePath);
 	if (!fout)
 	{
@@ -145,14 +151,17 @@ void outputData(Matrix2D data, string filePath)
 //	Output header
 
 	int interval = 0;
-	fout << "Interval, Utilization, StdDev" << endl;
+	fout << "Interval,";
+	for (int i = 0; i < numRuns; i++)
+		fout << "Run " << i << ","; 
+	fout << "Mean, StdDev" << endl;
 
-//	Output data
+//	Output utilization data
 
 	for (int i = 0; i < data.size(); i++)
 	{
 		fout << interval << ", ";
-		for (int j = numRuns; j < data[i].size(); j++)
+		for (int j = 0; j < data[i].size(); j++)
 			fout << data[i][j] << ", ";
 		fout << endl;
 		interval += intSize;

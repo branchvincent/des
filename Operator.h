@@ -164,7 +164,7 @@ void Operator::startNextTask(float startTime)
 		
 		float serTime = currTasks->getSerTime();
 		float fatFactor = getFatigueFactor(startTime);
-		serTime *= fatFactor;
+//		serTime *= fatFactor;
 		currTasks->setSerTime(serTime);
 		currTasks->setDepTime(startTime + serTime);
 	}
