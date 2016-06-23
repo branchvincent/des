@@ -120,6 +120,22 @@ Simulation::Simulation(int t, int sd) : simTime(), phase(), taskList(), op()
 			temp[i][0] = temp[i-1][0] + intSize; 
 	util = temp;
 	
+//	Set traffic levels
+	
+//	int numHrs = t/60;
+//	vector<float> traff(numHrs, 0);
+//	for (int i = 0; i < traff.size(); i++)
+//		traff[i] = 1;
+
+//	Set stats
+
+	for (int i = 0; i < numTypes; i++)
+	{
+		processTimes[i] = 0;
+		totalTasks[i] = 0;
+		waitTimes[i] = 0;
+	}
+	
 //	Raw data
 
 	Matrix raw(t, vector<float>(4, 0));
@@ -203,7 +219,7 @@ void Simulation::runPhase(int& uIndex)
 //	Generate all task types
 	
 	for (int tp = 0; tp < 9; tp++)
-		if (tp != 1 && tp != 3 && tp != 4)
+//		if (tp != 1 && tp != 3 && tp != 4)
 			genTasks(tp);
 
 //	Initiliaze variables
@@ -250,7 +266,7 @@ void Simulation::runPhase(int& uIndex)
 	depTask = op.getCurrTask();
 	depTime = op.getDepTime();
 	
-	while (op.isBusy() && depTime <= endTimes[2])
+	while (op.isBusy() && depTime <= endTimes[2])				// change
 	{
 		processDepature(depTask, uIndex);
 		depTask = op.getCurrTask();
@@ -285,6 +301,8 @@ void Simulation::processArrival(list<Task*>::iterator& it)
 	cout << "\t Task arriving at " << simTime << endl;
 	op.addTask(task);
 	it++;
+	
+	cout << op << endl;
 	
 	return;
 }

@@ -23,10 +23,10 @@ using namespace std;
 //	Functions and definitions
 
 bool comparePriority (Task* t1, Task* t2) 
-	{return t1->getPriority() > t2->getPriority();}
+	{return t1->getPriority() < t2->getPriority();}
 float getFatigueFactor(float time) 
 	{return 1 + (time/60 * 0.01);}
-//typedef priority_queue<Task*,vector<Task*>,decltype(&comparePriority)> Queue;
+typedef priority_queue<Task*,vector<Task*>,decltype(&comparePriority)> Queue;
 
 
 /****************************************************************************
@@ -43,7 +43,7 @@ class Operator
 		
 	//	Constructor
 	
-		Operator() : currTasks(NULL), taskQueue() {} // taskQueue(&comparePriority)
+		Operator() : currTasks(NULL), taskQueue(&comparePriority) {}
 		
 	//	Inspectors
 
@@ -56,7 +56,7 @@ class Operator
 //		float getDepTime() const {return currTasks->getDepTime();}
 //		float& getDepTime() {return currTasks->getDepTime();}
 		Task* getCurrTask() {return currTasks;} 
-		Task* getTop() {return taskQueue.front();}
+//		Task* getTop() {return taskQueue.front();}
 		float getDepTime();
 		
 	//	Mutators
@@ -73,7 +73,7 @@ class Operator
 
 	private:
 		Task* currTasks;			// current tasks
-		queue<Task*> taskQueue;		// task queue
+		Queue taskQueue;			// task queue
 };
 
 //	Operators
@@ -111,7 +111,6 @@ void Operator::makeIdle()
 	{
 		float depTime = currTasks->getDepTime(); 
 		currTasks = NULL; 
-//		taskQueue.pop(); 
 		startNextTask(depTime);
 	}
 		
@@ -155,9 +154,7 @@ void Operator::startNextTask(float startTime)
 	//	Get next task
 	
 		cout << "\t Task starting at " << startTime << endl;
-//		currTasks = taskQueue.top();
-		Task* nextTask = taskQueue.front();
-		currTasks = nextTask;
+		currTasks = taskQueue.top();
 		taskQueue.pop(); 
 
 	//	Update service and depature time
@@ -165,7 +162,7 @@ void Operator::startNextTask(float startTime)
 		float serTime = currTasks->getSerTime();
 		float fatFactor = getFatigueFactor(startTime);
 //		serTime *= fatFactor;
-		currTasks->setSerTime(serTime);
+//		currTasks->setSerTime(serTime);
 		currTasks->setDepTime(startTime + serTime);
 	}
 		
@@ -182,12 +179,20 @@ void Operator::startNextTask(float startTime)
 
 void Operator::output(ostream& out) const 
 {
-	if (currTasks != NULL)
-		cout << "Operator is busy until " << currTasks->getDepTime();
-	else
-		cout << "Operator is not busy";
+//	if (currTasks != NULL)
+//		cout << "Operator is busy until " << currTasks->getDepTime();
+//	else
+//		cout << "Operator is not busy";
+//	
+//	cout << " and has " << taskQueue.size() << " tasks in queue." << endl;  
+
+	Queue temp = taskQueue;
 	
-	cout << " and has " << taskQueue.size() << " tasks in queue." << endl;  
+	while (!temp.empty())
+	{
+		cout << *temp.top() << endl;
+		temp.pop();
+	}
 	
 	return;
 }

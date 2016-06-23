@@ -25,13 +25,18 @@ using namespace std;
 typedef vector< vector<vector<float> > > Matrix3D;
 void stdDev(vector<float>& data);
 void outputBatchUtil(Matrix data, string filePath);
+void outputStats(Matrix data, string filePath);
 
 // Global variables
 
-const string singleRunFile = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/singleRun.csv";
-const string batchRunFile = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/batchRun.csv";
-const int numRuns = 100;
+const string filePath = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/"
+const string singleRunFile = path + "singleRun.csv";
+const string batchRunFile = path + "batchRun.csv";
+const string singleStatsFile = path + "singleStats.csv";
+const string batchStatsFile = path + "batchStats.csv";
+const int numRuns = 1;
 const bool output = false;
+const bool randRun = false;
 
 /****************************************************************************
 *																			*
@@ -48,8 +53,8 @@ int main()
 	int numInts = endTime/intSize;
 	Matrix3D util(numRuns, vector<vector<float> >(numInts, vector<float>(numTypes + 2,0)));
 	Matrix data(numInts, vector<float>(numRuns + 2,0));
-	Matrix stats(numRuns, vector<float>(numTypes + 2,0));
-		
+	Matrix stats(numTypes * 3, vector<float>(numRuns + 2,0));
+
 	float processTimes[9];
 	float waitTimes[9];
 	int totalTasks[9];
@@ -59,27 +64,43 @@ int main()
 	for (int i = 0; i < numRuns; i++)
 	{
 	//	Run simulation
-	
+		
+		int mySeed = 0;
+		if (randRun) mySeed = rand();
+		
 		cout << "Run " << i << endl;
-		Simulation sim(endTime, rand());	
+		Simulation sim(endTime, mySeed);	
 		sim.run();	
 	
 	//	Get stats
 	
-//		cout << endl;
-//		sim.getStats(processTimes, waitTimes, totalTasks);
-//		cout << endl;
+		sim.getStats(processTimes, waitTimes, totalTasks);
 		sim.getUtil(util[i]);
 		
 	//	Copy total utilization 
 
-		for (int j = 0; j < numInts; j++)
+		for (int j = 0; j < data.size(); j++)
 			data[j][i] = util[i][j][10];
+	
+	//	Copy stats
+	
+		for (int j = 0; j < stats.size(); j++)
+		{
+			if (j < numTypes)
+				stats[j][i] = processTimes[j];
+			else if (j < 2*numTypes)
+				stats[j][i] = waitTimes[j%numTypes];
+			else
+				stats[j][i] = totalTasks[j%numTypes];
+		}
 			
 	//	Output data, if applicable
 
 		if (output && numRuns == 1)
+		{
 			sim.outputUtil(singleRunFile);
+			outputStats(stats, singleStatsFile);
+		}
 	}
 	
 //	Calculate mean and standard deviation
@@ -87,10 +108,16 @@ int main()
 	for (int i = 0; i < data.size(); i++)
 		stdDev(data[i]);
 	
+	for (int i = 0; i < stats.size(); i++)
+		stdDev(stats[i]);
+	
 //	Output data, if applicable
 
 	if (output && numRuns != 1)		
+	{
 		outputBatchUtil(data, batchRunFile);
+		outputStats(stats, batchStatsFile);
+	}
 
 	return 0;
 }
@@ -165,6 +192,54 @@ void outputBatchUtil(Matrix data, string filePath)
 			fout << data[i][j] << ", ";
 		fout << endl;
 		interval += intSize;
+	}
+	
+	return;           
+}
+
+/****************************************************************************
+*																			*
+*	Function:	outputStats													*
+*																			*
+*	Purpose:	To output the utilization data for all the runs, including 	*
+*				the average and standard deviation 							*
+*																			*
+****************************************************************************/
+
+void outputStats(Matrix data, string filePath)
+{
+//	Open file
+
+	ofstream fout(filePath);
+	if (!fout)
+	{
+		cerr << "Failed to open output file. Exiting...";
+		exit(1);
+	}
+	
+//	Output header
+
+	fout << "Statistic, Task Type,";
+	for (int i = 0; i < numRuns; i++)
+		fout << "Run " << i << ","; 
+	fout << "Mean, StdDev" << endl;
+
+//	Output utilization data
+
+	for (int i = 0; i < data.size(); i++)
+	{
+		if (i == 0)
+			fout << "Processing Time";
+		else if (i == numTypes)
+			fout << "Wait Times";
+		else if (i == 2*numTypes)
+			fout << "Total Tasks";
+		
+		fout << "," << i%numTypes << ",";
+		
+		for (int j = 0; j < data[i].size(); j++)
+			fout << data[i][j] << ", ";
+		fout << endl;
 	}
 	
 	return;           

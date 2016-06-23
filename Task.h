@@ -57,7 +57,8 @@ class Task
 	//	Other member functions
 	
 		void output(ostream& out) const 
-			{cout << "(" << type << ", " << arrTime << ", " << serTime <<  ")";}
+			{cout << "(Pr " << priority << ", Tp " << type << ", Arr " << arrTime;
+			cout << ", Ser " << serTime <<  ", Dep " << depTime << ")";}
 			
 //	Private member functions
 
@@ -134,15 +135,15 @@ int Task::getPriority(int phase)
 //	Priority array (task types vs. phases)
 
 						//	P0,	P1,	P2
-	int prty[9][3] = 	{	{2, 3, 	2},		// Communicating
-							{1, 2, 	1}, 	// Exception handling
-							{3,	6, 	4},		// Paperwork
-							{6, 1, 	6},		// Maintenance of way
-							{6, 1, 	6},		// Temp speed restriction
-							{6, 1, 	6},		// Signal response management
-							{4, 4, 	5},		// Monitoring inside
-							{5, 5, 	3},		// Monitoring outisde
-							{6, 1, 	6}		// Planning ahead
+	int prty[9][3] = 	{	{4, 3, 	4},		// Communicating
+							{5, 4, 	5}, 	// Exception handling
+							{3,	0, 	2},		// Paperwork
+							{0, 5, 	0},		// Maintenance of way
+							{0, 5, 	0},		// Temp speed restriction
+							{0, 5, 	0},		// Signal response management
+							{2, 2, 	1},		// Monitoring inside
+							{1, 1, 	3},		// Monitoring outisde
+							{0, 5, 	0}		// Planning ahead
 					 	};	
 					
 	return prty[type][phase];
@@ -217,15 +218,15 @@ float Task::genSerTime(int seed)
 	switch (type)
 	{
 //		case 0:	return genRandNum('L', seed, -1.6670796, 0.74938004);			// Communicating
-		case 0:	return genRandNum('E', seed, 0.133);				// Communicating
+		case 0:	return genRandNum('E', seed, 1/0.133);				// Communicating
 		case 1:	return genRandNum('L', seed, 0.980297, 1.389685);	// Exception handling
 		case 2: return genRandNum('U', seed, 0.05, 2);				// Paperwork	
 		case 3: return genRandNum('U', seed, 0.167, 1);				// Maintenance of way
 		case 4:	return genRandNum('U', seed, 0.1, 0.5);				// Temp speed restriction
 		case 5:	return genRandNum('U', seed, 0.1, 0.5);				// Signal response management
-		case 6:	return genRandNum('E', seed, 0.133);				// Monitoring inside
-		case 7:	return genRandNum('E', seed, 0.1);					// Monitoring outside
-		case 8:	return genRandNum('E', seed, 0.33);					// Planning ahead
+		case 6:	return genRandNum('E', seed, 1/0.133);				// Monitoring inside
+		case 7:	return genRandNum('E', seed, 1/0.1);				// Monitoring outside
+		case 8:	return genRandNum('E', seed, 1/0.33);				// Planning ahead
 	}
 }
 
