@@ -39,10 +39,11 @@ int seed;
 int numInts;
 const int intSize = 30;
 const int numTypes = 9;
+const int numPhases = 3;
 float processTimes[9] = {0};
 float totalTasks[9] = {0};
 float waitTimes[9] = {0};
-bool debug = true;
+bool debug = false;
 Matrix rawData;
 
 /****************************************************************************
@@ -59,7 +60,7 @@ class Simulation
 		
 	//	Constructors
 	
-		Simulation(int t, int sd);
+		Simulation(int t, int sd, vector<float> trafficLevels);
 
 	//	Inspectors
 	
@@ -79,12 +80,13 @@ class Simulation
 //	Data members
 
 	private:
-		float simTime;			// simulation time
-		int phase;				// current phase
-		int endTimes[3];		// phase end times
-		list<Task*> taskList;	// task list
-		Operator op;			// operators
-		Matrix util;			// utilization
+		float simTime;				// simulation time
+		int phase;					// current phase
+		int endTimes[numPhases];	// phase end times
+		list<Task*> taskList;		// task list
+		Operator op;				// operators
+		Matrix util;				// utilization
+		vector<float> traffic; 		// traffic levels
 };
 
 /****************************************************************************
@@ -95,15 +97,25 @@ class Simulation
 *																			*
 ****************************************************************************/
 
-Simulation::Simulation(int t, int sd) : simTime(), phase(), taskList(), op()
+Simulation::Simulation(int t, int sd, vector<float> trafficLevels) : simTime(), phase(), taskList(), op()
 {	
 //	Check duration of simulation
 	
-	if (t < 90 || t%10 != 0) 
+	if (t < 90 || t%30 != 0) 
 	{
 		cerr << "Error: Invalid simulation time. Exiting..." << endl;
 		exit(1);
 	}
+	
+//	Check traffic array
+	
+	int hours = (t/60. + 0.5);
+	if (trafficLevels.size() != hours) 
+	{
+		cerr << "Error: Invalid traffic array. Exiting..." << endl;
+		exit(1);
+	}
+	
 
 //	Set phase end times and seed
 
@@ -121,11 +133,8 @@ Simulation::Simulation(int t, int sd) : simTime(), phase(), taskList(), op()
 	util = temp;
 	
 //	Set traffic levels
-	
-//	int numHrs = t/60;
-//	vector<float> traff(numHrs, 0);
-//	for (int i = 0; i < traff.size(); i++)
-//		traff[i] = 1;
+
+	traffic = trafficLevels;
 
 //	Set stats
 
@@ -179,7 +188,7 @@ void Simulation::genTasks(int type)
 	
 	srand(seed++);
 	list<Task*> tmpList; 
-	Task* task = new Task(type, simTime, rand(), phase);
+	Task* task = new Task(type, simTime, rand(), phase, traffic);
 	float arrTime = task->getArrTime();
 	float serTime = task->getSerTime();
 	
@@ -194,7 +203,7 @@ void Simulation::genTasks(int type)
 		
 	//	Get next task
 	
-		task = new Task(type, arrTime, rand(), phase);
+		task = new Task(type, arrTime, rand(), phase, traffic);
 		arrTime = task->getArrTime();
 		serTime = task->getSerTime();
 	}
@@ -218,7 +227,7 @@ void Simulation::runPhase(int& uIndex)
 {
 //	Generate all task types
 	
-	for (int tp = 0; tp < 9; tp++)
+	for (int tp = 0; tp < numTypes; tp++)
 //		if (tp != 1 && tp != 3 && tp != 4)
 			genTasks(tp);
 
@@ -266,7 +275,7 @@ void Simulation::runPhase(int& uIndex)
 	depTask = op.getCurrTask();
 	depTime = op.getDepTime();
 	
-	while (op.isBusy() && depTime <= endTimes[2])				// change
+	while (op.isBusy() && depTime <= endTimes[2])
 	{
 		processDepature(depTask, uIndex);
 		depTask = op.getCurrTask();
@@ -298,11 +307,11 @@ void Simulation::processArrival(list<Task*>::iterator& it)
 
 //	Update state
 
-	cout << "\t Task arriving at " << simTime << endl;
+	if (debug) cout << "\t Task arriving at " << simTime << endl;
 	op.addTask(task);
 	it++;
 	
-	cout << op << endl;
+//	cout << op << endl;
 	
 	return;
 }
@@ -361,7 +370,7 @@ void Simulation::processDepature(Task* task, int& i)
 	
 //	Update state and stats
 	
-	cout << "\t Task departing at " << simTime << endl;
+	if (debug) cout << "\t Task departing at " << simTime << endl;
 	op.makeIdle();
 	processTimes[type] += serTime;
 	waitTimes[type] += begTime - arrTime;
@@ -499,29 +508,32 @@ void Simulation::getStats(float pTimes[], float wTimes[], int tTasks[])
 
 	for (int i = 0; i < 9; i++)
 	{
-		pTimes[i] = processTimes[i];
+		if (totalTasks[i] != 0)
+			pTimes[i] = processTimes[i]/totalTasks[i];
+		else
+			pTimes[i] = 0;
 		wTimes[i] = waitTimes[i];
 		tTasks[i] = totalTasks[i];
 	}
 
 //	Output stats
 	
-	cout << "Simulation Statistics" << endl;
-
-	cout << "Processing Times:  \t";
-	for (int j = 0; j < 9; j++)
-		cout << processTimes[j] << '\t';
-	cout << endl;
-
-	cout << "Wait Times:  \t\t";
-	for (int j = 0; j < 9; j++)
-		cout << waitTimes[j] << '\t';
-	cout << endl;
-
-	cout << "Total Tasks:  \t\t";
-	for (int j = 0; j < 9; j++)
-		cout << totalTasks[j] << '\t';
-	cout << endl;
+//	cout << "Simulation Statistics" << endl;
+//
+//	cout << "Processing Times:  \t";
+//	for (int j = 0; j < 9; j++)
+//		cout << processTimes[j] << '\t';
+//	cout << endl;
+//
+//	cout << "Wait Times:  \t\t";
+//	for (int j = 0; j < 9; j++)
+//		cout << waitTimes[j] << '\t';
+//	cout << endl;
+//
+//	cout << "Total Tasks:  \t\t";
+//	for (int j = 0; j < 9; j++)
+//		cout << totalTasks[j] << '\t';
+//	cout << endl;
 	
 	return;
 }

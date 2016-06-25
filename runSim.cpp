@@ -29,14 +29,14 @@ void outputStats(Matrix data, string filePath);
 
 // Global variables
 
-const string filePath = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/"
-const string singleRunFile = path + "singleRun.csv";
-const string batchRunFile = path + "batchRun.csv";
-const string singleStatsFile = path + "singleStats.csv";
-const string batchStatsFile = path + "batchStats.csv";
-const int numRuns = 1;
-const bool output = false;
-const bool randRun = false;
+const string filePath = "/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/";
+const string singleRunFile = filePath + "singleRun.csv";
+const string batchRunFile = filePath + "batchRun.csv";
+const string singleStatsFile = filePath + "singleStats.csv";
+const string batchStatsFile = filePath + "batchStats.csv";
+const int numRuns = 100;
+const bool output = true;
+const bool randRun = true;
 
 /****************************************************************************
 *																			*
@@ -49,7 +49,7 @@ int main()
 //	Initialize variables
 
 	srand(time(0));
-	int endTime = 90;
+	int endTime = 2 * 60;
 	int numInts = endTime/intSize;
 	Matrix3D util(numRuns, vector<vector<float> >(numInts, vector<float>(numTypes + 2,0)));
 	Matrix data(numInts, vector<float>(numRuns + 2,0));
@@ -59,17 +59,27 @@ int main()
 	float waitTimes[9];
 	int totalTasks[9];
 	
+	int hours = (endTime/60. + 0.5);
+	int mySeed = 0;
+	vector<float> traffic(hours, 0);
+	
 //	Run simulations for specified times
 
 	for (int i = 0; i < numRuns; i++)
 	{
-	//	Run simulation
+	//	Set simulation seed and traffic levels
 		
 		int mySeed = 0;
 		if (randRun) mySeed = rand();
 		
+		for (int j = 0; j < endTime/60; j++)
+		{
+			traffic[j] = j % 3;
+			if (traffic[j] == 0) traffic[j] = 0.5;
+		}
+	//	Run simulation	
 		cout << "Run " << i << endl;
-		Simulation sim(endTime, mySeed);	
+		Simulation sim(endTime, mySeed, traffic);	
 		sim.run();	
 	
 	//	Get stats

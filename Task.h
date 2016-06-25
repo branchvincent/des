@@ -33,7 +33,7 @@ class Task
 
 	//	Constructor
 		
-		Task(int tp, float prevArrTime, int seed, int phase, float traffLevel = 1);
+		Task(int tp, float prevArrTime, int seed, int phase, vector<float> traffLevel);
 
 	//	Inspectors
 
@@ -67,7 +67,7 @@ class Task
 	//	Used by constructor
 	
 		int getPriority(int phase);
-		float genArrTime(float prevArrTime, int seed, int phase, float traffLevel);
+		float genArrTime(float prevArrTime, int seed, int phase, vector<float> traffLevel);
 		float genSerTime(int seed);
 		float genRandNum(char distType, int seed, float arg1, float arg2 = 0);
 	
@@ -94,7 +94,7 @@ ostream& operator<<(ostream& out, const Task t) {t.output(out); return out;}
 *																			*
 ****************************************************************************/
 
-Task::Task(int tp, float prevArrTime, int seed, int phase, float traffLevel)
+Task::Task(int tp, float prevArrTime, int seed, int phase, vector<float> traffLevel)
 {
 //	Check type 
 
@@ -158,7 +158,7 @@ int Task::getPriority(int phase)
 *																			*
 ****************************************************************************/
 
-float Task::genArrTime(float prevArrTime, int seed, int phase, float traffLevel)
+float Task::genArrTime(float prevArrTime, int seed, int phase, vector<float> traffLevel)
 {	
 //	Exponential distribution parameters (task types vs. phases)
 
@@ -191,15 +191,23 @@ float Task::genArrTime(float prevArrTime, int seed, int phase, float traffLevel)
 //	Generate random interarrival time
 
 	float interArrTime = genRandNum('E', seed, lambda[type][phase]);
+	float arrival = prevArrTime + interArrTime; 
+	int currHour = (arrival/60. + 0.5);
 	
-//	Multiply by traffic level, if applicable 
-
-	if (affByTraff[type][phase]) 
-		interArrTime *= traffLevel;
-		
+//	Multiply by traffic level, if applicable 												think more about traffic
+	
+//	if (affByTraff[type][phase]) 
+//	{	
+//		float newInterArrTime = interArrTime / traffLevel[currHour];
+//		float newArrival = prevArrTime + newInterArrTime;
+//	 	int newCurrHour = (newArrival/60. + 0.5);
+//		if (currHour == newCurrHour)
+//			arrival = newArrival;
+//	}	
+	
 //	Return arrival time
 
-	return prevArrTime + interArrTime;
+	return arrival; //prevArrTime + interArrTime;
 }
 
 /****************************************************************************
@@ -217,7 +225,7 @@ float Task::genSerTime(int seed)
 
 	switch (type)
 	{
-//		case 0:	return genRandNum('L', seed, -1.6670796, 0.74938004);			// Communicating
+//		case 0:	return genRandNum('L', seed, -1.6670796, 0.74938);	// Communicating
 		case 0:	return genRandNum('E', seed, 1/0.133);				// Communicating
 		case 1:	return genRandNum('L', seed, 0.980297, 1.389685);	// Exception handling
 		case 2: return genRandNum('U', seed, 0.05, 2);				// Paperwork	
@@ -227,6 +235,14 @@ float Task::genSerTime(int seed)
 		case 6:	return genRandNum('E', seed, 1/0.133);				// Monitoring inside
 		case 7:	return genRandNum('E', seed, 1/0.1);				// Monitoring outside
 		case 8:	return genRandNum('E', seed, 1/0.33);				// Planning ahead
+	
+	//	Error message
+		
+		default:
+		{
+			cerr << "Error:  Incompatible task type. Exiting..." << endl;
+			exit(1);
+		}
 	}
 }
 

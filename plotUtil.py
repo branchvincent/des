@@ -23,7 +23,7 @@ import csv
 filePath = '/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/'
 numTypes = 9
 numRuns = 1
-oneRun = True
+oneRun = 0
 
 #****************************************************************************
 #																			*
@@ -105,9 +105,10 @@ def plotData(time, data, error, outFile):
 	
 #	Initialize plot parameters
 
-	colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
-	patterns = ['/', '\\', '|', '-', '+', 'x', 'o', 'O', '.', '*']
-	legend = ['0: Communicating', '1: Exception Handling', '2: Paperwork', 
+#	colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+	colors = color_list = plt.cm.Set1(np.linspace(0, 1, numTypes))
+#	patterns = ['/', '\\', '|', '-', '+', 'x', 'o', 'O', '.', '*']
+	labels = ['0: Communicating', '1: Exception Handling', '2: Paperwork', 
 			'3: MOW', '4: Speed Restriction', '5: Signal Response', 
 			'6: Monitoring In', '7: Monitoring Out', '8: Planning Ahead']
 
@@ -118,28 +119,41 @@ def plotData(time, data, error, outFile):
 	plt.ylabel("Utilization (%)")
 	plt.ylim(0, 110)
 	plt.xlim(0, endTimes[2])
-	plt.xticks(np.arange(0, endTimes[2], intSize))
+#	plt.xticks(np.arange(0, endTimes[2] + intSize, intSize))
+	ax = plt.gca()
 
 #	Plot utilization
 
 	if oneRun:												# For one run,
 		for i in range(len(data)):	
 			plt.bar(time, data[i], 							# Plot all task types
-				width = intSize/2,							# Set bar width
-				bottom = np.sum(data[:i], axis = 0),		# Set bottom bars
-				color = colors[i % len(colors)],			# Set color
-				hatch = patterns[i % len(patterns)],		# Set pattern
-				align = 'center')							# Align bars
-		lgd = plt.legend(legend, loc='center left', 		# Set legend
-							bbox_to_anchor=(1, 0.5))
-							
+					width = intSize/2,						# Set bar width
+					bottom = np.sum(data[:i], axis = 0),	# Set bottom bars
+					color = colors[i % len(colors)],		# Set bar color
+					linewidth = 0.1,
+#					edgecolor = colors[i % len(colors)],	# Set bar edge color
+#					hatch = patterns[i % len(patterns)],	# Set pattern
+					label = labels[i],						# Set label
+					align = 'center')						# Align bars
+#		lgd = plt.legend(title='Task Types',				# Set legend
+#						loc='center left', 		
+#						bbox_to_anchor=(1, 0.5))
+		handles, labels = ax.get_legend_handles_labels()
+		lgd = ax.legend(handles[::-1], labels[::-1], 
+						title='Task Types', loc='center left', 
+						bbox_to_anchor=(1, 0.5), prop={'size':'medium'})
+#		lgd.get_title().set_fontsize('6') #legend 'Title' fontsize
+#		plt.setp(plt.gca().get_legend().get_texts(), fontsize='12')
+
 	else:													# For multiple runs,
 		plt.bar(time, data[0], 								# Plot avg for all types
 			width = intSize/2,								# Set bar width
 			color = 'r',									# Set color
+			linewidth = 0.1,								# Set bar border width
 			align = 'center',								# Align bars
 			yerr = error)									# Set error bars
-		lgd = []											# Set legend
+#		lgd = []											# Set legend
+		lgd = ax.legend(['All task types', 'Std Dev'], loc=9, bbox_to_anchor=(0.5, -0.1))
 		
 # 	Plot phase lines
 

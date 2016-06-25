@@ -28,7 +28,6 @@ float getFatigueFactor(float time)
 	{return 1 + (time/60 * 0.01);}
 typedef priority_queue<Task*,vector<Task*>,decltype(&comparePriority)> Queue;
 
-
 /****************************************************************************
 *																			*
 *	Definition of Operator class											*
@@ -153,7 +152,7 @@ void Operator::startNextTask(float startTime)
 	{
 	//	Get next task
 	
-		cout << "\t Task starting at " << startTime << endl;
+//		cout << "\t Task starting at " << startTime << endl;
 		currTasks = taskQueue.top();
 		taskQueue.pop(); 
 
