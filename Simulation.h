@@ -24,27 +24,25 @@
 #include <algorithm>
 #include "Operator.h"
 #include "Task.h"
+#include "Constants.h"
 
 using namespace std;
+using namespace cnsts;
 
 // Helper functions and definitions
 
-typedef vector< vector<float> > Matrix;
+typedef vector<vector<float> > Matrix2D;
+typedef vector<Matrix2D> Matrix3D;
 bool compareTasks (Task* t1, Task* t2) 
 	{return t1->getArrTime() < t2->getArrTime();}
 
 // Global variables
 
-int seed;
-int numInts;
-const int intSize = 30;
-const int numTypes = 9;
-const int numPhases = 3;
-float processTimes[9] = {0};
-float totalTasks[9] = {0};
-float waitTimes[9] = {0};
-bool debug = false;
-Matrix rawData;
+int SEED;
+float PROCESS_TIMES[9] = {0};
+float TOTAL_TASKS[9] = {0};
+float WAIT_TIMES[9] = {0};
+Matrix2D RAW_DATA;
 
 /****************************************************************************
 *																			*
@@ -64,7 +62,7 @@ class Simulation
 
 	//	Inspectors
 	
-		void getUtil(Matrix& data);
+		void getUtil(Matrix2D& data);
 		void getStats(float pTimes[], float wTimes[], int tTasks[]);
 		void outputUtil(string filePath);
 		void outputRaw(string filePath);
@@ -82,10 +80,10 @@ class Simulation
 	private:
 		float simTime;				// simulation time
 		int phase;					// current phase
-		int endTimes[numPhases];	// phase end times
+		int endTimes[NUM_PHASES];	// phase end times
 		list<Task*> taskList;		// task list
 		Operator op;				// operators
-		Matrix util;				// utilization
+		Matrix2D util;				// utilization
 		vector<float> traffic; 		// traffic levels
 };
 
@@ -122,14 +120,14 @@ Simulation::Simulation(int t, int sd, vector<float> trafficLevels) : simTime(), 
 	endTimes[0] = 30;
 	endTimes[1] = t - 30;
 	endTimes[2] = t;
-	seed = sd;
+	SEED = sd;
 	
-//	Initialize utilization matrix
+//	Initialize utilization Matrix2D
 	
-	numInts = t/intSize;
-	Matrix temp(numInts, vector<float>(numTypes + 2, 0));
-	for (int i = 1; i < numInts; i++)
-			temp[i][0] = temp[i-1][0] + intSize; 
+//	NUM_INTS = t/INT_SIZE;
+	Matrix2D temp(NUM_INTS, vector<float>(NUM_TASK_TYPES + 2, 0));
+	for (int i = 1; i < NUM_INTS; i++)
+			temp[i][0] = temp[i-1][0] + INT_SIZE; 
 	util = temp;
 	
 //	Set traffic levels
@@ -138,17 +136,17 @@ Simulation::Simulation(int t, int sd, vector<float> trafficLevels) : simTime(), 
 
 //	Set stats
 
-	for (int i = 0; i < numTypes; i++)
+	for (int i = 0; i < NUM_TASK_TYPES; i++)
 	{
-		processTimes[i] = 0;
-		totalTasks[i] = 0;
-		waitTimes[i] = 0;
+		PROCESS_TIMES[i] = 0;
+		TOTAL_TASKS[i] = 0;
+		WAIT_TIMES[i] = 0;
 	}
 	
 //	Raw data
 
-	Matrix raw(t, vector<float>(4, 0));
-	rawData = raw;
+	Matrix2D raw(t, vector<float>(4, 0));
+	RAW_DATA = raw;
 }
 
 /****************************************************************************
@@ -163,7 +161,7 @@ void Simulation::run()
 {
 	cout << "Beginning simulation..." << endl;
 
-//	Run all phases, tracking the index to utilization matrix 
+//	Run all phases, tracking the index to utilization Matrix2D 
 
 	int uIndex = 0;
 	for (int i = 0; i < 1; i++)
@@ -186,7 +184,7 @@ void Simulation::genTasks(int type)
 {
 //	Create first task and temporary list
 	
-	srand(seed++);
+	srand(SEED++);
 	list<Task*> tmpList; 
 	Task* task = new Task(type, simTime, rand(), phase, traffic);
 	float arrTime = task->getArrTime();
@@ -199,7 +197,7 @@ void Simulation::genTasks(int type)
 	//	Add current task and update stats
 	
 		tmpList.push_back(task);
-		totalTasks[type]++;
+		TOTAL_TASKS[type]++;
 		
 	//	Get next task
 	
@@ -227,7 +225,7 @@ void Simulation::runPhase(int& uIndex)
 {
 //	Generate all task types
 	
-	for (int tp = 0; tp < numTypes; tp++)
+	for (int tp = 0; tp < NUM_TASK_TYPES; tp++)
 //		if (tp != 1 && tp != 3 && tp != 4)
 			genTasks(tp);
 
@@ -241,7 +239,7 @@ void Simulation::runPhase(int& uIndex)
 	
 //	Debugging 
 
-	if (debug)
+	if (DEBUG)
 	{
 		cout << "Task List" << endl; int i = 0;
 		for (list<Task*>::iterator it = taskList.begin(); it != taskList.end(); it++)
@@ -307,7 +305,7 @@ void Simulation::processArrival(list<Task*>::iterator& it)
 
 //	Update state
 
-	if (debug) cout << "\t Task arriving at " << simTime << endl;
+	if (DEBUG) cout << "\t Task arriving at " << simTime << endl;
 	op.addTask(task);
 	it++;
 	
@@ -337,7 +335,7 @@ void Simulation::processDepature(Task* task, int& i)
 //	Get interval times and update time
 	
 	float beginInt = util[i][0];
-	float endInt = beginInt + intSize;
+	float endInt = beginInt + INT_SIZE;
 	simTime = depTime;
 	float timeBusy = 0;
 	float percBusy = 0;
@@ -348,32 +346,32 @@ void Simulation::processDepature(Task* task, int& i)
 	{
 		i++;
 		beginInt = endInt;
-		endInt += intSize;
+		endInt += INT_SIZE;
 	}
 
 	while (simTime >= endInt)
 	{
 		timeBusy = endInt - max(begTime, beginInt);
-		percBusy = timeBusy/intSize * 100;
+		percBusy = timeBusy/INT_SIZE * 100;
 		util[i][type + 1] += percBusy;					// By type
-		util[i++][numTypes + 1] += percBusy;			// Total
+		util[i++][NUM_TASK_TYPES + 1] += percBusy;			// Total
 //		cout << "\t\t timeBusy(" << beginInt << ", " << endInt << "):  " << timeBusy << endl;
 		beginInt = endInt;
-		endInt += intSize;
+		endInt += INT_SIZE;
 	}
 	
 	timeBusy = simTime - max(begTime, beginInt);
-	percBusy = timeBusy/intSize * 100;
+	percBusy = timeBusy/INT_SIZE * 100;
 	util[i][type + 1] += percBusy;						// By type
-	util[i][numTypes + 1] += percBusy;					// Total
+	util[i][NUM_TASK_TYPES + 1] += percBusy;					// Total
 //	cout << "\t\t timeBusy(" << beginInt << ", " << endInt << "):  " << timeBusy << endl;
 	
 //	Update state and stats
 	
-	if (debug) cout << "\t Task departing at " << simTime << endl;
+	if (DEBUG) cout << "\t Task departing at " << simTime << endl;
 	op.makeIdle();
-	processTimes[type] += serTime;
-	waitTimes[type] += begTime - arrTime;
+	PROCESS_TIMES[type] += serTime;
+	WAIT_TIMES[type] += begTime - arrTime;
 	
 	return;
 }
@@ -462,14 +460,14 @@ void Simulation::outputRaw(string filePath)
 *																			*
 ****************************************************************************/
 
-void Simulation::getUtil(Matrix& data)
+void Simulation::getUtil(Matrix2D& data)
 {
-//	Check matrix size
+//	Check Matrix2D size
 
-	if (data.size() != numInts || data[0].size() != numTypes + 2)
-		cerr << "Error:  Incompatible matrix size. Exiting..." << endl;
+	if (data.size() != NUM_INTS || data[0].size() != NUM_TASK_TYPES + 2)
+		cerr << "Error:  Incompatible Matrix2D size. Exiting..." << endl;
 
-//	Copy data to specified matrix
+//	Copy data to specified Matrix2D
 
 	for (int i = 0; i < util.size(); i++)
 		for (int j = 0; j < util[i].size(); j++)
@@ -508,12 +506,12 @@ void Simulation::getStats(float pTimes[], float wTimes[], int tTasks[])
 
 	for (int i = 0; i < 9; i++)
 	{
-		if (totalTasks[i] != 0)
-			pTimes[i] = processTimes[i]/totalTasks[i];
+		if (TOTAL_TASKS[i] != 0)
+			pTimes[i] = PROCESS_TIMES[i]/TOTAL_TASKS[i];
 		else
 			pTimes[i] = 0;
-		wTimes[i] = waitTimes[i];
-		tTasks[i] = totalTasks[i];
+		wTimes[i] = WAIT_TIMES[i];
+		tTasks[i] = TOTAL_TASKS[i];
 	}
 
 //	Output stats
@@ -522,17 +520,17 @@ void Simulation::getStats(float pTimes[], float wTimes[], int tTasks[])
 //
 //	cout << "Processing Times:  \t";
 //	for (int j = 0; j < 9; j++)
-//		cout << processTimes[j] << '\t';
+//		cout << PROCESS_TIMES[j] << '\t';
 //	cout << endl;
 //
 //	cout << "Wait Times:  \t\t";
 //	for (int j = 0; j < 9; j++)
-//		cout << waitTimes[j] << '\t';
+//		cout << WAIT_TIMES[j] << '\t';
 //	cout << endl;
 //
 //	cout << "Total Tasks:  \t\t";
 //	for (int j = 0; j < 9; j++)
-//		cout << totalTasks[j] << '\t';
+//		cout << TOTAL_TASKS[j] << '\t';
 //	cout << endl;
 	
 	return;

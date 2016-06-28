@@ -13,14 +13,14 @@
 
 # Packages 
 
-from __future__ import print_function
+#from __future__ import print_function
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
 
 # Global variables
 
-filePath = '/Users/Branch/Documents/Academic/Year 1/Entry Summer/Code/DES/Data/'
+filePath = '/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/Data/'
 numTypes = 9
 numRuns = 1
 oneRun = 0
