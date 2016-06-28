@@ -7,7 +7,7 @@
 *	Date:		Jun 6, 2016													*
 *																			*
 *	Purpose:	This file runs the simulation for the specified time and 	*
-*				OUTPUTs the results to the specified file					*
+*				outputs the results to the specified file					*
 *																			*
 ****************************************************************************/
 
@@ -22,9 +22,11 @@ using namespace cnsts;
 
 // Function prototypes
 
-void stdDev(vector<float>& data);
-void outputBatchUtil(Matrix2D data, string filePath);
-void outputStats(Matrix2D data, string filePath);
+void getStdDev(vector<float>& data);
+void outputStats(Simulation& sim, string filePath);
+void outputBatchStats(Matrix2D data, string filePath);
+void setTrafficLevels(vector<float>& traffic);
+void setSeed(int& seed);
 
 /****************************************************************************
 *																			*
@@ -34,100 +36,60 @@ void outputStats(Matrix2D data, string filePath);
 
 int main() 
 {
+//	Set folder paths
+
+	const string filePath = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/Data/";
+	const string oneRunFile = filePath + "singleRun.csv";
+	const string batchRunFile = filePath + "batchRun.csv";
+
 //	Initialize variables
 
 	srand((unsigned int) time(0));
-	Matrix3D util(NUM_RUNS, Matrix2D(NUM_INTS, vector<float>(NUM_TASK_TYPES + 2,0)));
-	Matrix2D data(NUM_INTS, vector<float>(NUM_RUNS + 2,0));
 	Matrix2D stats(NUM_STATS * NUM_TASK_TYPES, vector<float>(NUM_RUNS + 2,0));
-
-	float processTimes[9];
-	float waitTimes[9];
-	int totalTasks[9];
-	
-	int mySeed = 0;
 	vector<float> traffic(NUM_HOURS, 0);
-	
+	int seed = 0;
+
 //	Run simulations for specified times
 
 	for (int i = 0; i < NUM_RUNS; i++)
 	{
 	//	Set simulation seed and traffic levels
-		
-		if (RAND_RUN) mySeed = rand();
-		
-		for (int j = 0; j < END_TIME/60; j++)
-		{
-			traffic[j] = j % 3;
-			if (traffic[j] == 0) traffic[j] = 0.5;
-		}
+	
+		setSeed(seed);
+		setTrafficLevels(traffic);
 		
 	//	Run simulation	
 	
 		cout << "Run " << i << endl;
-		Simulation sim(END_TIME, mySeed, traffic);	
+		Simulation sim(END_TIME, seed, traffic);	
 		sim.run();	
 	
-	//	Get stats
-	
-		sim.getStats(processTimes, waitTimes, totalTasks);
-		sim.getUtil(util[i]);
-		
-	//	Copy total utilization 
-
-		for (int j = 0; j < data.size(); j++)
-			data[j][i] = util[i][j][10];
-	
-	//	Copy stats
-	
-		for (int j = 0; j < stats.size(); j++)
-		{
-			if (j < NUM_TASK_TYPES)
-				stats[j][i] = processTimes[j];
-			else if (j < 2 * NUM_TASK_TYPES)
-				stats[j][i] = waitTimes[j % NUM_TASK_TYPES];
-			else
-				stats[j][i] = totalTasks[j % NUM_TASK_TYPES];
-		}
-			
 	//	Output data, if applicable
-
+	
 		if (OUTPUT && NUM_RUNS == 1)
-		{
-			sim.outputUtil(ONE_RUN_FILE);
-			outputStats(stats, ONE_RUN_STATS_FILE);
-		}
+			outputStats(sim, oneRunFile);
+		else if (NUM_RUNS != 1)
+			sim.getStatSums(stats, i);
 	}
-	
-//	Calculate mean and standard deviation
 
-	for (int i = 0; i < data.size(); i++)
-		stdDev(data[i]);
-	
-	for (int i = 0; i < stats.size(); i++)
-		stdDev(stats[i]);
-	
 //	Output data, if applicable
 
 	if (OUTPUT && NUM_RUNS != 1)		
-	{
-		outputBatchUtil(data, BATCH_RUN_FILE);
-		outputStats(stats, BATCH_RUN_STATS_FILE);
-	}
+		outputBatchStats(stats, batchRunFile);
 
 	return 0;
 }
 
 /****************************************************************************
 *																			*
-*	Function:	stdDev														*
+*	Function:	getStdDev													*
 *																			*
 *	Purpose:	To calculate the mean and standard deviation for the 		*
 *				specified array												*
 *																			*
 ****************************************************************************/
 
-void stdDev(vector<float>& data)
+void getStdDev(vector<float>& data)
 {
 //	Initialize variables
 
@@ -153,41 +115,80 @@ void stdDev(vector<float>& data)
 
 /****************************************************************************
 *																			*
-*	Function:	outputBatchUtil												*
+*	Function:	outputBatchStats											*
 *																			*
-*	Purpose:	To output the utilization data for all the runs, including 	*
-*				the average and standard deviation 							*
+*	Purpose:	To output the stats compiled by the simulation				*
 *																			*
 ****************************************************************************/
 
-void outputBatchUtil(Matrix2D data, string filePath)
+void outputBatchStats(Matrix2D data, string filePath)
 {
+//	Calculate mean and standard deviation
+
+	for (int i = 0; i < data.size(); i++)		
+		getStdDev(data[i]);	
+	
 //	Open file
 
 	ofstream fout(filePath);
 	if (!fout)
 	{
-		cerr << "Failed to open OUTPUT file. Exiting...";
+		cerr << "Failed to open output file. Exiting...";
 		exit(1);
 	}
 	
 //	Output header
 
-	int interval = 0;
-	fout << "Interval,";
+	fout << "Statistic Type, Task Type, ";
 	for (int i = 0; i < NUM_RUNS; i++)
-		fout << "Run " << i << ","; 
-	fout << "Mean, StdDev" << endl;
+		fout << "Run " << i << ", ";
+	fout << "Mean, Std Dev" << endl;
 
-//	Output utilization data
+//	Output statistical data
 
-	for (int i = 0; i < data.size(); i++)
+	fout << "Utilization";
+	for (int i = 0; i < NUM_TASK_TYPES; i++)
 	{
-		fout << interval << ", ";
-		for (int j = 0; j < data[i].size(); j++)
-			fout << data[i][j] << ", ";
+		fout << ", " << i << ", ";
+		for (int j = 0; j < NUM_RUNS + 2; j++)
+			fout << data[i][j] << ", ";	
 		fout << endl;
-		interval += INT_SIZE;
+	}
+	
+	fout << "Avg Service Time";
+	for (int i = NUM_TASK_TYPES; i < 2 * NUM_TASK_TYPES; i++)
+	{
+		fout << ", " << i % NUM_TASK_TYPES << ", ";
+		for (int j = 0; j < NUM_RUNS + 2; j++)
+			fout << data[i][j] << ", ";	
+		fout << endl;
+	}
+	
+	fout << "Avg Wait Time";
+	for (int i = 2 * NUM_TASK_TYPES; i < 3 * NUM_TASK_TYPES; i++)
+	{
+		fout << ", " << i % NUM_TASK_TYPES << ", ";
+		for (int j = 0; j < NUM_RUNS + 2; j++)
+			fout << data[i][j] << ", ";	
+		fout << endl;
+	}
+	
+	fout << "Number In";
+	for (int i = 3 * NUM_TASK_TYPES; i < 4 * NUM_TASK_TYPES; i++)
+	{
+		fout << ", " << i % NUM_TASK_TYPES << ", ";
+		for (int j = 0; j < NUM_RUNS + 2; j++)
+			fout << data[i][j] << ", ";	
+		fout << endl;
+	}
+	
+	fout << "Number Out";
+	for (int i = 4 * NUM_TASK_TYPES; i < 5 * NUM_TASK_TYPES; i++)
+	{
+		fout << ", " << i % NUM_TASK_TYPES << ", ";
+		for (int j = 0; j < NUM_RUNS + 2; j++)
+			fout << data[i][j] << ", ";	
+		fout << endl;
 	}
 	
 	return;           
@@ -202,41 +203,70 @@ void outputBatchUtil(Matrix2D data, string filePath)
 *																			*
 ****************************************************************************/
 
-void outputStats(Matrix2D data, string filePath)
+void outputStats(Simulation& sim, string filePath)
 {
 //	Open file
 
 	ofstream fout(filePath);
 	if (!fout)
 	{
-		cerr << "Failed to open OUTPUT file. Exiting...";
+		cerr << "Failed to open output file. Exiting...";
 		exit(1);
 	}
 	
-//	Output header
-
-	fout << "Statistic, Task Type,";
-	for (int i = 0; i < NUM_RUNS; i++)
-		fout << "Run " << i << ","; 
-	fout << "Mean, StdDev" << endl;
-
-//	Output utilization data
-
-	for (int i = 0; i < data.size(); i++)
-	{
-		if (i == 0)
-			fout << "Processing Time";
-		else if (i == NUM_TASK_TYPES)
-			fout << "Wait Times";
-		else if (i == 2*NUM_TASK_TYPES)
-			fout << "Total Tasks";
-		
-		fout << "," << i%NUM_TASK_TYPES << ",";
-		
-		for (int j = 0; j < data[i].size(); j++)
-			fout << data[i][j] << ", ";
-		fout << endl;
-	}
+	fout << sim << endl;
 	
 	return;           
+}
+
+/****************************************************************************
+*																			*
+*	Function:	setTrafficLevels											*
+*																			*
+*	Purpose:	To set the traffic levels for the simulation				*
+*																			*
+****************************************************************************/
+
+void setTrafficLevels(vector<float>& traffic)
+{
+//	Set random traffic, if applicable
+
+	if (RAND_RUN)
+	{
+		for (int i = 0; i < traffic.size(); i++)
+		{
+			traffic[i] = rand() % 3;
+			if (traffic[i] == 0) traffic[i] = 0.5;
+		}
+	}
+	
+//	Otherwise, set specific traffic
+
+	else
+	{
+		for (int i = 0; i < traffic.size(); i++)
+		{
+			traffic[i] = i % 3;
+			if (traffic[i] == 0) traffic[i] = 0.5;
+		}
+	}
+	
+	return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	setSeed														*
+*																			*
+*	Purpose:	To set the seed for the simulation							*
+*																			*
+****************************************************************************/
+
+void setSeed(int& seed)
+{
+	if (RAND_RUN) 
+		seed = rand();
+	else 
+		seed++;
+	return;
 }

@@ -39,13 +39,9 @@ class Task
 
 //		int getType() const {return type;}
 		const int& getType() {return type;}
-//		int getPriority() const {return priority;}
 		const int& getPriority() {return priority;}
-//		float getArrTime() const {return arrTime;}
 		const float& getArrTime() {return arrTime;}
-//		float getSerTime() const {return serTime;}
 		const float& getSerTime() {return serTime;}
-//		float getDepTime() const {return depTime;}
 		const float& getDepTime() {return depTime;}
 
 	//	Mutators
