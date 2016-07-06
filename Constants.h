@@ -18,13 +18,13 @@ namespace cnsts
 {
 //	Batch run details
 
-	const int NUM_RUNS = 100;
+	const int NUM_RUNS = 1000;
 	const bool OUTPUT = true;
-	const bool RAND_RUN = true;
+	const bool RAND_RUN = false;
 	
 //	One run details
 	
-	const int END_TIME = 100;
+	const int END_TIME = 90;
 	const int INT_SIZE = 10;
 	const int NUM_HOURS = (END_TIME/60. + 0.5);
 	const int NUM_INTS = END_TIME/INT_SIZE;
@@ -32,6 +32,7 @@ namespace cnsts
 	const int NUM_PHASES = 3;
 	const int NUM_STATS = 5;
 	const bool DEBUG = false;
+	const bool TRAFFIC_ON = false;
 	
 //	const int TASKS;
 }

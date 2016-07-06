@@ -16,8 +16,11 @@
 #include <iostream>
 #include <string>
 #include <random>
+#include <cmath>
+#include "Constants.h"
 
 using namespace std;
+using namespace cnsts;
 
 /****************************************************************************
 *																			*
@@ -64,6 +67,7 @@ class Task
 	
 		int getPriority(int phase);
 		float genArrTime(float prevArrTime, int seed, int phase, vector<float> traffLevel);
+		void adjArrForTraff(float& arrival, int phase, vector<float> traffLevel);
 		float genSerTime(int seed);
 		float genRandNum(char distType, int seed, float arg1, float arg2 = 0);
 	
@@ -109,11 +113,12 @@ Task::Task(int tp, float prevArrTime, int seed, int phase, vector<float> traffLe
 	}
 	
 //	Set task attributes
-
+	
+	srand(seed);
 	type = tp;
-	priority = getPriority(phase);
-	arrTime = genArrTime(prevArrTime, seed, phase, traffLevel);
-	serTime = genSerTime(seed);
+	priority = 1; //getPriority(phase);
+	arrTime = genArrTime(prevArrTime, rand(), phase, traffLevel);
+	serTime = genSerTime(rand());
 	depTime = -1;
 }
 
@@ -160,7 +165,7 @@ float Task::genArrTime(float prevArrTime, int seed, int phase, vector<float> tra
 
 							//	P0,		P1,		P2
 	float lambda[9][3] = 	{	{1/3., 	0.2, 	1/3.},		// Communicating
-								{0, 	.1/30, 	.1/30}, 	// Exception handling		*change 0 to determinisitic
+								{0, 	.1/30, 	.1/30}, 	// Exception handling	*change 0 to determinisitic*
 								{1/3., 	1/30., 	1/3.},		// Paperwork
 								{0, 	.05/30, .5/30},		// Maintenance of way
 								{0, 	1/30., 	0},			// Temp speed restriction
@@ -169,7 +174,32 @@ float Task::genArrTime(float prevArrTime, int seed, int phase, vector<float> tra
 								{0.1, 	0.2, 	0.1},		// Monitoring outisde
 								{1/30., 1/15., 1/30.}		// Planning ahead
 					 	 	};	
-		
+
+//	Generate random interarrival time
+
+	float interArrTime = genRandNum('E', seed, lambda[type][phase]);		
+	float arrival = prevArrTime + interArrTime; 
+
+//	Adjust arrival time for traffic, if applicable
+
+	if (!isinf(arrival))
+		adjArrForTraff(arrival, phase, traffLevel);
+
+	return arrival;
+}
+
+
+/****************************************************************************
+*																			*
+*	Function:	adjArrForTraffic											*
+*																			*
+*	Purpose:	To adjust the arrival time based on the current traffic		* 
+*				level														*
+*																			*
+****************************************************************************/
+
+void Task::adjArrForTraff(float& arrival, int phase, vector<float> traffLevel)
+{
 //	Tasks affected by traffic level (task types vs. phases)
 
 								//	P0, P1,	P2
@@ -184,26 +214,30 @@ float Task::genArrTime(float prevArrTime, int seed, int phase, vector<float> tra
 									{0, 1, 	0}		// Planning ahead
 					 		 	};	
 
-//	Generate random interarrival time
+//	Adjust arrival time, if applicable
 
-	float interArrTime = genRandNum('E', seed, lambda[type][phase]);
-	float arrival = prevArrTime + interArrTime; 
-	int currHour = (arrival/60. + 0.5);
+	if (affByTraff[type][phase] && TRAFFIC_ON) 
+	{
+	//	Calculate new arrival 
 	
-//	Multiply by traffic level, if applicable 												think more about traffic
+		int currHour = arrival/60;
+		int beginInt = 60 * currHour;
+		float level = traffLevel[currHour];
+		float newArrival = beginInt + (arrival - beginInt)/level;
 	
-//	if (affByTraff[type][phase]) 
-//	{	
-//		float newInterArrTime = interArrTime / traffLevel[currHour];
-//		float newArrival = prevArrTime + newInterArrTime;
-//	 	int newCurrHour = (newArrival/60. + 0.5);
-//		if (currHour == newCurrHour)
-//			arrival = newArrival;
-//	}	
+	//	Adjust arrival if new traffic level varies
+		
+		int newHour = newArrival/60;
+		
+		if (newHour != currHour)			
+		{
+			beginInt = 60 * newHour;
+			level = traffLevel[newHour]/level;
+			arrival = beginInt + (newArrival - beginInt)/level;
+		}		
+	}	
 	
-//	Return arrival time
-
-	return arrival; //prevArrTime + interArrTime;
+	return;
 }
 
 /****************************************************************************

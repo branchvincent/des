@@ -40,6 +40,7 @@ bool compareTasks (Task* t1, Task* t2)
 // Global variables
 
 int SEED;
+//Statistics stats(NUM_TASK_TYPES + 1, NUM_INTS + 1, NUM_RUNS);
 
 /****************************************************************************
 *																			*
@@ -55,11 +56,12 @@ class Simulation
 		
 	//	Constructors
 	
-		Simulation(int t, int sd, vector<float> trafficLevels);
+		Simulation(int t, int sd, vector<float> trafficLevels, Statistics* sts);
+//		~Simulation() {del Task*;}
 
 	//	Inspectors
 	
-		void getStatSums(Matrix2D& matrix, int run) {stats.getSums(matrix, run);}
+//		void getStatSums(Matrix2D& matrix, int run) {stats->getColSums(matrix, run);}
 
 	//	Other member functions
 
@@ -78,8 +80,7 @@ class Simulation
 		int endTimes[NUM_PHASES];	// phase end times
 		list<Task*> taskList;		// task list
 		Operator op;				// operators
-		Matrix2D util;				// utilization
-		Statistics stats;			// simulation statistics
+		Statistics* stats;			// simulation statistics
 		vector<float> traffic; 		// traffic levels
 };
 
@@ -95,9 +96,8 @@ ostream& operator<<(ostream& out, const Simulation sim) {sim.output(out); return
 *																			*
 ****************************************************************************/
 
-Simulation::Simulation(int t, int sd, vector<float> trafficLevels) : simTime(), phase(), taskList(), op(), 
-																		stats(NUM_TASK_TYPES, NUM_INTS, 0)
-{	
+Simulation::Simulation(int t, int sd, vector<float> trafficLevels, Statistics* sts) : simTime(), phase(), taskList(), op()
+{
 //	Check duration of simulation
 
 	if (t < 90 || t%10 != 0) 
@@ -124,6 +124,7 @@ Simulation::Simulation(int t, int sd, vector<float> trafficLevels) : simTime(), 
 //	Set traffic levels
 
 	traffic = trafficLevels;
+	stats = sts;
 }
 
 /****************************************************************************
@@ -139,12 +140,16 @@ void Simulation::run()
 	cout << "Beginning simulation..." << endl;
 
 //	Run all phases, tracking the stats index
-
+	
 	int uIndex = 0;
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 1; i++)
 		runPhase(uIndex);
 	
 	cout << "Simulation completed." << endl;
+	
+//	End statistics counter
+
+	stats->endRun();
 
 	return;
 }
@@ -248,11 +253,20 @@ void Simulation::runPhase(int& uIndex)
 	depTask = op.getCurrTask();
 	depTime = op.getDepTime();
 	
-	while (op.isBusy() && depTime <= endTimes[2])
+	while (op.isBusy() && depTime <= endTimes[phase])		// 2
 	{
 		processDepature(depTask, uIndex);
 		depTask = op.getCurrTask();
 		depTime = op.getDepTime();
+	}
+	
+	if (op.isBusy())
+	{
+		float serTime = depTask->getSerTime();
+		int type = depTask->getType();
+		processDepature(depTask, uIndex);
+		stats->getAvgServiceTime(type, uIndex) -= serTime;
+		stats->getNumTasksIn(type, uIndex)--;
 	}
 
 //	Clear task list for next phase
@@ -285,8 +299,8 @@ void Simulation::processArrival(list<Task*>::iterator& it, int& i)
 	op.addTask(task);
 	it++;
 	
-	stats.incNumTasksIn(type, i, 1);
-	
+	stats->incNumTasksIn(type, i, 1);
+
 //	cout << op << endl;
 	
 	return;
@@ -312,7 +326,7 @@ void Simulation::processDepature(Task* task, int& i)
 	
 //	Get interval times and update time
 	
-	float beginInt = stats.getInterval(i);
+	float beginInt = stats->getInterval(i);
 	float endInt = beginInt + INT_SIZE;
 	simTime = depTime;
 	float timeBusy = 0;
@@ -331,8 +345,8 @@ void Simulation::processDepature(Task* task, int& i)
 	{
 		timeBusy = endInt - max(begTime, beginInt);
 		percBusy = timeBusy/INT_SIZE;
-		stats.incUtil(type, i, percBusy);
-		stats.incAvgServiceTime(type, i++, timeBusy);
+		stats->incUtil(type, i, percBusy);
+		stats->incAvgServiceTime(type, i++, timeBusy);
 //		cout << "\t\t timeBusy(" << beginInt << ", " << endInt << "):  " << timeBusy << endl;
 		beginInt = endInt;
 		endInt += INT_SIZE;
@@ -340,8 +354,8 @@ void Simulation::processDepature(Task* task, int& i)
 	
 	timeBusy = simTime - max(begTime, beginInt);
 	percBusy = timeBusy/INT_SIZE;
-	stats.incUtil(type, i, percBusy);
-	stats.incAvgServiceTime(type, i, timeBusy);
+	stats->incUtil(type, i, percBusy);
+	stats->incAvgServiceTime(type, i, timeBusy);
 //	cout << "\t\t timeBusy(" << beginInt << ", " << endInt << "):  " << timeBusy << endl;
 	
 //	Update state and stats
@@ -349,8 +363,8 @@ void Simulation::processDepature(Task* task, int& i)
 	if (DEBUG) cout << "\t Task departing at " << simTime << endl;
 	op.makeIdle();
 	
-	stats.incAvgWaitTime(type, i, begTime - arrTime);
-	stats.incNumTasksOut(type, i, 1);
+	stats->incAvgWaitTime(type, i, begTime - arrTime);
+	stats->incNumTasksOut(type, i, 1);
 	
 	return;
 }
