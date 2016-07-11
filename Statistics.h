@@ -57,11 +57,11 @@ class Statistics
 		void incAvgWaitTime(int i, int j, float val) {incStat(avgWaitTime[currRun], i, j, val);}
 		void incNumTasksIn(int i, int j, float val) {incStat(numTasksIn[currRun], i, j, val);}
 		void incNumTasksOut(int i, int j, float val) {incStat(numTasksOut[currRun], i, j, val);}
+		void incNumTasksExp(int i, int j, float val) {incStat(numTasksExp[currRun], i, j, val);}
 		void endRun();
 		void endSim();
 		void getMeanAndStdDev(vector<float>& data);
 
-		
 //		void setUtil(const int& i, const int& j, const int& val) {util[i][j] = val;}
 //		void setSerTime(const int& i, const int& j, const int& val) {avgServiceTime[i][j] = val;}
 //		void setWaitTime(const int& i, const int& j, const int& val) {avgWaitTime[i][j] = val;}
@@ -91,6 +91,7 @@ class Statistics
 		Matrix3D avgWaitTime;		// average wait time in queue
 		Matrix3D numTasksIn;		// number of tasks in
 		Matrix3D numTasksOut;		// number of tasks out
+		Matrix3D numTasksExp;		// number of tasks expired
 };
 
 //	Operators
@@ -111,7 +112,8 @@ Statistics::Statistics(int xDim, int yDim, int zDim, int val) :
 	avgWaitTime(zDim, Matrix2D(xDim, vector<float>(yDim, val))), 
 	numTasksIn(zDim, Matrix2D(xDim, vector<float>(yDim, val))), 
 	numTasksOut(zDim, Matrix2D(xDim, vector<float>(yDim, val))),
-	cmpStats(4 * (xDim-1) + yDim-1, vector<float>(zDim + 2, val)),
+	numTasksExp(zDim, Matrix2D(xDim, vector<float>(yDim, val))),
+	cmpStats(5 * (xDim-1) + yDim-1, vector<float>(zDim + 2, val)),
 	currRun(0)
 {
 	interval[0] = 0;
@@ -261,7 +263,8 @@ void Statistics::output(ostream& out) const
 	outputArr(out, "Avg Service Time", 0);
 	outputArr(out, "Avg Wait Time", 1);
 	outputArr(out, "Number In", 2);
-	outputArr(out, "Number Out", 3);	
+	outputArr(out, "Number Out", 3);
+	outputArr(out, "Number Expired", 4);	
 
 	return;
 }
@@ -279,7 +282,7 @@ void Statistics::outputArr(ostream& out, string arrName, int statNum) const
 //	Output stat name
 
 	out << arrName;
-	
+		
 //	Output stat
 
 	for (int i = NUM_INTS + statNum * NUM_TASK_TYPES; i < NUM_INTS + (statNum + 1) * NUM_TASK_TYPES; i++)
@@ -402,6 +405,7 @@ void Statistics::endRun()
 		cmpStats[i + NUM_INTS + NUM_TASK_TYPES][currRun] = avgWaitTime[currRun][i][lastCol];
 		cmpStats[i + NUM_INTS + 2*NUM_TASK_TYPES][currRun] = numTasksIn[currRun][i][lastCol];
 		cmpStats[i + NUM_INTS + 3*NUM_TASK_TYPES][currRun] = numTasksOut[currRun][i][lastCol];
+		cmpStats[i + NUM_INTS + 4*NUM_TASK_TYPES][currRun] = numTasksExp[currRun][i][lastCol];
 	}
 	
 //	Increment current run

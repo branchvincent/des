@@ -69,8 +69,16 @@ int main()
 
 	if (OUTPUT)	
 	{
-		ofstream fout(batchRunFile);
-		fout << *stats << endl;
+		if (NUM_RUNS == 1)
+		{
+			ofstream fout(oneRunFile);
+			fout << *stats << endl;
+		}
+		else
+		{
+			ofstream fout(batchRunFile);
+			fout << *stats << endl;
+		}
 	}	
 
 	return 0;

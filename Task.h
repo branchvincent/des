@@ -46,6 +46,7 @@ class Task
 		const float& getArrTime() {return arrTime;}
 		const float& getSerTime() {return serTime;}
 		const float& getDepTime() {return depTime;}
+		const float& getExpTime() {return expTime;}
 
 	//	Mutators
 	
@@ -57,7 +58,7 @@ class Task
 	
 		void output(ostream& out) const 
 			{cout << "(Pr " << priority << ", Tp " << type << ", Arr " << arrTime;
-			cout << ", Ser " << serTime <<  ", Dep " << depTime << ")";}
+			cout << ", Ser " << serTime <<  ", Dep " << depTime << ", Exp " << expTime << ")";}
 			
 //	Private member functions
 
@@ -67,8 +68,9 @@ class Task
 	
 		int getPriority(int phase);
 		float genArrTime(float prevArrTime, int seed, int phase, vector<float> traffLevel);
-		void adjArrForTraff(float& arrival, int phase, vector<float> traffLevel);
+		float adjArrForTraff(float arrival, float prevArrTime, int phase, vector<float> traffLevel);
 		float genSerTime(int seed);
+		float genExpTime(vector<float> traffLevel, int phase, int seed);
 		float genRandNum(char distType, int seed, float arg1, float arg2 = 0);
 	
 //	Data members
@@ -79,6 +81,7 @@ class Task
 		float arrTime;		// arrival time (min)
 		float serTime; 		// service time (min)
 		float depTime;		// depature time (min)
+		float expTime;		// expiration time (min)
 };
 
 //	Operators
@@ -116,10 +119,11 @@ Task::Task(int tp, float prevArrTime, int seed, int phase, vector<float> traffLe
 	
 	srand(seed);
 	type = tp;
-	priority = 1; //getPriority(phase);
+	priority = getPriority(phase);
 	arrTime = genArrTime(prevArrTime, rand(), phase, traffLevel);
 	serTime = genSerTime(rand());
 	depTime = -1;
+	expTime = genExpTime(traffLevel, phase, rand());
 }
 
 /****************************************************************************
@@ -175,19 +179,14 @@ float Task::genArrTime(float prevArrTime, int seed, int phase, vector<float> tra
 								{1/30., 1/15., 1/30.}		// Planning ahead
 					 	 	};	
 
-//	Generate random interarrival time
+//	Generate random interarrival time and adjust for traffic
 
 	float interArrTime = genRandNum('E', seed, lambda[type][phase]);		
 	float arrival = prevArrTime + interArrTime; 
-
-//	Adjust arrival time for traffic, if applicable
-
-	if (!isinf(arrival))
-		adjArrForTraff(arrival, phase, traffLevel);
+	arrival = adjArrForTraff(arrival, prevArrTime, phase, traffLevel);
 
 	return arrival;
 }
-
 
 /****************************************************************************
 *																			*
@@ -198,7 +197,7 @@ float Task::genArrTime(float prevArrTime, int seed, int phase, vector<float> tra
 *																			*
 ****************************************************************************/
 
-void Task::adjArrForTraff(float& arrival, int phase, vector<float> traffLevel)
+float Task::adjArrForTraff(float arrival, float prevArrTime, int phase, vector<float> traffLevel)
 {
 //	Tasks affected by traffic level (task types vs. phases)
 
@@ -216,11 +215,26 @@ void Task::adjArrForTraff(float& arrival, int phase, vector<float> traffLevel)
 
 //	Adjust arrival time, if applicable
 
+//	if (isinf(arrival)) return;
+
 	if (affByTraff[type][phase] && TRAFFIC_ON) 
 	{
+	//	Calculate previous arrival
+	
+//		int prevHour = prevArrTime/60;										* fix for when an hour is skipped
+//		int currHour = arrival/60;
+//		
+//		while (prevHour != currHour)
+//		{
+//			arrival = traffLevel[prevHour]
+//			prevHour++;
+//		}
+		
 	//	Calculate new arrival 
 	
 		int currHour = arrival/60;
+		if (currHour >= traffLevel.size()) return arrival;
+		
 		int beginInt = 60 * currHour;
 		float level = traffLevel[currHour];
 		float newArrival = beginInt + (arrival - beginInt)/level;
@@ -228,7 +242,8 @@ void Task::adjArrForTraff(float& arrival, int phase, vector<float> traffLevel)
 	//	Adjust arrival if new traffic level varies
 		
 		int newHour = newArrival/60;
-		
+		if (newHour >= traffLevel.size()) return arrival;
+
 		if (newHour != currHour)			
 		{
 			beginInt = 60 * newHour;
@@ -237,7 +252,7 @@ void Task::adjArrForTraff(float& arrival, int phase, vector<float> traffLevel)
 		}		
 	}	
 	
-	return;
+	return arrival;
 }
 
 /****************************************************************************
@@ -255,7 +270,7 @@ float Task::genSerTime(int seed)
 
 	switch (type)
 	{
-//		case 0:	return genRandNum('L', seed, -1.6670796, 0.74938);	// Communicating
+//		case 0:	return genRandNum('L', seed, -1.66708, 0.74938);	// Communicating
 		case 0:	return genRandNum('E', seed, 1/0.133);				// Communicating
 		case 1:	return genRandNum('L', seed, 0.980297, 1.389685);	// Exception handling
 		case 2: return genRandNum('U', seed, 0.05, 2);				// Paperwork	
@@ -274,6 +289,66 @@ float Task::genSerTime(int seed)
 			exit(1);
 		}
 	}
+}
+
+/****************************************************************************
+*																			*
+*	Function:	genExpTime													*
+*																			*
+*	Purpose:	To generate an expiration time based on the specified task	*
+*				type, ..., and distribution seed			*
+*																			*
+****************************************************************************/
+
+float Task::genExpTime(vector<float> traffLevel, int phase, int seed)
+{
+//	Exponential distribution parameters (task types vs. phases)						* returns infinity for lda = 0
+
+//	High traffic
+									//	P0,	P1,				P2
+	float highTraffLambda[9][3] = 	{	{0,	0.086333333,	0},				// Communicating
+										{0,	0.055166667,	0.055166667}, 	// Exception handling
+										{0,	0,				0},				// Paperwork
+										{0,	0.184,			0},				// Maintenance of way
+										{0,	0.184,			0},				// Temp speed restriction
+										{0,	0.184,			0.184},			// Signal response management
+										{0,	0,				0},				// Monitoring inside
+										{0,	0,				0},				// Monitoring outisde
+										{0,	0.1795,			0},				// Planning ahead
+							 	 	};	
+
+//	Low and normal traffic
+								//	P0,	P1,				P2
+	float otherLambda[9][3] =	{	{0,	0.107166667,	0},				// Communicating
+									{0,	0.044666667,	0.044666667}, 	// Exception handling
+									{0,	0,				0},				// Paperwork
+									{0,	0.184,			0},				// Maintenance of way
+									{0,	0.184,			0},				// Temp speed restriction
+									{0,	0.184,			0.184},			// Signal response management
+									{0,	0,				0},				// Monitoring inside
+									{0,	0,				0},				// Monitoring outisde
+									{0,	0.166,			0},				// Planning ahead
+						 	 	};		
+	
+	float lambda;
+	float expiration = 0;
+	int hour = arrTime/60;
+	
+//	Set lambda
+	
+	if (hour >= traffLevel.size())
+		return arrTime;
+	else if (traffLevel[hour] == 2)
+		lambda = highTraffLambda[type][phase];
+	else
+		lambda = otherLambda[type][phase];
+	
+//	Get random number
+
+	while (expiration < serTime)
+		expiration = genRandNum('E', seed++, lambda);
+
+	return arrTime + expiration;
 }
 
 /****************************************************************************

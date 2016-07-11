@@ -15,42 +15,100 @@
 
 #include <iostream>
 #include <list>
+#include "Task.h"
 
 using namespace std;
 
-template<class T>
 class Queue
 {
 //	Public member functions
 	
 	public:
 	
+	//	Constructor
+		
+		Queue() : mList() {}
+	
 	// 	Inspector
 		
-		T head() const {return list.front();}
-		int size() const {return list.size();}
+		Task* front() const;
+		int size() const {return mList.size();}
 		
 	// 	Mutators
 		
-		void enqueue(const T& value) {list.push_back(value);}
-		T dequeue() {T temp = list.front(); list.pop_front(); return temp;}
+		void push(Task* task) {mList.push_back(task);}
+		Task* pop();
 		
 	//	Facilitators
 		
-		void output(ostream& out) const {list.output(out);}
+//		void output(ostream& out) const
+//		{
+//		for (mList<Task*>::iterator it = taskmList.begin(); it != taskmList.end(); it++)
+//			cout << **it << endl;
+//		}
 		
 	//	Other
 		
-		void makeEmpty() {list.makeEmpty();}
-		bool isEmpty() {return list.isEmpty();}	
+//		void makeEmpty() {mList.makeEmpty();}
+//		bool isEmpty() {return mList.isEmpty();}	
 
 //	Data members
 
 	private:
-		list<float> list;
+		list<Task*> mList;
 };
 
-template <class T>
-ostream& operator<<(ostream& out, const LinkedQueue<T>& q) {q.output(out); return out;}
+//ostream& operator<<(ostream& out, const Queue& q) {q.output(out); return out;}
+
+/****************************************************************************
+*																			*
+*	Function:	front														*
+*																			*
+*	Purpose:	To return the front item in the queue						*
+*																			*
+****************************************************************************/
+
+Task* Queue::front() const
+{
+//	Check size
+
+	if (mList.size() == 0) 
+	{
+		cerr << "Error: Cannot access empty queue. Exiting...";
+		exit(1);
+	}
+
+//	Return front
+	
+	return mList.front();
+}
+
+/****************************************************************************
+*																			*
+*	Function:	pop															*
+*																			*
+*	Purpose:	To remove and return the front item in the queue 			*
+*																			*
+****************************************************************************/
+
+Task* Queue::pop() 
+{
+//	Check size
+
+	if (mList.size() == 0) 
+	{
+		cerr << "Error: Cannot access empty queue. Exiting...";
+		exit(1);
+	}
+
+//	Get and pop front
+
+	Task* front = mList.front(); 
+	mList.pop_front(); 
+	
+//	Return front
+	
+	return front;
+}
 
 #endif

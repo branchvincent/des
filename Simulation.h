@@ -96,7 +96,7 @@ ostream& operator<<(ostream& out, const Simulation sim) {sim.output(out); return
 *																			*
 ****************************************************************************/
 
-Simulation::Simulation(int t, int sd, vector<float> trafficLevels, Statistics* sts) : simTime(), phase(), taskList(), op()
+Simulation::Simulation(int t, int sd, vector<float> trafficLevels, Statistics* sts) : simTime(), phase(), taskList(), op(sts)
 {
 //	Check duration of simulation
 
@@ -142,7 +142,7 @@ void Simulation::run()
 //	Run all phases, tracking the stats index
 	
 	int uIndex = 0;
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 3; i++)
 		runPhase(uIndex);
 	
 	cout << "Simulation completed." << endl;
@@ -165,7 +165,7 @@ void Simulation::run()
 void Simulation::genTasks(int type)
 {
 //	Create first task and temporary list
-	
+		
 	srand(SEED++);
 	list<Task*> tmpList; 
 	Task* task = new Task(type, simTime, rand(), phase, traffic);
@@ -253,21 +253,21 @@ void Simulation::runPhase(int& uIndex)
 	depTask = op.getCurrTask();
 	depTime = op.getDepTime();
 	
-	while (op.isBusy() && depTime <= endTimes[phase])		// 2
+	while (op.isBusy() && depTime <= endTimes[2])		// 2
 	{
 		processDepature(depTask, uIndex);
 		depTask = op.getCurrTask();
 		depTime = op.getDepTime();
 	}
 	
-	if (op.isBusy())
-	{
-		float serTime = depTask->getSerTime();
-		int type = depTask->getType();
-		processDepature(depTask, uIndex);
-		stats->getAvgServiceTime(type, uIndex) -= serTime;
-		stats->getNumTasksIn(type, uIndex)--;
-	}
+//	if (op.isBusy())
+//	{
+//		float serTime = depTask->getSerTime();
+//		int type = depTask->getType();
+//		processDepature(depTask, uIndex);
+//		stats->getAvgServiceTime(type, uIndex) -= serTime;
+//		stats->getNumTasksIn(type, uIndex)--;
+//	}
 
 //	Clear task list for next phase
 	
@@ -323,7 +323,7 @@ void Simulation::processDepature(Task* task, int& i)
 	float serTime = task->getSerTime();
 	float begTime = depTime - serTime;
 	int type = task->getType();
-	
+		
 //	Get interval times and update time
 	
 	float beginInt = stats->getInterval(i);
