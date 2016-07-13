@@ -10,6 +10,8 @@
 *																			*
 ****************************************************************************/
 
+//  change seed to rand()?
+
 #ifndef TASK_H
 #define TASK_H
 
@@ -47,15 +49,22 @@ class Task
 		const float& getSerTime() {return serTime;}
 		const float& getDepTime() {return depTime;}
 		const float& getExpTime() {return expTime;}
+        const float& getSerLeft() {return serLeft;}
+        const float getPercLeft() {return serLeft/serTime;}
+        const int getOpNum() {return opNum;}
+		float percShared();
+		bool isSharedTask() {return (int)percShared();}
 
 	//	Mutators
 	
 		void setArrTime(float t) {arrTime = t;}
 		void setSerTime(float t) {serTime = t;}
 		void setDepTime(float t) {depTime = t;}
+        void setSerLeft(float t) {serLeft = t;}
+        void setOpNum(int n) {opNum = n;}
 
 	//	Other member functions
-	
+
 		void output(ostream& out) const 
 			{cout << "(Pr " << priority << ", Tp " << type << ", Arr " << arrTime;
 			cout << ", Ser " << serTime <<  ", Dep " << depTime << ", Exp " << expTime << ")";}
@@ -82,6 +91,9 @@ class Task
 		float serTime; 		// service time (min)
 		float depTime;		// depature time (min)
 		float expTime;		// expiration time (min)
+//		float waitTime;		// total wait time in queue
+        float serLeft;      // service time left
+        int opNum;          // operator id number
 };
 
 //	Operators
@@ -98,8 +110,15 @@ ostream& operator<<(ostream& out, const Task t) {t.output(out); return out;}
 ****************************************************************************/
 
 Task::Task(int tp, float prevArrTime, int seed, int phase, vector<float> traffLevel)
+//    type(tp),
+//    priority(getPriority(phase)),
+//    arrTime(genArrTime(prevArrTime, rand(), phase, traffLevel)),
+//    serTime(genSerTime(rand())),
+//    depTime(-1),
+//    expTime(genExpTime(traffLevel, phase, rand())),
+//    serLeft(1)
 {
-//	Check type 
+//	Check type
 
 	if (tp < 0 || tp > 8)
 	{
@@ -124,6 +143,12 @@ Task::Task(int tp, float prevArrTime, int seed, int phase, vector<float> traffLe
 	serTime = genSerTime(rand());
 	depTime = -1;
 	expTime = genExpTime(traffLevel, phase, rand());
+    serLeft = serTime;
+    
+    if (!isSharedTask())
+        opNum = 0;
+    else
+        opNum = 2;
 }
 
 /****************************************************************************
@@ -181,7 +206,7 @@ float Task::genArrTime(float prevArrTime, int seed, int phase, vector<float> tra
 
 //	Generate random interarrival time and adjust for traffic
 
-	float interArrTime = genRandNum('E', seed, lambda[type][phase]);		
+	float interArrTime = genRandNum('E', seed, lambda[type][phase]);
 	float arrival = prevArrTime + interArrTime; 
 	arrival = adjArrForTraff(arrival, prevArrTime, phase, traffLevel);
 
@@ -270,7 +295,6 @@ float Task::genSerTime(int seed)
 
 	switch (type)
 	{
-//		case 0:	return genRandNum('L', seed, -1.66708, 0.74938);	// Communicating
 		case 0:	return genRandNum('E', seed, 1/0.133);				// Communicating
 		case 1:	return genRandNum('L', seed, 0.980297, 1.389685);	// Exception handling
 		case 2: return genRandNum('U', seed, 0.05, 2);				// Paperwork	
@@ -314,8 +338,8 @@ float Task::genExpTime(vector<float> traffLevel, int phase, int seed)
 										{0,	0.184,			0.184},			// Signal response management
 										{0,	0,				0},				// Monitoring inside
 										{0,	0,				0},				// Monitoring outisde
-										{0,	0.1795,			0},				// Planning ahead
-							 	 	};	
+										{0,	0.1795,			0}				// Planning ahead
+							 	 	};
 
 //	Low and normal traffic
 								//	P0,	P1,				P2
@@ -327,7 +351,7 @@ float Task::genExpTime(vector<float> traffLevel, int phase, int seed)
 									{0,	0.184,			0.184},			// Signal response management
 									{0,	0,				0},				// Monitoring inside
 									{0,	0,				0},				// Monitoring outisde
-									{0,	0.166,			0},				// Planning ahead
+									{0,	0.166,			0}				// Planning ahead
 						 	 	};		
 	
 	float lambda;
@@ -345,7 +369,7 @@ float Task::genExpTime(vector<float> traffLevel, int phase, int seed)
 	
 //	Get random number
 
-	while (expiration < serTime)
+	while (expiration <= serTime)
 		expiration = genRandNum('E', seed++, lambda);
 
 	return arrTime + expiration;
@@ -402,6 +426,30 @@ float Task::genRandNum(char distType, int seed, float arg1, float arg2)
 			exit(1);
 		}
 	}
+}
+
+/****************************************************************************
+*																			*
+*	Function:	percShared													*
+*																			*
+*	Purpose:	To 								*
+*																			*
+****************************************************************************/
+
+float Task::percShared()
+{
+	float percShared[9] = 	{	0.1,	// Communicating
+								0.8, 	// Exception handling
+								0.5,	// Paperwork
+								0.25,	// Maintenance of way
+								0.5,	// Temp speed restriction
+								1,		// Signal response management
+								1,		// Monitoring inside
+								0.5,	// Monitoring outisde
+								1		// Planning ahead
+				 	 		};	
+				
+	return percShared[type];	
 }
 
 #endif

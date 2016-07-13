@@ -12,20 +12,17 @@
 *																			*
 ****************************************************************************/
 
-// Header files
-
 #include <iostream>
 #include <string>
 #include "Simulation.h"
-#include "Statistics.h"
 
 using namespace std;
 using namespace cnsts;
 
 // Function prototypes
 
-void setSeed(int& seed);
-void setTrafficLevels(vector<float>& traffic);
+void setTrafficLevels(vector<float>& traffic, bool randRun);
+void outputStats(Simulation& sim, string outputFile);
 
 /****************************************************************************
 *																			*
@@ -33,78 +30,31 @@ void setTrafficLevels(vector<float>& traffic);
 *																			*
 ****************************************************************************/
 
+//  Notes:
+//  - Not using RAND_RUN
+//  - OUTPUT_ON used once
+//  - sim.run(NUM_RUNS):  NUM_RUNS has already set stat size
+
 int main() 
 {
-//	Set folder paths
+//	Set folder path
 
-	const string filePath = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/Data/";
-	const string oneRunFile = filePath + "singleRun.csv";
-	const string batchRunFile = filePath + "batchRun.csv";
+//	string filePath = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/Data/";
+    string outputFile = "/Users/Branch/Desktop/DES/DES/Output/runData.csv";
 		
 //	Initialize variables
 
-	srand((unsigned int) time(0));
-	
-	int seed = 0;
+    bool randRun = false;
 	vector<float> traffic(NUM_HOURS, 0);
-	Statistics* stats = new Statistics(NUM_TASK_TYPES + 1, NUM_INTS + 1, NUM_RUNS);
-
-//	Run simulations for specified times
-
-	for (int i = 0; i < NUM_RUNS; i++)
-	{
-	//	Set simulation seed and traffic levels
-	
-		setSeed(seed);
-		setTrafficLevels(traffic);
-		
-	//	Run simulation	
-	
-		cout << "Run " << i << endl;
-		Simulation sim(END_TIME, seed, traffic, stats);	
-		sim.run();	
-}
-
-//	Output data, if applicable
-
-	if (OUTPUT)	
-	{
-		if (NUM_RUNS == 1)
-		{
-			ofstream fout(oneRunFile);
-			fout << *stats << endl;
-		}
-		else
-		{
-			ofstream fout(batchRunFile);
-			fout << *stats << endl;
-		}
-	}	
+    setTrafficLevels(traffic, randRun);
+    
+//  Run sim and output data
+    
+    Simulation sim(randRun, END_TIME, traffic);
+	sim.run(NUM_RUNS);
+    outputStats(sim, outputFile);
 
 	return 0;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	setSeed														*
-*																			*
-*	Purpose:	To set the seed for the simulation							*
-*																			*
-****************************************************************************/
-
-void setSeed(int& seed)
-{
-//	Set random seed, if applicable
-
-	if (RAND_RUN) 
-		seed = rand();
-
-//	Otherwise, set specific seed
-
-	else 
-		seed++;
-		
-	return;
 }
 
 /****************************************************************************
@@ -115,13 +65,14 @@ void setSeed(int& seed)
 *																			*
 ****************************************************************************/
 
-void setTrafficLevels(vector<float>& traffic)
+void setTrafficLevels(vector<float>& traffic, bool randRun)
 {
 //	Set random traffic, if applicable
 
+    srand((unsigned int) time(0));
 	float levels[] = {0.5, 1, 2};
 	
-	if (RAND_RUN)
+	if (randRun)
 		for (int i = 0; i < traffic.size(); i++)
 			traffic[i] = levels[rand() % 3];
 	
@@ -132,4 +83,35 @@ void setTrafficLevels(vector<float>& traffic)
 			traffic[i] = levels[i % 3];
 	
 	return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	outputStats                                                 *
+*																			*
+*	Purpose:	To output the statistical data from the simulation			*
+*																			*
+****************************************************************************/
+
+void outputStats(Simulation& sim, string outputFile)
+{
+//  Check for output
+    
+    if (OUTPUT_ON)
+    {
+    //  Open file
+        
+        ofstream fout(outputFile);
+        if (!fout)
+        {
+            cerr << "Error: Cannot open file. Exiting..." << endl;
+            exit(1);
+        }
+        
+    //  Output stats
+        
+        fout << sim << endl;
+    }
+            
+    return;
 }
