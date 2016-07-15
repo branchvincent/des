@@ -55,12 +55,12 @@ class TaskParameters
 		float* serDistParams[NUM_TASK_TYPES][NUM_PHASES];
 		float* expDistParams[2][NUM_TASK_TYPES][NUM_PHASES];
 		bool* affByTraff[NUM_TASK_TYPES][NUM_PHASES];
-		float percShared[NUM_TASK_TYPES];
+		float percAllowed[NUM_TASK_TYPES];
 };
 
 //	Operators
 
-ostream& operator<<(ostream& out, const Task t) {t.output(out); return out;}
+ostream& operator<<(ostream& out, const Task& t) {t.output(out); return out;}
 
 /****************************************************************************
 *																			*
@@ -89,7 +89,7 @@ TaskParameters::TaskParameters()
 	
 //	Set arrival distributions
 
-	arrDists = 'E';
+	arrDists = 'E';     //  not mutable
 
 						//	P0,		P1,		P2
 	arrDistParams = 	{	{1/3., 	0.2, 	1/3.},		// Communicating
@@ -114,7 +114,7 @@ TaskParameters::TaskParameters()
 					'E',	// Monitoring inside
 					'E',	// Monitoring outisde
 					'E'		// Planning ahead
-		 	 	};	
+		 	 	};	// not mutable (default E)
 
 	serDistParams = {	{1/0.133,	0},			// Communicating
 						{0.980297, 	1.389685}, 	// Exception handling
@@ -125,12 +125,12 @@ TaskParameters::TaskParameters()
 						{1/0.133,	0},			// Monitoring inside
 						{1/0.1,		0},			// Monitoring outisde
 						{1/0.33,	0}			// Planning ahead
-			 	 	};	
+			 	 	};	// same as serDist
 
 
 //	Set expiration distributions
 
-	expDists = 'E';
+	expDists = 'E';     // not mutable
 	
 						//	P0,	P1,				P2
 	expDistParams[0] = {	{0,	0.086333333,	0},				// Communicating
@@ -142,7 +142,7 @@ TaskParameters::TaskParameters()
 							{0,	0,				0},				// Monitoring inside
 							{0,	0,				0},				// Monitoring outisde
 							{0,	0.1795,			0}				// Planning ahead
-				 	 	};
+				 	 	}; // use formula (not mutable)
 				
 						//	P0,	P1,				P2
 	expDistParams[1] =	{	{0,	0.107166667,	0},				// Communicating
@@ -154,7 +154,7 @@ TaskParameters::TaskParameters()
 							{0,	0,				0},				// Monitoring inside
 							{0,	0,				0},				// Monitoring outisde
 							{0,	0.166,			0}				// Planning ahead
-				 	 	};	
+				 	 	};	// use formula (not mutable)
 
 //	Set tasks affected by traffic
 	
@@ -168,11 +168,12 @@ TaskParameters::TaskParameters()
 						{0, 0, 	0},		// Monitoring inside
 						{0, 1, 	0},		// Monitoring outisde
 						{0, 1, 	0}		// Planning ahead
-		 		 	};	
+		 		 	}; // set (if add new, choose for that specific task type)
 
 //	Set percent of tasks to be completed before jockeying
 
-	percShared[9] = {	0.1,	// Communicating
+                    //  allow to vary by phase
+	percAllowed[9] = {	0.1,	// Communicating
 						0.8, 	// Exception handling
 						0.5,	// Paperwork
 						0.25,	// Maintenance of way
@@ -182,7 +183,7 @@ TaskParameters::TaskParameters()
 						0.5,	// Monitoring outisde
 						1		// Planning ahead
 		 	 		};	
-					
+    
 	return;
 }
 

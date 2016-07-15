@@ -25,7 +25,7 @@ using namespace cnsts;
 
 //	Functions and definitions
 
-bool comparePriority(Task* t1, Task* t2) 
+bool cmpPrty(Task* t1, Task* t2) 
 {
 	if (t1->getPriority() == t2->getPriority())
 		return t1->getExpTime() > t2->getExpTime();
@@ -33,14 +33,15 @@ bool comparePriority(Task* t1, Task* t2)
 		return t1->getPriority() < t2->getPriority();
 }
 
-float getFatigueFactor(float time) {return 1 + (time/60 * 0.01);}
-typedef priority_queue<Task*,vector<Task*>,decltype(&comparePriority)> Queue;
+typedef priority_queue<Task*,vector<Task*>,decltype(&cmpPrty)> Queue;
 
 /****************************************************************************
 *																			*
 *	Definition of Operator class											*
 *																			*
 ****************************************************************************/
+
+//  Put percShared into this class (varies by operator)
 
 class Operator
 {
@@ -50,46 +51,59 @@ class Operator
 		
 	//	Constructor
 	
-        Operator(Statistics* sts, Queue& sharedQ) : currTask(NULL), taskQueue(&comparePriority), sharedQueue(sharedQ), stats(sts) {}
+        Operator(Statistics& sts, Queue& sharedQ) :
+            currTask(NULL),
+            taskQueue(&cmpPrty),
+            sharedQueue(sharedQ),
+            sharedStats(sts),
+            stats() {}
 		
 	//	Inspectors
 
-		bool isBusy() const {return currTask != NULL;}
-//		bool& isBusy() {return currTask != NULL;}
-		bool isQueueEmpty() const {return taskQueue.empty();}
-		int tasksLeft() const {return taskQueue.size();}
+        bool isIdle() const {return currTask == NULL;}
+		bool isBusy() const {return !isIdle();}
+        int queueSize() const {return taskQueue.size();}
+//		bool isQueueEmpty() const {return taskQueue.empty();}
+//		int tasksLeft() const {return taskQueue.size();}
+//		Task* getTop() {return taskQueue.top();}
 		Task* getCurrTask() {return currTask;}
-		Task* getTop() {return taskQueue.top();}
-		float getDepTime();
+        float getDepTime();
+        bool needToIntrp(Queue& queue);
 		
 	//	Mutators
-	
-		void addTask(Task* task);
-        void addSharedTask(Task* task);
-		void startNextTask(float currTime);
-        Task* getNextTask();
-		void interruptTask(float currTime);
-		void processDepature(Task* task);
-        void makeIdle();
-        void clear();
+    
+		void procArr(Task* task);
+		void procIntrp(float currTime);  //, Queue &queue
+		void procDep(Task* task);
+        void servNextTask(float currTime);
+        void endRep();
 				
 	//	Other member functions
 
-		void updateUtil(Task* task, float currTime);
-		void output(ostream& out) const;
+        void output(ostream& out) const {out << stats << endl;}
+
+//  Private member functions
+    
+    private:
+        float getFatigueFactor(float time) {return 1 + (time/60 * 0.01);}
+        Task* getNextTask();
+        bool currTaskExp();
+        void procExp(float currTime);
+        void updateUtil(Task* task, float currTime);
 
 //	Data members
 
 	private:
-		Task* currTask;			// current task
-		Queue taskQueue;		// task queue
-        Queue& sharedQueue;     // shared queue
-		Statistics* stats;		// stats
+		Task* currTask;             // current task
+		Queue taskQueue;            // task queue
+        Queue& sharedQueue;         // shared queue
+		Statistics& sharedStats;	// shared stats
+        Statistics stats;           // local stats
 };
 
 //	Operators
 
-ostream& operator<<(ostream& out, const Operator op) {op.output(out); return out;}
+ostream& operator<<(ostream& out, const Operator& op) {op.output(out); return out;}
 
 /****************************************************************************
 *																			*
@@ -104,349 +118,168 @@ float Operator::getDepTime()
 	if (isBusy())
 		return currTask->getDepTime();
 	else
-		return -1;
+		return INFINITY;
 }
 
 /****************************************************************************
 *																			*
-*	Function:	addTask														*
+*	Function:	needToIntrp                                                 *
+*																			*
+*	Purpose:	To determine if the current task needs to be interrupted by *
+*               by the specified task                                       *
+*																			*
+****************************************************************************/
+
+bool Operator::needToIntrp(Queue& queue)
+{
+//    cout << "isBusy = " << isBusy() << endl;
+//    cout << "taskQueue.size() = " << taskQueue.size() << endl;
+//    cout << "currTask = " << *currTask << endl;
+//    cout << "taskQueue.top() = " << *taskQueue.top() << endl;
+    
+    if (isBusy() && queue.size() > 0)
+        return cmpPrty(currTask, queue.top());
+    else
+        return false;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	procArr                                                     *
 *																			*
 *	Purpose:	To enqueue the specified task								*
 *																			*
 ****************************************************************************/
 
-void Operator::addTask(Task* task) 
+void Operator::procArr(Task* task)
 {
 //	Enqueue task
+    
+    taskQueue.push(task);
 
-	taskQueue.push(task); 
-	float currTime = task->getArrTime();
-	
-//	Start next task, if applicable
+//  Get task attributes
+    
+    float currTime = task->getArrTime();
+    int type = task->getType();
+    int timeInt = currTime/INT_SIZE;
+    task->setQueTime(currTime);
+    
+//  Update stats
+    
+    stats.incNumTasksIn(type, timeInt, 1);
+    
+//	Service next task, if idle
+    
+    if (isIdle())
+        servNextTask(currTime);
+    
+//  Interrupt current task, if applicable
+    
+    else if (needToIntrp(taskQueue)) 
+        procIntrp(currTime);
 
-//	if (isBusy() && taskQueue.top() != currTask)
-	if (isBusy() && comparePriority(currTask, taskQueue.top()))
-		interruptTask(currTime);
-	if (!isBusy()) 
-		startNextTask(currTime);
-			
 	return;
 }
 
 /****************************************************************************
 *																			*
-*	Function:	addSharedTask												*
+*	Function:	processIntrp												*
 *																			*
-*	Purpose:	To enqueue the specified shared task						*
+*	Purpose:	To process an interruption of the current task              *
 *																			*
 ****************************************************************************/
 
-void Operator::addSharedTask(Task* task)
+void Operator::procIntrp(float currTime)
 {
-//	Enqueue task
+//  Check that the operator is busy
     
-    sharedQueue.push(task);
-    float currTime = task->getArrTime();
+    if (isIdle())
+    {
+        cerr << "Error: Cannot process task interruption. Exiting..." << endl;
+        exit(1);
+    }
     
-//	Start next task, if applicable
+    if (DEBUG_ON) cout << "\t\t Task interrupted at " << currTime << endl; //" " << *currTask << endl;
     
-    if (isBusy() && comparePriority(currTask, sharedQueue.top()))
-        interruptTask(currTime);
-    if (!isBusy())
-        startNextTask(currTime);
+//	Update stats
+    
+    updateUtil(currTask, currTime);
+    float depTime = currTask->getDepTime();
+    currTask->setSerLeft(depTime - currTime);
+    currTask->setDepTime(INFINITY);
+    currTask->setQueTime(currTime);
+
+//	Add current task to queue and service next task
+    
+    float percLeft = currTask->getPercLeft();
+    float percAllowed = currTask->getPercAllowed();
+
+    if (percLeft <= percAllowed)
+    {
+        sharedQueue.push(currTask);
+        currTask->setOpNum(2);
+    }
+    else
+        taskQueue.push(currTask);
+    
+//  Service next task
+    
+    currTask = NULL;
+    servNextTask(currTime);
     
     return;
 }
 
 /****************************************************************************
 *																			*
-*	Function:	startNextTask												*
-*																			*
-*	Purpose:	To start the next task in the queue, if applicable			*
-*																			*
-****************************************************************************/
-
-void Operator::startNextTask(float currTime) 
-{
-	if (!taskQueue.empty() || !sharedQueue.empty())
-	{
-	//	Get next task
-	
-		if (DEBUG_ON) cout << "\t Task starting at " << currTime << endl;
-        currTask = getNextTask();
-        
-	//	Update service
-		
-		float serTime = currTask->getSerLeft();
-	
-	//	Account for fatigue, if applicable		
-
-		if (FATIGUE_ON)
-		{
-			serTime *= getFatigueFactor(currTime);
-			currTask->setSerTime(serTime);
-		}
-        
-	//	Check to see if task expired
-        
-        float depTime = currTime + serTime;
-		float expTime = currTask->getExpTime();
-		int type = currTask->getType();
-        
-		if (expTime < depTime)
-		{
-			int timeInt = currTime/INT_SIZE;
-			stats->incNumTasksExp(type, timeInt, 1);
-//			taskQueue.pop();
-			currTask = NULL;
-			if (DEBUG_ON) cout << "\t\t Task expired at " << currTime << endl;
-			startNextTask(currTime);
-		}
-		else
-			currTask->setDepTime(depTime);
-    }
-		
-	return;
-}
-
-/****************************************************************************
- *																			*
- *	Function:	getNextTask                                                 *
- *																			*
- *	Purpose:	To get the next task			*
- *																			*
- ****************************************************************************/
-
-Task* Operator::getNextTask()
-{
-    Task* nextTask;
-    
-//  Compare the next two tasks
-    
-    if (!taskQueue.empty() && !sharedQueue.empty())
-    {
-        Task* myTask = taskQueue.top();
-        Task* sharedTask = sharedQueue.top();
-        
-        if (comparePriority(myTask, sharedTask))
-        {
-            nextTask = sharedTask;
-            sharedQueue.pop();
-        }
-        else
-        {
-            nextTask = myTask;
-            taskQueue.pop();
-        }
-    }
-    else if (!taskQueue.empty())
-    {
-        nextTask = taskQueue.top();
-        taskQueue.pop();
-    }
-    else
-    {
-        nextTask = sharedQueue.top();
-        sharedQueue.pop();
-    }
-    
-    return nextTask;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	interruptTask												*
-*																			*
-*	Purpose:	To 			*
-*																			*
-****************************************************************************/
-
-void Operator::interruptTask(float currTime) 
-{
-//	Update current task service time
-	
-	if (DEBUG_ON) cout << "\t\t Task interrupted at " << currTime << endl;
-	updateUtil(currTask, currTime);
-	
-    float depTime = currTask->getDepTime();
-    currTask->setSerLeft(depTime - currTime);
-	currTask->setDepTime(-1);
-
-//	Add current task to queue and start next task
-    
-    float percLeft = currTask->getPercLeft();
-    float percShared = currTask->percShared();
-    
-    if (currTask != NULL)
-        cout << "currTask = " << *currTask << endl;
-    else
-        cout << "Error:  NUll pointer" << endl;
-    
-    if (sharedQueue.size() != 0)
-        cout << "sharTask 1 of " << sharedQueue.size() << " = " << *sharedQueue.top() << endl;
-    
-//    if (percLeft <= percShared)
-        sharedQueue.push(currTask);
-//    else
-//        taskQueue.push(currTask);
-    
-    currTask = NULL;
-	startNextTask(currTime);
-	
-
-//	record how many tasks move back to sharedqueue
-
-	return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	updateUtil													*
-*																			*
-*	Purpose:	To update the utilization									*
-*																			*
-****************************************************************************/
-
-void Operator::updateUtil(Task* task, float currTime)
-{
-//	Get task characteristics
-
-	float depTime = task->getDepTime();
-	float serTime = task->getSerLeft();
-	float begTime = depTime - serTime;
-	int type = task->getType();
-		
-//	Get interval times and update time
-	
-    int timeInt = begTime/INT_SIZE;
-	float beginInt = timeInt * INT_SIZE;
-	float endInt = beginInt + INT_SIZE;
-	float timeBusy = 0;
-	float percBusy = 0;
-
-//	Record utilization
-
-	while (currTime >= endInt)
-	{
-		timeBusy = endInt - max(begTime, beginInt);
-		percBusy = timeBusy/INT_SIZE;
-		stats->incUtil(type, timeInt, percBusy);
-		stats->incAvgServiceTime(type, timeInt++, timeBusy);
-		beginInt = endInt;
-		endInt += INT_SIZE;
-	}
-	
-	timeBusy = currTime - max(begTime, beginInt);
-	percBusy = timeBusy/INT_SIZE;
-	stats->incUtil(type, timeInt, percBusy);
-	stats->incAvgServiceTime(type, timeInt, timeBusy);
-	
-	return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	processDepature												*
+*	Function:	procDep                                                     *
 *																			*
 *	Purpose:	To process a task depature								 	*
 *																			*
 ****************************************************************************/
 
-void Operator::processDepature(Task* task)
+void Operator::procDep(Task* task)
 {
-//	Get task characteristics
-
-	float arrTime = task->getArrTime();
-	float depTime = task->getDepTime();
-	float serTime = task->getSerLeft();
-	float begTime = depTime - serTime;
-	int type = task->getType();
-		
-//	Get interval times and update time
-	
+//	Get task attributes
+    
+    float depTime = task->getDepTime();
+    float begTime = task->getBegTime();
+    int type = task->getType();
     int timeInt = begTime/INT_SIZE;
-	float beginInt = timeInt * INT_SIZE;
-	float endInt = beginInt + INT_SIZE;
-	float timeBusy = 0;
-	float percBusy = 0;
 
-//	Record utilization
-
-	while (depTime >= endInt)
-	{
-		timeBusy = endInt - max(begTime, beginInt);
-		percBusy = timeBusy/INT_SIZE;
-		stats->incUtil(type, timeInt, percBusy);
-		stats->incAvgServiceTime(type, timeInt++, timeBusy);
-        if (timeBusy < 0) {
-            cout << "NEG VALUE: timeBusy = " << timeBusy << endl;
-            cout << "\t task = " << *task << endl;}
-		beginInt = endInt;
-		endInt += INT_SIZE;
-	}
-	
-	timeBusy = depTime - max(begTime, beginInt);
-	percBusy = timeBusy/INT_SIZE;
-	stats->incUtil(type, timeInt, percBusy);
-	stats->incAvgServiceTime(type, timeInt, timeBusy);
-    if (timeBusy < 0) {
-        cout << "NEG VALUE: timeBusy = " << timeBusy << endl;
-        cout << "\t task = " << *task << endl;}
-	
-//	Update state and stats
-	
-	if (DEBUG_ON) cout << "\t Task departing at " << depTime << endl;
-	makeIdle();
-	
-	stats->incAvgWaitTime(type, timeInt, begTime - arrTime);
-	stats->incNumTasksOut(type, timeInt, 1);
+//	Update stats
     
-    if (begTime - arrTime < 0) {
-        cout << "NEG VALUE: waitTime = " << begTime - arrTime << endl;
-        cout << "task = " << *task << endl;}
-	
-//    cout << sharedQueue.size() << endl;
-    
-	return;
-}
+    if (DEBUG_ON) cout << "\t Task departing at " << depTime << endl;
+    updateUtil(task, depTime);
+    stats.incNumTasksOut(type, timeInt, 1);
 
-/****************************************************************************
-*																			*
-*	Function:	makeIdle													*
-*																			*
-*	Purpose:	To finish the current task and move to the next one, if		*
-*				applicable													*
-*																			*
-****************************************************************************/
-
-void Operator::makeIdle()
-{
-    if (isBusy())
-    {
-        float depTime = currTask->getDepTime();
-        currTask = NULL;
-//        taskQueue.pop();
-        startNextTask(depTime);
-    }
+//  Start next task, if applicable
     
+    currTask = NULL;
+    servNextTask(depTime);
+
     return;
 }
 
 /****************************************************************************
 *																			*
-*	Function:	clear														*
+*	Function:	endRep														*
 *																			*
-*	Purpose:	To clear the operator of all tasks 							*
+*	Purpose:	To end the current replication                              *
 *																			*
 ****************************************************************************/
 
-void Operator::clear()
+void Operator::endRep()
 {
-    //  Clear current task
+//  Update stats
+    
+    stats.endRep();
+    
+//  Clear current task
     
     currTask = NULL;
     
-    //  Clear queue
+//  Clear queue
     
     while (!taskQueue.empty())
         taskQueue.pop();
@@ -462,23 +295,264 @@ void Operator::clear()
 *																			*
 ****************************************************************************/
 
-void Operator::output(ostream& out) const 
-{
-//	if (currTask != NULL)
-//		cout << "Operator is busy until " << currTask->getDepTime();
-//	else
-//		cout << "Operator is not busy";
-//	
-//	cout << " and has " << taskQueue.size() << " tasks in queue." << endl;  
+//void Operator::output(ostream& out) const
+//{
+////  Output operator's status and number of enqueued tasks
+//    
+//    if (currTask != NULL)
+//        cout << "Operator is busy until " << currTask->getDepTime();
+//    else
+//        cout << "Operator is not busy";
+//    
+//    cout << " and has " << taskQueue.size() << " tasks in queue." << endl;
+//    
+////  Output queue
+//    
+//    cout << "Queue = {" << endl;
+//    
+//    Queue tmpQ = taskQueue;
+//    
+//    while (!tmpQ.empty())
+//    {
+//        cout << *tmpQ.top() << endl;
+//        tmpQ.pop();
+//    }
+//    
+//    cout << "}" << endl;
+//    
+//    return;
+//}
 
-	Queue temp = taskQueue;
-	
-	while (!temp.empty())
+/****************************************************************************
+*																			*
+*	Function:	getNextTask                                                 *
+*																			*
+*	Purpose:	To get the next task to be serviced                         *
+*																			*
+****************************************************************************/
+
+Task* Operator::getNextTask()
+{
+//  Initialize variable
+    
+    Task* nextTask;
+    
+//  Compare the next two tasks
+    
+    if (!taskQueue.empty() && !sharedQueue.empty())
+    {
+        Task* myTask = taskQueue.top();
+        Task* sharedTask = sharedQueue.top();
+        
+        if (cmpPrty(myTask, sharedTask))
+        {
+            nextTask = sharedTask;
+            sharedQueue.pop();
+        }
+        else
+        {
+            nextTask = myTask;
+            taskQueue.pop();
+        }
+    }
+    else if (!taskQueue.empty())
+    {
+        nextTask = taskQueue.top();
+        taskQueue.pop();
+    }
+    else if (!sharedQueue.empty())
+    {
+        nextTask = sharedQueue.top();
+        sharedQueue.pop();
+    }
+    else
+    {
+        cerr << "Error: Cannot access next task. Exiting..." << endl;
+        exit(1);
+    }
+    
+    return nextTask;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	servNextTask												*
+*																			*
+*	Purpose:	To service the next task in the queue, if applicable		*
+*																			*
+****************************************************************************/
+
+// Bug here?
+
+void Operator::servNextTask(float currTime)
+{
+//  Check that a task can be serviced
+    
+    if (!taskQueue.empty())
+//	if (!taskQueue.empty() && !sharedQueue.empty())
 	{
-		cout << *temp.top() << endl;
-		temp.pop();
+	//	Get next task
+        
+        if (DEBUG_ON) cout << "\t Task starting at " << currTime << endl;
+        
+        currTask = getNextTask();
+        currTask->setBegTime(currTime);
+       
+//        cout << "\t\t currTask =  " << *currTask << endl;
+//        if (taskQueue.size() > 0)
+//            cout << "\t\t taskQueue.top = " << *taskQueue.top() << endl;
+//        if (sharedQueue.size() > 0)
+//            cout << "\t\t sharedQueue.top = " << *sharedQueue.top() << endl;
+        
+	//	Account for fatigue, if applicable
+		
+		float serTime = currTask->getSerLeft();
+        
+		if (FATIGUE_ON)
+		{
+			serTime *= getFatigueFactor(currTime);
+			currTask->setSerTime(serTime);
+            serTime = currTask->getSerLeft();
+		}
+        
+    //  Set depature time
+        
+        float depTime = currTime + serTime;
+        currTask->setDepTime(depTime);
+    
+    //  Update stats
+        
+        int timeInt = currTime/INT_SIZE;
+        int type = currTask->getType();
+        float waitTime = currTime - currTask->getQueTime();
+        stats.incAvgWaitTime(type, timeInt, waitTime);
+        sharedStats.incAvgWaitTime(type, timeInt, waitTime);
+
+    //	Check to see if task expired
+        
+        if (currTaskExp())
+            procExp(currTime);
+    }
+		
+	return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	currTaskExp                                                 *
+*																			*
+*	Purpose:	To check if the current task has expired                    *
+*																			*
+****************************************************************************/
+
+bool Operator::currTaskExp()
+{
+//  Get task attributes
+    
+    float depTime = currTask->getDepTime();
+    float expTime = currTask->getExpTime();
+    
+//  Check if depature time has been set
+    
+    if (isinf(depTime))
+    {
+        cerr << "Error: Current task has not started. Exiting..." << endl;
+        exit(1);
+    }
+    
+//  Check for expiration
+    
+    if (expTime < depTime)
+        return true;
+    else
+        return false;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	procExp                                                     *
+*																			*
+*	Purpose:	To process a task expiration                                *
+*																			*
+****************************************************************************/
+
+void Operator::procExp(float currTime)
+{
+    if (DEBUG_ON) cout << "\t\t Task expired at " << currTime << endl;
+
+//  Get task attributes and update stats
+    
+    int type = currTask->getType();
+    int timeInt = currTime/INT_SIZE;
+    stats.incNumTasksExp(type, timeInt, 1);
+    sharedStats.incNumTasksExp(type, timeInt, 1);
+
+//  Start next task
+    
+    currTask = NULL;
+    servNextTask(currTime);
+    
+    return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	updateUtil													*
+*																			*
+*	Purpose:	To update the utilization									*
+*																			*
+****************************************************************************/
+
+//  Fix wait time
+//  change to updatestat and seed each array here (or implement in stats class)
+
+void Operator::updateUtil(Task* task, float currTime)
+{
+//	Get task attributes
+
+    float begTime = task->getBegTime();
+    int type = task->getType();
+		
+//	Get interval times and update time
+	
+    int timeInt = begTime/INT_SIZE;
+	float beginInt = timeInt * INT_SIZE;
+	float endInt = beginInt + INT_SIZE;
+	float timeBusy = 0;
+	float percBusy = 0;
+ 
+//	Record utilization
+
+	while (currTime >= endInt)
+	{
+		timeBusy = endInt - max(begTime, beginInt);
+		percBusy = timeBusy/INT_SIZE;
+		stats.incUtil(type, timeInt, percBusy);
+		stats.incAvgServiceTime(type, timeInt, timeBusy);
+        sharedStats.incAvgServiceTime(type, timeInt++, timeBusy);
+        
+        if (timeBusy < 0)
+        {
+            cout << "NEG VALUE: timeBusy = " << timeBusy << endl;
+            cout << "\t task = " << *task << endl;
+        }
+		
+        beginInt = endInt;
+		endInt += INT_SIZE;
 	}
 	
+	timeBusy = currTime - max(begTime, beginInt);
+	percBusy = timeBusy/INT_SIZE;
+	stats.incUtil(type, timeInt, percBusy);
+	stats.incAvgServiceTime(type, timeInt, timeBusy);
+    sharedStats.incAvgServiceTime(type, timeInt, timeBusy);
+
+    if (timeBusy < 0)
+    {
+        cout << "NEG VALUE: timeBusy = " << timeBusy << endl;
+        cout << "\t task = " << *task << endl;
+    }
+    
 	return;
 }
 

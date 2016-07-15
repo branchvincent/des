@@ -37,28 +37,30 @@ class Statistics
 		
 	//	Constructor
 	
-		Statistics(int xDim, int yDim, int zDim, int val = 0);
+		Statistics(int xDim = NUM_TASK_TYPES + 1,
+                   int yDim = NUM_INTS + 1,
+                   int zDim = NUM_REPS, int val = 0);
 		
 	//	Inspectors
 
 		int getInterval(int i) {return interval[i];}
 //		float& getUtil(int i, int j) {return util[i][j];} 
-		float& getAvgServiceTime(int i, int j) {return avgServiceTime[currRun][i][j];} 
+		float& getAvgServiceTime(int i, int j) {return avgServiceTime[currRep][i][j];} 
 //		float& getAvgWaitTime(int i, int j) {return avgWaitTime[i][j];} 
-		float& getNumTasksIn(int i, int j) {return numTasksIn[currRun][i][j];} 
+		float& getNumTasksIn(int i, int j) {return numTasksIn[currRep][i][j];} 
 //		float& getNumTasksOut(int i, int j) {return numTasksOut[i][j];} 
 //		void getColSums(Matrix2D& sum, int run);
 //		void getRowSums(Matrix2D& sum, int run);
 
 	//	Mutators
 
-        void incUtil(int i, int j, float val) {incStat(util[currRun], i, j, val);}
-        void incAvgServiceTime(int i, int j, float val) {incStat(avgServiceTime[currRun], i, j, val);}
-		void incAvgWaitTime(int i, int j, float val) {incStat(avgWaitTime[currRun], i, j, val);}
-		void incNumTasksIn(int i, int j, float val) {incStat(numTasksIn[currRun], i, j, val);}
-		void incNumTasksOut(int i, int j, float val) {incStat(numTasksOut[currRun], i, j, val);}
-		void incNumTasksExp(int i, int j, float val) {incStat(numTasksExp[currRun], i, j, val);}
-		void endRun();
+        void incUtil(int i, int j, float val) {incStat(util[currRep], i, j, val);}
+        void incAvgServiceTime(int i, int j, float val) {incStat(avgServiceTime[currRep], i, j, val);}
+		void incAvgWaitTime(int i, int j, float val) {incStat(avgWaitTime[currRep], i, j, val);}
+		void incNumTasksIn(int i, int j, float val) {incStat(numTasksIn[currRep], i, j, val);}
+		void incNumTasksOut(int i, int j, float val) {incStat(numTasksOut[currRep], i, j, val);}
+		void incNumTasksExp(int i, int j, float val) {incStat(numTasksExp[currRep], i, j, val);}
+		void endRep();
 		void endSim();
 		void getMeanAndStdDev(vector<float>& data);
 
@@ -83,9 +85,10 @@ class Statistics
 //	Data members
 
 	private:
-		int currRun;				// current run counter
+		int currRep;				// current run counter
         int cmpStatsIndex[NUM_STATS];  // index in cmpStats
-		int interval[NUM_INTS];		// time interval
+		vector<int> interval;		// time interval
+//        int interval[NUM_INTS];		// time interval
 		Matrix3D util;				// utilization
 		Matrix3D avgServiceTime;	// average service time
 		Matrix3D avgWaitTime;		// average wait time in queue
@@ -97,7 +100,7 @@ class Statistics
 
 //	Operators
 
-ostream& operator<<(ostream& out, const Statistics stats) {stats.output(out); return out;}
+ostream& operator<<(ostream& out, const Statistics& stats) {stats.output(out); return out;}
 
 /****************************************************************************
 *																			*
@@ -108,9 +111,9 @@ ostream& operator<<(ostream& out, const Statistics stats) {stats.output(out); re
 ****************************************************************************/
 
 Statistics::Statistics(int xDim, int yDim, int zDim, int val) :
-    currRun(0),
+    currRep(0),
     cmpStatsIndex(),
-    interval(),
+    interval(NUM_INTS),
 	util(zDim, Matrix2D(xDim, vector<float>(yDim, val))),
 	avgServiceTime(zDim, Matrix2D(xDim, vector<float>(yDim, val))), 
 	avgWaitTime(zDim, Matrix2D(xDim, vector<float>(yDim, val))), 
@@ -140,7 +143,7 @@ Statistics::Statistics(int xDim, int yDim, int zDim, int val) :
 //{
 ////	Check matrix size
 //
-//	if (sum.size() != NUM_STATS * NUM_TASK_TYPES || sum[0].size() != NUM_RUNS + 2)
+//	if (sum.size() != NUM_STATS * NUM_TASK_TYPES || sum[0].size() != NUM_REPS + 2)
 //	{
 //		cerr << "Incompatible matrix size. Exiting..." << endl;
 //		exit(1);
@@ -153,11 +156,11 @@ Statistics::Statistics(int xDim, int yDim, int zDim, int val) :
 //
 //	for (int i = 0; i < lastRow; i++)
 //	{
-//		sum[i][run] = util[currRun][i][lastCol];
-//		sum[i + NUM_TASK_TYPES][run] = avgServiceTime[currRun][i][lastCol];
-//		sum[i + 2 * NUM_TASK_TYPES][run] = avgWaitTime[currRun][i][lastCol];
-//		sum[i + 3 * NUM_TASK_TYPES][run] = numTasksIn[currRun][i][lastCol];
-//		sum[i + 4 * NUM_TASK_TYPES][run] = numTasksOut[currRun][i][lastCol];
+//		sum[i][run] = util[currRep][i][lastCol];
+//		sum[i + NUM_TASK_TYPES][run] = avgServiceTime[currRep][i][lastCol];
+//		sum[i + 2 * NUM_TASK_TYPES][run] = avgWaitTime[currRep][i][lastCol];
+//		sum[i + 3 * NUM_TASK_TYPES][run] = numTasksIn[currRep][i][lastCol];
+//		sum[i + 4 * NUM_TASK_TYPES][run] = numTasksOut[currRep][i][lastCol];
 //	}
 //	
 //	return;
@@ -175,7 +178,7 @@ Statistics::Statistics(int xDim, int yDim, int zDim, int val) :
 //{
 ////	Check matrix size
 //
-//	if (sum.size() != NUM_STATS * NUM_INTS || sum[0].size() != NUM_RUNS + 2)
+//	if (sum.size() != NUM_STATS * NUM_INTS || sum[0].size() != NUM_REPS + 2)
 //	{
 //		cerr << "Incompatible matrix size. Exiting..." << endl;
 //		exit(1);
@@ -188,11 +191,11 @@ Statistics::Statistics(int xDim, int yDim, int zDim, int val) :
 //
 //	for (int i = 0; i < lastCol; i++)
 //	{
-//		sum[i][run] = util[currRun][i][lastRow];
-//		sum[i + NUM_INTS][run] = avgServiceTime[currRun][lastRow][i];
-//		sum[i + 2 * NUM_INTS][run] = avgWaitTime[currRun][lastRow][i];
-//		sum[i + 3 * NUM_INTS][run] = numTasksIn[currRun][lastRow][i];
-//		sum[i + 4 * NUM_INTS][run] = numTasksOut[currRun][lastRow][i];
+//		sum[i][run] = util[currRep][i][lastRow];
+//		sum[i + NUM_INTS][run] = avgServiceTime[currRep][lastRow][i];
+//		sum[i + 2 * NUM_INTS][run] = avgWaitTime[currRep][lastRow][i];
+//		sum[i + 3 * NUM_INTS][run] = numTasksIn[currRep][lastRow][i];
+//		sum[i + 4 * NUM_INTS][run] = numTasksOut[currRep][lastRow][i];
 //	}
 //	
 //	return;
@@ -219,8 +222,8 @@ void Statistics::incStat(Matrix2D& stat, int i, int j, float val)
 	
 //	Calculate indices for the last row/column
     
-	int lastRow = util[0].size() - 1;
-	int lastCol = util[0][0].size() - 1;
+    int lastRow = util[0].size() - 1;
+    int lastCol = util[0][0].size() - 1;
 
 //	Increment stat values for the current run
 
@@ -246,8 +249,8 @@ void Statistics::output(ostream& out) const
 
 	out << "Statistic Type, Time (min), ";
 		
-	for (int i = 0; i < currRun; i++)
-		out << "Run " << i << ", ";
+	for (int i = 0; i < currRep; i++)
+		out << "Rep " << i << ", ";
 	out << "Mean, Std Dev" << endl;
 
 //	Output statistical data
@@ -258,7 +261,7 @@ void Statistics::output(ostream& out) const
 	{	
 		out << ", " << i * INT_SIZE << ", ";
 			
-		for (int j = 0; j < NUM_RUNS + 2; j++)
+		for (int j = 0; j < NUM_REPS + 2; j++)
 			out << cmpStats[i][j] << ", ";	
 		out << endl;
 	}
@@ -298,7 +301,7 @@ void Statistics::outputArr(ostream& out, string arrName, int statNum) const
 		
 	//	Output stat data
 	
-		for (int j = 0; j < NUM_RUNS + 2; j++)
+		for (int j = 0; j < NUM_REPS + 2; j++)
 			out << cmpStats[i][j] << ", ";	
 		out << endl;
 	}
@@ -381,13 +384,13 @@ void Statistics::outputArr(ostream& out, string arrName, int statNum) const
 
 /****************************************************************************
 *																			*
-*	Function:	endRun														*
+*	Function:	endRep														*
 *																			*
-*	Purpose:	To update the compiled stats at the end of a run			*
+*	Purpose:	To update the compiled stats at the end of a replication	*
 *																			*
 ****************************************************************************/
 
-void Statistics::endRun()
+void Statistics::endRep()
 {
 //	Calculate indices for the last row/column
 
@@ -402,22 +405,22 @@ void Statistics::endRun()
 //	Copy totals from stats
 
 	for (int i = 0; i < lastCol; i++)
-		cmpStats[i][currRun] = util[currRun][lastRow][i];
+		cmpStats[i][currRep] = util[currRep][lastRow][i];
     
 	for (int i = 0; i < lastRow; i++)
 	{
-		cmpStats[i + NUM_INTS][currRun] = avgServiceTime[currRun][i][lastCol];
-		cmpStats[i + NUM_INTS + NUM_TASK_TYPES][currRun] = avgWaitTime[currRun][i][lastCol];
-		cmpStats[i + NUM_INTS + 2*NUM_TASK_TYPES][currRun] = numTasksIn[currRun][i][lastCol];
-		cmpStats[i + NUM_INTS + 3*NUM_TASK_TYPES][currRun] = numTasksOut[currRun][i][lastCol];
-		cmpStats[i + NUM_INTS + 4*NUM_TASK_TYPES][currRun] = numTasksExp[currRun][i][lastCol];
+		cmpStats[i + NUM_INTS][currRep] = avgServiceTime[currRep][i][lastCol];
+		cmpStats[i + NUM_INTS + NUM_TASK_TYPES][currRep] = avgWaitTime[currRep][i][lastCol];
+		cmpStats[i + NUM_INTS + 2*NUM_TASK_TYPES][currRep] = numTasksIn[currRep][i][lastCol];
+		cmpStats[i + NUM_INTS + 3*NUM_TASK_TYPES][currRep] = numTasksOut[currRep][i][lastCol];
+		cmpStats[i + NUM_INTS + 4*NUM_TASK_TYPES][currRep] = numTasksExp[currRep][i][lastCol];
 	}
 	
 //	Increment current run
 	
-	currRun++;
+	currRep++;
 		
-	if (currRun == NUM_RUNS)
+	if (currRep == NUM_REPS)
 		endSim();
 }
 

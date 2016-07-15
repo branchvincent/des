@@ -35,12 +35,15 @@ def main():
 	
 #	Set input and output files
 	
-	if oneRun:
-		inFile = filePath + 'singleRun.csv'
-		outFile = filePath + 'singleGraph.pdf'
-	else:
-		inFile = filePath + 'batchRun.csv'
-		outFile = filePath + 'batchGraph.pdf'
+	inFile = '/Users/Branch/Desktop/DES/DES/Output/Results/cond.csv'
+	outFile = '/Users/Branch/Desktop/DES/DES/Output/Results/conGraph.pdf'
+	
+#	if oneRun:
+#		inFile = filePath + 'singleRun.csv'
+#		outFile = filePath + 'singleGraph.pdf'
+#	else:
+#		inFile = filePath + 'batchRun.csv'
+#		outFile = filePath + 'batchGraph.pdf'
 	
 #	Get and plot data
 
@@ -77,11 +80,13 @@ def getData(inputFile):
 				data[i].append(float(row[i+1]))		# Add utilization for each task type
 				
 	else:											# For multiple runs,
+		print("Time, Util, Std Dev")
 		for row in reader:
+			print("%s, %s, %s" %(row[0], row[-3], row[-2]))
 			time.append(float(row[0]))				# Add time interval
 			data[0].append(float(row[-3]))			# Add avg utilization
 			error.append(float(row[-2]))			# Add std dev
-			numRuns = len(row) - 4					# Update number of runs
+			numRuns = len(row) - 2					# Update number of runs
 
 	return time, data, error
 
@@ -114,10 +119,10 @@ def plotData(time, data, error, outFile):
 
 # 	Initialize graph
 
-	plt.title("Utilization for %d Runs" %numRuns)
+	plt.title("Conductor's Utilization for %d Runs" %numRuns)
 	plt.xlabel("Time (min)")
 	plt.ylabel("Utilization (%)")
-	plt.ylim(0, 110)
+	plt.ylim(0, 1.1)
 	plt.xlim(0, endTimes[2])
 #	plt.xticks(np.arange(0, endTimes[2] + intSize, intSize))
 	ax = plt.gca()
@@ -158,7 +163,7 @@ def plotData(time, data, error, outFile):
 # 	Plot phase lines
 
 	for i in range(2):
-		plt.plot((endTimes[i], endTimes[i]), (0, 110), 'm--')
+		plt.plot((endTimes[i], endTimes[i]), (0, 1.10), 'm--')
 
 # 	Save file
 	

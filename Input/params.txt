@@ -1,0 +1,12 @@
+output_file		/Users/Branch/Desktop/DES/DES/Output/results.csv
+num_hours		12
+traffic			m m m m m m m m m m m m
+num_reps		100
+output_on		1
+rand_run_on		1
+int_size		30
+num_task_types	9
+num_phases		3
+traffic_on		0
+fatigue_on		0
+debug_on		1

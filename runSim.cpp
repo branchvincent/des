@@ -21,7 +21,7 @@ using namespace cnsts;
 
 // Function prototypes
 
-void setTrafficLevels(vector<float>& traffic, bool randRun);
+void setTrafficLevels(vector<float>& traffic);
 void outputStats(Simulation& sim, string outputFile);
 
 /****************************************************************************
@@ -33,26 +33,22 @@ void outputStats(Simulation& sim, string outputFile);
 //  Notes:
 //  - Not using RAND_RUN
 //  - OUTPUT_ON used once
-//  - sim.run(NUM_RUNS):  NUM_RUNS has already set stat size
+//  - sim.run(NUM_REPS):  NUM_REPS has already set stat size
+//  - call runs replications
 
 int main() 
 {
 //	Set folder path
 
-//	string filePath = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/Data/";
-    string outputFile = "/Users/Branch/Desktop/DES/DES/Output/runData.csv";
+//  string outputFile = "/Users/Branch/Desktop/DES/DES/Output/runData.csv";
 		
 //	Initialize variables
 
-    bool randRun = false;
-	vector<float> traffic(NUM_HOURS, 0);
-    setTrafficLevels(traffic, randRun);
-    
 //  Run sim and output data
     
-    Simulation sim(randRun, END_TIME, traffic);
-	sim.run(NUM_RUNS);
-    outputStats(sim, outputFile);
+    Simulation sim; //(END_TIME, traffic);
+	sim.run();
+    outputStats(sim, OUTPUT_FILE);
 
 	return 0;
 }
@@ -65,25 +61,25 @@ int main()
 *																			*
 ****************************************************************************/
 
-void setTrafficLevels(vector<float>& traffic, bool randRun)
-{
-//	Set random traffic, if applicable
-
-    srand((unsigned int) time(0));
-	float levels[] = {0.5, 1, 2};
-	
-	if (randRun)
-		for (int i = 0; i < traffic.size(); i++)
-			traffic[i] = levels[rand() % 3];
-	
-//	Otherwise, set specific traffic
-
-	else
-		for (int i = 0; i < traffic.size(); i++)
-			traffic[i] = levels[i % 3];
-	
-	return;
-}
+//void setTrafficLevels(vector<float>& traffic)
+//{
+////	Set random traffic, if applicable
+//
+//    srand((unsigned int) time(0));
+//	float levels[] = {0.5, 1, 2};
+//	
+//	if (RAND_RUN_ON)
+//		for (int i = 0; i < traffic.size(); i++)
+//			traffic[i] = levels[rand() % 3];
+//	
+////	Otherwise, set specific traffic
+//
+//	else
+//		for (int i = 0; i < traffic.size(); i++)
+//			traffic[i] = levels[i % 3];
+//	
+//	return;
+//}
 
 /****************************************************************************
 *																			*

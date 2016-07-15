@@ -38,7 +38,7 @@ class Task
 
 	//	Constructor
 		
-		Task(int tp, float prevArrTime, int seed, int phase, vector<float> traffLevel);
+		Task(int tp, float prevArrTime, int phase, vector<float> traffLevel);
 
 	//	Inspectors
 
@@ -49,11 +49,13 @@ class Task
 		const float& getSerTime() {return serTime;}
 		const float& getDepTime() {return depTime;}
 		const float& getExpTime() {return expTime;}
+        const float& getBegTime() {return begTime;}
+        const float& getQueTime() {return queTime;}
         const float& getSerLeft() {return serLeft;}
         const float getPercLeft() {return serLeft/serTime;}
         const int getOpNum() {return opNum;}
-		float percShared();
-		bool isSharedTask() {return (int)percShared();}
+		float getPercAllowed();
+		bool isSharedTask() {return (int)getPercAllowed();}
 
 	//	Mutators
 	
@@ -61,6 +63,8 @@ class Task
 		void setSerTime(float t) {serTime = t;}
 		void setDepTime(float t) {depTime = t;}
         void setSerLeft(float t) {serLeft = t;}
+        void setBegTime(float t) {begTime = t;}
+        void setQueTime(float t) {queTime = t;}
         void setOpNum(int n) {opNum = n;}
 
 	//	Other member functions
@@ -76,10 +80,10 @@ class Task
 	//	Used by constructor
 	
 		int getPriority(int phase);
-		float genArrTime(float prevArrTime, int seed, int phase, vector<float> traffLevel);
+		float genArrTime(float prevArrTime, int phase, vector<float> traffLevel, int seed);
 		float adjArrForTraff(float arrival, float prevArrTime, int phase, vector<float> traffLevel);
 		float genSerTime(int seed);
-		float genExpTime(vector<float> traffLevel, int phase, int seed);
+		float genExpTime(int phase, vector<float> traffLevel, int seed);
 		float genRandNum(char distType, int seed, float arg1, float arg2 = 0);
 	
 //	Data members
@@ -91,14 +95,15 @@ class Task
 		float serTime; 		// service time (min)
 		float depTime;		// depature time (min)
 		float expTime;		// expiration time (min)
-//		float waitTime;		// total wait time in queue
+		float begTime;		// begin service time (min)
+        float queTime;      // enter queue time (min)
         float serLeft;      // service time left
         int opNum;          // operator id number
 };
 
 //	Operators
 
-ostream& operator<<(ostream& out, const Task t) {t.output(out); return out;}
+ostream& operator<<(ostream& out, const Task& t) {t.output(out); return out;}
 
 /****************************************************************************
 *																			*
@@ -109,14 +114,16 @@ ostream& operator<<(ostream& out, const Task t) {t.output(out); return out;}
 *																			*
 ****************************************************************************/
 
-Task::Task(int tp, float prevArrTime, int seed, int phase, vector<float> traffLevel)
-//    type(tp),
-//    priority(getPriority(phase)),
-//    arrTime(genArrTime(prevArrTime, rand(), phase, traffLevel)),
-//    serTime(genSerTime(rand())),
-//    depTime(-1),
-//    expTime(genExpTime(traffLevel, phase, rand())),
-//    serLeft(1)
+Task::Task(int tp, float prevArrTime, int phase, vector<float> traffLevel) :
+    type(tp),
+    priority(getPriority(phase)),
+    arrTime(genArrTime(prevArrTime, phase, traffLevel, rand())),
+    serTime(genSerTime(rand())),
+    depTime(INFINITY),
+    expTime(genExpTime(phase, traffLevel, rand())),
+    begTime(0),
+    queTime(arrTime),
+    serLeft(serTime)
 {
 //	Check type
 
@@ -136,15 +143,6 @@ Task::Task(int tp, float prevArrTime, int seed, int phase, vector<float> traffLe
 	
 //	Set task attributes
 	
-	srand(seed);
-	type = tp;
-	priority = getPriority(phase);
-	arrTime = genArrTime(prevArrTime, rand(), phase, traffLevel);
-	serTime = genSerTime(rand());
-	depTime = -1;
-	expTime = genExpTime(traffLevel, phase, rand());
-    serLeft = serTime;
-    
     if (!isSharedTask())
         opNum = 0;
     else
@@ -188,7 +186,7 @@ int Task::getPriority(int phase)
 *																			*
 ****************************************************************************/
 
-float Task::genArrTime(float prevArrTime, int seed, int phase, vector<float> traffLevel)
+float Task::genArrTime(float prevArrTime, int phase, vector<float> traffLevel, int seed)
 {	
 //	Exponential distribution parameters (task types vs. phases)
 
@@ -324,7 +322,7 @@ float Task::genSerTime(int seed)
 *																			*
 ****************************************************************************/
 
-float Task::genExpTime(vector<float> traffLevel, int phase, int seed)
+float Task::genExpTime(int phase, vector<float> traffLevel, int seed)
 {
 //	Exponential distribution parameters (task types vs. phases)						* returns infinity for lda = 0
 
@@ -430,15 +428,16 @@ float Task::genRandNum(char distType, int seed, float arg1, float arg2)
 
 /****************************************************************************
 *																			*
-*	Function:	percShared													*
+*	Function:	getPercAllowed												*
 *																			*
-*	Purpose:	To 								*
+*	Purpose:	To return the percent of the task that other operators can  *
+*               complete                                                    *
 *																			*
 ****************************************************************************/
 
-float Task::percShared()
+float Task::getPercAllowed()
 {
-	float percShared[9] = 	{	0.1,	// Communicating
+	float percAllowed[9] = 	{	0.1,	// Communicating
 								0.8, 	// Exception handling
 								0.5,	// Paperwork
 								0.25,	// Maintenance of way
@@ -449,7 +448,7 @@ float Task::percShared()
 								1		// Planning ahead
 				 	 		};	
 				
-	return percShared[type];	
+	return percAllowed[type];
 }
 
 #endif
