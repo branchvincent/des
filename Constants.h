@@ -17,6 +17,8 @@
 #include "Parameters.h"
 #include <vector>
 
+//using namespace std;
+
 //namespace cnsts
 //{
 //    //	Batch run details
@@ -45,7 +47,7 @@ namespace cnsts
 //  Get parameters
     
     int i = 0;
-    Parameters pms("/Users/Branch/Desktop/DES/DES/Input/params.txt");
+    Parameters pms;
     
 //  Set parameters
     

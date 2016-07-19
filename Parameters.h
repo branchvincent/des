@@ -32,7 +32,7 @@ class Parameters
 
 	//	Constructor
 		
-		Parameters(string paramFile);
+		Parameters();
 
 	//	Inspectors
     
@@ -56,8 +56,16 @@ class Parameters
 *																			*
 ****************************************************************************/
 
-Parameters::Parameters(string paramFile)
+Parameters::Parameters()
 {
+//  Get parameter file
+    
+    string paramFile;
+    cout << "Input parameter file location: ";
+    cin >> paramFile;
+    
+//    paramFile = "/Users/Branch/Desktop/DES/DES/Input/params.txt";
+    
 //  Open parameter file
     
     fstream fin(paramFile);

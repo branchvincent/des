@@ -15,6 +15,7 @@
 #include <iostream>
 #include <string>
 #include "Simulation.h"
+#include "Python.h"
 
 using namespace std;
 using namespace cnsts;
@@ -49,6 +50,24 @@ int main()
     Simulation sim; //(END_TIME, traffic);
 	sim.run();
     outputStats(sim, OUTPUT_FILE);
+    
+//  Plot data in python
+    
+//    string command = "python3 ";
+//    string plotFile = "/Users/Branch/Desktop/DES/DES/plotUtil.py ";
+//    string engGraph = "engGraph.pdf ";
+//    string conGraph = "conGraph.pdf ";
+//    string numRuns = "100";
+    
+//    string command1 = "python3 /Users/Branch/Desktop/DES/DES/plotUtil.py";
+//    system(command1.c_str());
+
+//    command += plotFile;
+//    system(command.c_str());
+    
+//    Py_Initialize();
+//    PyRun_SimpleString("print('Hello')");
+//    Py_Finalize();
 
 	return 0;
 }

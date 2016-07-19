@@ -17,6 +17,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
+import sys
+
+# Set arguments
+
+inFile = sys.argv[1]
+outFile1 = '/Users/Branch/Desktop/engGraph.pdf'
+outFile2 = '/Users/Branch/Desktop/conGraph.pdf'
+numInts = 24
 
 # Global variables
 
@@ -35,8 +43,8 @@ def main():
 	
 #	Set input and output files
 	
-	inFile = '/Users/Branch/Desktop/DES/DES/Output/Results/cond.csv'
-	outFile = '/Users/Branch/Desktop/DES/DES/Output/Results/conGraph.pdf'
+	inFile = '/Users/Branch/Desktop/DES/DES/Output/Results/eng.csv'
+	outFile = '/Users/Branch/Desktop/DES/DES/Output/Results/engGraph.pdf'
 	
 #	if oneRun:
 #		inFile = filePath + 'singleRun.csv'
@@ -82,6 +90,8 @@ def getData(inputFile):
 	else:											# For multiple runs,
 		print("Time, Util, Std Dev")
 		for row in reader:
+#			if (row[0] == 'Utilization'):
+#				for i in xrange(24):
 			print("%s, %s, %s" %(row[0], row[-3], row[-2]))
 			time.append(float(row[0]))				# Add time interval
 			data[0].append(float(row[-3]))			# Add avg utilization
@@ -119,7 +129,7 @@ def plotData(time, data, error, outFile):
 
 # 	Initialize graph
 
-	plt.title("Conductor's Utilization for %d Runs" %numRuns)
+	plt.title("Engineer's Utilization for %d Runs" %numRuns)
 	plt.xlabel("Time (min)")
 	plt.ylabel("Utilization (%)")
 	plt.ylim(0, 1.1)

@@ -131,6 +131,18 @@ Simulation::Simulation(int t) : //, vector<float> trafficLevels) :
         srand((unsigned int) time(0));
     else
         srand(0);
+    
+//  Output run parameters
+    
+    cout << "Simulation Parameters" << endl;
+    cout << "Number of hours = " << NUM_HOURS << endl;
+    cout << "Number of replications = " << NUM_REPS << endl;
+    cout << "Interval size = " << INT_SIZE << endl;
+    cout << "Traffic levels = ";
+    
+    for (int i = 0; i < TRAFFIC.size(); i++)
+        cout << TRAFFIC[i] << ", ";
+    cout << endl << endl;
 }
 
 /****************************************************************************

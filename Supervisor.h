@@ -264,10 +264,7 @@ void Supervisor::procDep(Task* task)
     if (task == eng.getCurrTask())
         eng.procDep(task);
     else if (task == con.getCurrTask())
-    {
         con.procDep(task);
-//        cout << "COND TASK EXITING" << endl;
-    }
     else
     {
         cerr << "Error: Could not process task depature. Exiting..." << endl;

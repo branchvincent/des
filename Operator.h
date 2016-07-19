@@ -94,6 +94,7 @@ class Operator
 //	Data members
 
 	private:
+//        string name;
 		Task* currTask;             // current task
 		Queue taskQueue;            // task queue
         Queue& sharedQueue;         // shared queue
@@ -211,15 +212,15 @@ void Operator::procIntrp(float currTime)
 
 //	Add current task to queue and service next task
     
-    float percLeft = currTask->getPercLeft();
-    float percAllowed = currTask->getPercAllowed();
-
-    if (percLeft <= percAllowed)
-    {
-        sharedQueue.push(currTask);
-        currTask->setOpNum(2);
-    }
-    else
+//    float percLeft = currTask->getPercLeft();
+//    float percAllowed = currTask->getPercAllowed();
+//
+//    if (percLeft <= percAllowed)
+//    {
+//        sharedQueue.push(currTask);
+//        currTask->setOpNum(2);
+//    }
+//    else
         taskQueue.push(currTask);
     
 //  Service next task
@@ -395,7 +396,10 @@ void Operator::servNextTask(float currTime)
         
         if (DEBUG_ON) cout << "\t Task starting at " << currTime << endl;
         
-        currTask = getNextTask();
+        currTask = taskQueue.top();
+        taskQueue.pop();
+        
+//        currTask = getNextTask();
         currTask->setBegTime(currTime);
        
 //        cout << "\t\t currTask =  " << *currTask << endl;
@@ -411,7 +415,8 @@ void Operator::servNextTask(float currTime)
 		if (FATIGUE_ON)
 		{
 			serTime *= getFatigueFactor(currTime);
-			currTask->setSerTime(serTime);
+//			currTask->setSerTime(serTime);          //  error: set time left
+            currTask->setSerLeft(serTime);
             serTime = currTask->getSerLeft();
 		}
         
