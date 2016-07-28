@@ -49,8 +49,7 @@ int main()
     
     Simulation sim;
 	sim.run();
-    
-//    outputStats(sim, OUTPUT_PATH + "/results.csv");
+    outputStats(sim, OUTPUT_PATH + "/results.csv");
     
 //  Plot data in python
     
