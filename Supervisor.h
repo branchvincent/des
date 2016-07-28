@@ -19,6 +19,7 @@
 #include "Task.h"
 #include "Operator.h"
 #include "Statistics.h"
+#include "Python.h"
 
 using namespace std;
 using namespace cnsts;
@@ -58,7 +59,7 @@ class Supervisor
 //        Supervisor(Statistics* sts) : sharedQueue(), eng(sts, sharedQueue),
 //                                        con(sts, sharedQueue), stats(sts) {}
 	
-        Supervisor() : stats(), sharedQueue(&cmpPrty), eng(stats, sharedQueue), con(stats, sharedQueue) {}
+        Supervisor() : stats(), sharedQueue(&cmpPrty), eng(stats, sharedQueue, "Engineer"), con(stats, sharedQueue, "Conductor") {}
 
 	// 	Inspector
 		
@@ -75,6 +76,7 @@ class Supervisor
         void procIntrp(float currTime);
 		void procDep(Task* task);
         void endRep();
+        void plot() {Py_Initialize(); eng.plot(); con.plot(); Py_Finalize();}
     
     //  Other member functions
     

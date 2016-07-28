@@ -16,6 +16,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "PyPlot.h"
 
 using namespace std;
 using namespace cnsts;
@@ -72,6 +73,7 @@ class Statistics
 				
 	//	Other member functions
 
+        void plot(string opName);
 		void output(ostream& out) const;
 		void outputArr(ostream& out, string arrName, int statNum) const;
 		void outputRun(ostream& out, int run) const;
@@ -480,6 +482,37 @@ void Statistics::getMeanAndStdDev(vector<float>& data)
 	data[N + 1] = sqrt(devSum/(N-1));
 	
 	return;           
+}
+
+void Statistics::plot(string opName)
+{
+    int lastRow = util[0].size() - 1;
+    int lastCol = util[0][0].size() - 1;
+    
+    vector<float> time;
+    vector<float> util;
+    vector<float> err;
+    
+    for (int i = 0; i < NUM_INTS; i++)
+    {
+        time.push_back(interval[i]);
+        util.push_back(cmpStats[i][NUM_REPS]);
+        err.push_back(cmpStats[i][NUM_REPS + 1]);
+    }
+    
+//  Plot using matplotlib
+    
+    PyPlot plt;
+    plt.set_title(opName + " Utilization for " + to_string(NUM_REPS) + " Reps");
+    plt.set_xlabel("Time (min)");
+    plt.set_ylabel("Utilization");
+    plt.set_xlim(0, END_TIME);
+    plt.set_ylim(0, 1.1);
+    plt.set_axis();
+    plt.plot_bar(time, util, err);
+    plt.save_fig(OUTPUT_PATH + "/" + opName + "_Util.pdf");
+    
+    return;
 }
 
 #endif

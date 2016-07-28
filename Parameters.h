@@ -61,10 +61,10 @@ Parameters::Parameters()
 //  Get parameter file
     
     string paramFile;
-    cout << "Input parameter file location: ";
-    cin >> paramFile;
+//    cout << "Input parameter file location: ";
+//    cin >> paramFile;
     
-//    paramFile = "/Users/Branch/Desktop/DES/DES/Input/params.txt";
+    paramFile = "/Users/Branch/Desktop/DES/DES/Input/params.txt";
     
 //  Open parameter file
     

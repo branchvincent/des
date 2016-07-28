@@ -137,9 +137,8 @@ Simulation::Simulation(int t) : //, vector<float> trafficLevels) :
     cout << "Simulation Parameters" << endl;
     cout << "Number of hours = " << NUM_HOURS << endl;
     cout << "Number of replications = " << NUM_REPS << endl;
-    cout << "Interval size = " << INT_SIZE << endl;
-    cout << "Traffic levels = ";
     
+    cout << "Traffic levels = ";
     for (int i = 0; i < TRAFFIC.size(); i++)
         cout << TRAFFIC[i] << ", ";
     cout << endl << endl;
@@ -163,6 +162,8 @@ void Simulation::run()
 		cout << "Rep " << i << endl;
 		runRep();
 	}
+    
+    spv.plot();
     
     return;
 }

@@ -15,7 +15,6 @@
 #include <iostream>
 #include <string>
 #include "Simulation.h"
-#include "Python.h"
 
 using namespace std;
 using namespace cnsts;
@@ -36,6 +35,7 @@ void outputStats(Simulation& sim, string outputFile);
 //  - OUTPUT_ON used once
 //  - sim.run(NUM_REPS):  NUM_REPS has already set stat size
 //  - call runs replications
+//  - change rand() to default_random_engine (minstd_rand0 rand; rand();)
 
 int main() 
 {
@@ -47,9 +47,10 @@ int main()
 
 //  Run sim and output data
     
-    Simulation sim; //(END_TIME, traffic);
+    Simulation sim;
 	sim.run();
-    outputStats(sim, OUTPUT_FILE);
+    
+//    outputStats(sim, OUTPUT_PATH + "/results.csv");
     
 //  Plot data in python
     

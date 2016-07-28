@@ -51,7 +51,8 @@ class Operator
 		
 	//	Constructor
 	
-        Operator(Statistics& sts, Queue& sharedQ) :
+        Operator(Statistics& sts, Queue& sharedQ, string nm) :
+            name(nm),
             currTask(NULL),
             taskQueue(&cmpPrty),
             sharedQueue(sharedQ),
@@ -81,6 +82,7 @@ class Operator
 	//	Other member functions
 
         void output(ostream& out) const {out << stats << endl;}
+        void plot() {stats.plot(name);}
 
 //  Private member functions
     
@@ -94,7 +96,7 @@ class Operator
 //	Data members
 
 	private:
-//        string name;
+        string name;
 		Task* currTask;             // current task
 		Queue taskQueue;            // task queue
         Queue& sharedQueue;         // shared queue
@@ -200,7 +202,7 @@ void Operator::procIntrp(float currTime)
         exit(1);
     }
     
-    if (DEBUG_ON) cout << "\t\t Task interrupted at " << currTime << endl; //" " << *currTask << endl;
+    if (DEBUG_ON) cout << "\t\t" << name << ": Task interrupted at " << currTime << endl; //" " << *currTask << endl;
     
 //	Update stats
     
@@ -250,7 +252,7 @@ void Operator::procDep(Task* task)
 
 //	Update stats
     
-    if (DEBUG_ON) cout << "\t Task departing at " << depTime << endl;
+    if (DEBUG_ON) cout << "\t" << name << ": Task departing at " << depTime << endl;
     updateUtil(task, depTime);
     stats.incNumTasksOut(type, timeInt, 1);
 
@@ -394,7 +396,7 @@ void Operator::servNextTask(float currTime)
 	{
 	//	Get next task
         
-        if (DEBUG_ON) cout << "\t Task starting at " << currTime << endl;
+        if (DEBUG_ON) cout << "\t" << name << ": Task starting at " << currTime << endl;
         
         currTask = taskQueue.top();
         taskQueue.pop();
