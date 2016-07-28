@@ -28,6 +28,10 @@ using namespace params;
 *																			*
 ****************************************************************************/
 
+// Notes
+// - This class is not being used
+// - Update to work
+
 class TaskParameters
 {
 //	Public member functions
@@ -55,7 +59,6 @@ class TaskParameters
 		float* serDistParams[NUM_TASK_TYPES][NUM_PHASES];
 		float* expDistParams[2][NUM_TASK_TYPES][NUM_PHASES];
 		bool* affByTraff[NUM_TASK_TYPES][NUM_PHASES];
-		float percAllowed[NUM_TASK_TYPES];
 };
 
 //	Operators
@@ -172,17 +175,17 @@ TaskParameters::TaskParameters()
 
 //	Set percent of tasks to be completed before jockeying
 
-                    //  allow to vary by phase
-	percAllowed[9] = {	0.1,	// Communicating
-						0.8, 	// Exception handling
-						0.5,	// Paperwork
-						0.25,	// Maintenance of way
-						0.5,	// Temp speed restriction
-						1,		// Signal response management
-						1,		// Monitoring inside
-						0.5,	// Monitoring outisde
-						1		// Planning ahead
-		 	 		};	
+//                    //  allow to vary by phase
+//	percAllowed[9] = {	0.1,	// Communicating
+//						0.8, 	// Exception handling
+//						0.5,	// Paperwork
+//						0.25,	// Maintenance of way
+//						0.5,	// Temp speed restriction
+//						1,		// Signal response management
+//						1,		// Monitoring inside
+//						0.5,	// Monitoring outisde
+//						1		// Planning ahead
+//		 	 		};	
     
 	return;
 }

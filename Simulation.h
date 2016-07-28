@@ -22,7 +22,7 @@
 #include <algorithm>
 #include "Supervisor.h"
 #include "Task.h"
-#include "Parameters.h"
+#include "Parameters/Parameters.h"
 #include "Statistics.h"
 
 using namespace std;

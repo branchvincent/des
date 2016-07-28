@@ -41,8 +41,6 @@ typedef priority_queue<Task*,vector<Task*>,decltype(&cmpPrty)> Queue;
 *																			*
 ****************************************************************************/
 
-//  Put percShared into this class (varies by operator)
-
 class Operator
 {
 //	Public member functions
@@ -214,16 +212,7 @@ void Operator::procIntrp(float currTime)
 
 //	Add current task to queue and service next task
     
-//    float percLeft = currTask->getPercLeft();
-//    float percAllowed = currTask->getPercAllowed();
-//
-//    if (percLeft <= percAllowed)
-//    {
-//        sharedQueue.push(currTask);
-//        currTask->setOpNum(2);
-//    }
-//    else
-        taskQueue.push(currTask);
+    taskQueue.push(currTask);
     
 //  Service next task
     

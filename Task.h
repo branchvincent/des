@@ -10,8 +10,6 @@
 *																			*
 ****************************************************************************/
 
-//  change seed to rand()?
-
 #ifndef TASK_H
 #define TASK_H
 
@@ -19,7 +17,7 @@
 #include <string>
 #include <random>
 #include <cmath>
-#include "Parameters.h"
+#include "Parameters/Parameters.h"
 
 using namespace std;
 using namespace params;
@@ -29,6 +27,9 @@ using namespace params;
 *	Definition of Task class												*
 *																			*
 ****************************************************************************/
+
+// Notes
+// - Fix traffic
 
 class Task
 {
@@ -52,10 +53,8 @@ class Task
         const float& getBegTime() {return begTime;}
         const float& getQueTime() {return queTime;}
         const float& getSerLeft() {return serLeft;}
-        const float getPercLeft() {return serLeft/serTime;}
+//        const float getPercLeft() {return serLeft/serTime;}
         const int getOpNum() {return opNum;}
-		float getPercAllowed();
-		bool isSharedTask() {return (int)getPercAllowed();}
 
 	//	Mutators
 	
@@ -85,6 +84,7 @@ class Task
 		float genSerTime(int seed);
 		float genExpTime(int phase, vector<float> traffLevel, int seed);
 		float genRandNum(char distType, int seed, float arg1, float arg2 = 0);
+        int initOpNum();
 	
 //	Data members
 
@@ -123,7 +123,8 @@ Task::Task(int tp, float prevArrTime, int phase, vector<float> traffLevel) :
     expTime(genExpTime(phase, traffLevel, rand())),
     begTime(0),
     queTime(arrTime),
-    serLeft(serTime)
+    serLeft(serTime),
+    opNum(initOpNum())
 {
 //	Check type
 
@@ -140,13 +141,6 @@ Task::Task(int tp, float prevArrTime, int phase, vector<float> traffLevel) :
 		cerr << "Error:  Incompatible phase. Exiting..." << endl;
 		exit(1);
 	}
-	
-//	Set task attributes
-	
-    if (!isSharedTask())
-        opNum = 0;
-    else
-        opNum = 2;
 }
 
 /****************************************************************************
@@ -428,27 +422,26 @@ float Task::genRandNum(char distType, int seed, float arg1, float arg2)
 
 /****************************************************************************
 *																			*
-*	Function:	getPercAllowed												*
+*	Function:	initOpNum													*
 *																			*
-*	Purpose:	To return the percent of the task that other operators can  *
-*               complete                                                    *
+*	Purpose:	To initialize the operator number                           *
 *																			*
 ****************************************************************************/
 
-float Task::getPercAllowed()
+int Task::initOpNum()
 {
-	float percAllowed[9] = 	{	0.1,	// Communicating
-								0.8, 	// Exception handling
-								0.5,	// Paperwork
-								0.25,	// Maintenance of way
-								0.5,	// Temp speed restriction
-								1,		// Signal response management
-								1,		// Monitoring inside
-								0.5,	// Monitoring outisde
-								1		// Planning ahead
-				 	 		};	
+    int opNum[9] = 	{	0,	// Communicating
+                        0, 	// Exception handling
+                        0,	// Paperwork
+                        0,	// Maintenance of way
+                        0,	// Temp speed restriction
+                        2,	// Signal response management
+                        2,	// Monitoring inside
+                        0,	// Monitoring outisde
+                        2	// Planning ahead
+                    };
 				
-	return percAllowed[type];
+    return opNum[type];
 }
 
 #endif
