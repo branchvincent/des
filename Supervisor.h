@@ -19,10 +19,10 @@
 #include "Task.h"
 #include "Operator.h"
 #include "Statistics.h"
-#include "Python.h"
+#include <Python/Python.h>
 
 using namespace std;
-using namespace cnsts;
+using namespace params;
 
 // Type definitions
 

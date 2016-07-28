@@ -6,7 +6,7 @@
 *																			*
 *	Date:		Jul 27, 2016												*
 *																			*
-*	Purpose:	This file is a wrapper for calling matplotlib in Python 	*
+*	Purpose:	This file acts as a wrapper for Python's matplotlib.pyplot  *
 *																			*
 ****************************************************************************/
 
@@ -15,10 +15,10 @@
 
 #include <iostream>
 #include <string>
-#include "Python.h"
+#include <Python/Python.h>
 
 using namespace std;
-using namespace cnsts;
+using namespace params;
 
 class PyPlot
 {
@@ -28,22 +28,11 @@ class PyPlot
     
     //  Constructor
     
-        PyPlot()
-        {
-            _pythoncmd = "";
-//            Py_Initialize(); // Might already have been called?
-            run("import matplotlib.pyplot as plt");
-            run("plt.clf()");
-        }
+        PyPlot();
     
     //  Destructor
         
-        ~PyPlot()
-        {
-//            Py_Finalize();
-            cout << "- Python plot command:\n";
-            cout << _pythoncmd;
-        }
+        ~PyPlot() {cout << "- Python plot command:\n" << _pythoncmd << "\n";}
 
     //  Mutators
     
@@ -54,49 +43,81 @@ class PyPlot
         void set_ylim(float min, float max) {run("plt.ylim(" + to_string(min) + ", " + to_string(max) + ")");}
         void set_axis() {run("ax = plt.gca()");}
 //        void set_legend() {}
-        
+        void plot_bar(vector<float> x, vector<float> y, vector<float> yerr);
         void save_fig(string outputFile) {run("plt.savefig('" + outputFile + "')");}
-    
-        void plot_bar(vector<float> x, vector<float> y, vector<float> yerr)
-        {
-            string xPts;
-            string yPts;
-            string yerrPts;
-            
-            for (int i = 0; i < x.size(); i++)
-            {
-            //  Insert comma
-                
-                if (i != 0)
-                {
-                    xPts += ",";
-                    yPts += ",";
-                    yerrPts += ",";
-                }
-            
-            //  Add to list
-                
-                xPts += to_string(x[i]);
-                yPts += to_string(y[i]);
-                yerrPts += to_string(yerr[i]);
-            }
-            
-            run("plt.bar([" + xPts + "], "
-                         "[" + yPts + "], "
-                         "width = " + to_string(INT_SIZE/2) + ", "
-                         "color = 'r', "
-//                         "bottom = np.sum(), "
-                         "linewidth = 0.1, "
-                         "align = 'center', "
-                         "yerr = [" + yerrPts + "])");
-        }
-
-
         void run_cmd(string command) {run(command);}
+    
+//  Private data members
     
     private:
         string _pythoncmd;
-        void run(string cmdString) {PyRun_SimpleString(cmdString.c_str());_pythoncmd += "\n" + cmdString;}
+        void run(string cmdString) {PyRun_SimpleString(cmdString.c_str()); _pythoncmd += "\n" + cmdString;}
 };
+
+/****************************************************************************
+*																			*
+*	Function:	PyPlot                                                      *
+*																			*
+*	Purpose:	To construct a new plot                                     *
+*																			*
+****************************************************************************/
+
+PyPlot::PyPlot()
+{
+    _pythoncmd = "";
+//    Py_Initialize(); // Might already have been called?
+    run("import matplotlib.pyplot as plt");
+    run("plt.clf()");
+}
+
+/****************************************************************************
+*																			*
+*	Function:	plot_bar                                                    *
+*																			*
+*	Purpose:	To plot a bar graph                                         *
+*																			*
+****************************************************************************/
+
+void PyPlot::plot_bar(vector<float> x, vector<float> y, vector<float> yerr)
+{
+//  Initialize variables
+    
+    string xPts;
+    string yPts;
+    string yerrPts;
+    
+//  Get data
+    
+    for (int i = 0; i < x.size(); i++)
+    {
+    //  Insert comma
+        
+        if (i != 0)
+        {
+            xPts += ",";
+            yPts += ",";
+            yerrPts += ",";
+        }
+        
+    //  Add to list
+        
+        xPts += to_string(x[i]);
+        yPts += to_string(y[i]);
+        yerrPts += to_string(yerr[i]);
+    }
+    
+//  Plot data
+    
+    run("plt.bar([" + xPts + "], "
+        "[" + yPts + "], "
+        "width = " + to_string(INT_SIZE/2) + ", "
+        "color = 'r', "
+        //                         "bottom = np.sum(), "
+        "linewidth = 0.1, "
+        "align = 'center', "
+        "yerr = [" + yerrPts + "])");
+    
+    return;
+}
 
 #endif

@@ -1,4 +1,4 @@
-output_path		/Users/Branch/Desktop/DES/DES/Output/Testing
+output_path		/Users/Branch/Documents/Academic/Year_1/Summer/DES_Code/DES/Output
 num_hours		12
 traffic			l l l l l l l l l l l l
 num_reps		100

@@ -19,10 +19,10 @@
 #include <string>
 #include <random>
 #include <cmath>
-#include "Constants.h"
+#include "Parameters.h"
 
 using namespace std;
-using namespace cnsts;
+using namespace params;
 
 /****************************************************************************
 *																			*

@@ -19,7 +19,7 @@
 #include "PyPlot.h"
 
 using namespace std;
-using namespace cnsts;
+using namespace params;
 
 typedef vector<vector<float> > Matrix2D;
 typedef vector<Matrix2D> Matrix3D;

@@ -21,7 +21,7 @@
 #include "Statistics.h"
 
 using namespace std;
-using namespace cnsts;
+using namespace params;
 
 //	Functions and definitions
 

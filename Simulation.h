@@ -22,11 +22,11 @@
 #include <algorithm>
 #include "Supervisor.h"
 #include "Task.h"
-#include "Constants.h"
+#include "Parameters.h"
 #include "Statistics.h"
 
 using namespace std;
-using namespace cnsts;
+using namespace params;
 
 // Helper functions and definitions
 
@@ -163,7 +163,28 @@ void Simulation::run()
 		runRep();
 	}
     
-    spv.plot();
+//  Output data, if applicable
+    
+    if (OUTPUT_ON)
+    {
+    //  Open stats file
+        
+        ofstream fout(OUTPUT_PATH + "/results.csv");
+        if (!fout)
+        {
+            cerr << "Error: Cannot open file. Exiting..." << endl;
+            exit(1);
+        }
+        
+    //  Output stats
+        
+        fout << *this << endl;
+
+    //  Plot utilization
+        
+        spv.plot();
+    }
+    
     
     return;
 }

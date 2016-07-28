@@ -1,30 +1,31 @@
 /****************************************************************************
 *																			*
-*	File:		Parameters.h                                                *
+*	File:		LoadParameters.h                                            *
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
 *	Date:		Jul 12, 2016												*
 *																			*
-*	Purpose:	This file defines the Parameters class.                     *
+*	Purpose:	This file defines the LoadParameters class.                 *
 *																			*
 ****************************************************************************/
 
-#ifndef Parameters_H
-#define Parameters_H
+#ifndef LOADPARAMETERS_H
+#define LOADPARAMETERS_H
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
 /****************************************************************************
 *																			*
-*	Definition of Parameters class                                          *
+*	Definition of LoadParameters class                                      *
 *																			*
 ****************************************************************************/
 
-class Parameters
+class LoadParameters
 {
 //	Public member functions
 
@@ -32,7 +33,7 @@ class Parameters
 
 	//	Constructor
 		
-		Parameters();
+		LoadParameters();
 
 	//	Inspectors
     
@@ -50,13 +51,13 @@ class Parameters
 
 /****************************************************************************
 *																			*
-*	Function:	Parameters                                                  *
+*	Function:	LoadParameters                                              *
 *																			*
 *	Purpose:	To construct new parameters                                 *
 *																			*
 ****************************************************************************/
 
-Parameters::Parameters()
+LoadParameters::LoadParameters()
 {
 //  Get parameter file
     
@@ -64,7 +65,7 @@ Parameters::Parameters()
 //    cout << "Input parameter file location: ";
 //    cin >> paramFile;
     
-    paramFile = "/Users/Branch/Desktop/DES/DES/Input/params.txt";
+    paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/Input/params.txt";
     
 //  Open parameter file
     
@@ -85,6 +86,7 @@ Parameters::Parameters()
 //	Read in output file
     
     fin >> paramName >> outFile;
+    replace(outFile.begin(), outFile.end(), '_', ' ');
     
 //  Read in number of hours
     

@@ -1,6 +1,6 @@
 /****************************************************************************
 *																			*
-*	File:		Constants.h													*
+*	File:		Parameters.h												*
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
@@ -11,22 +11,22 @@
 *																			*
 ****************************************************************************/
 
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef PARAMETERS_H
+#define PARAMETERS_H
 
-#include "Parameters.h"
+#include "LoadParameters.h"
 #include <vector>
 
 // Notes
 // - Add ability to pick phase to run
 // - Input start and end time (can be random multiple)
 
-namespace cnsts
+namespace params
 {
-//  Get parameters
+//  Load parameters
     
     int i = 0;
-    Parameters pms;
+    LoadParameters pms;
     
 //  Set parameters
     
