@@ -47,6 +47,7 @@ using namespace params;
 //  - Add num_op and names
 //  - Add fatigue for just human operators
 //  - Add shared task ID as a subset
+//  - Pass all queues to each operator for interruptions
 
 class Supervisor
 {
@@ -60,35 +61,31 @@ class Supervisor
 	
 	//	Constructor
 	
-        Supervisor() : stats(), sharedQueue(&cmpPrty), ops{Operator("Engineer", stats, sharedQueue), Operator("Conductor", stats, sharedQueue)} {}
+        Supervisor() : stats(), ops{Operator("Engineer", stats), Operator("Conductor", stats)} {}
 
 	// 	Inspector
 		
         Task* getNextDepature();
         float getNextDeptTime();
-		bool isBusy() const {return (ops[0].isBusy() || ops[1].isBusy());}
-        bool opIsIdle() {return (ops[0].isIdle() || ops[1].isIdle());}
+        bool isBusy() const;
+//        bool opIsIdle() const;
         Operator& getIdleOp();
-        bool needToIntrp() {return (ops[0].needToIntrp(sharedQueue) || ops[1].needToIntrp(sharedQueue));}
 	
     // 	Mutators
 		
         void procArr(Task* task);
-        void procIntrp(float currTime);
 		void procDep(Task* task);
         void endRep();
-        void plot() {Py_Initialize(); ops[0].plot(); ops[1].plot(); Py_Finalize();}
+        void plot();
     
     //  Other member functions
     
-        void output(ostream& out) const
-            {out << stats << endl << ops[0] << endl << ops[1] << endl;}
-
+        void output(ostream& out) const;
+    
 //	Data members
 
 	private:
         Statistics stats;
-        Queue sharedQueue;
         Operator ops[NUM_OPS];
 };
 
@@ -156,71 +153,45 @@ float Supervisor::getNextDeptTime()
 
 /****************************************************************************
 *																			*
-*	Function:	procArr                                                     *
+*	Function:	isBusy                                                      *
 *																			*
-*	Purpose:	To process a task arrival								 	*
+*	Purpose:	To determine if at least one operator is busy               *
 *																			*
 ****************************************************************************/
 
-void Supervisor::procArr(Task* task)
-{	
-//	Get task attributes
+bool Supervisor::isBusy() const
+{
+//  Check for a busy operator
     
-	float currTime = task->getArrTime();
-    int opNum = task->getOpNum();
-    if (DEBUG_ON) cout << "\t Task arriving at " << currTime << endl; //" " << *task << endl;
-    
-//	Add task to the appropriate queue
-    
-//    ops[1].procArr(task);
+    for (int i = 0; i < NUM_OPS; i++)
+        if (ops[i].isBusy())
+            return true;
 
-    if (opNum != NUM_OPS)
-        ops[opNum].procArr(task);
-    else
-    {
-        sharedQueue.push(task);
+//  If not found, return false
     
-    //  See operator should service task
-        
-        cout << "SHARED TASK ARRIVAL" << endl;
-        
-        for (int i = 0; i < NUM_OPS; i++)
-        {
-            if (ops[i].isBusy())
-                cout << ops[i].getName() << " is busy with " << *(ops[i].getCurrTask()) << endl;
-            else
-                cout << ops[i].getName() << " is idle." << endl;
-        }
-        
-        if (opIsIdle()) getIdleOp().servNextTask(currTime);
-        else if (needToIntrp()) procIntrp(currTime);
-    }
-//    else
-//    {
-//        if (ops[0].queueSize() < ops[1].queueSize())
-//            ops[0].procArr(task);
-//        else
-//            ops[1].procArr(task);
-//    }
-
-
-//  Determine if an operator should change behavior
-    
-//    if (opIsIdle())
-//        getIdleOp().servNextTask(currTime);
-//    if (needToIntrp())
-//        procIntrp(currTime);
-//    if (opIsIdle())
-//        getIdleOp().servNextTask(currTime);
-    
-//  Update stat
-
-    int type = task->getType();
-    int timeInt = currTime/INT_SIZE;
-	stats.incNumTasksIn(type, timeInt, 1);
-    
-	return;
+    return false;
 }
+
+/****************************************************************************
+*																			*
+*	Function:	isIdle                                                      *
+*																			*
+*	Purpose:	To determine if at least one operator is idle               *
+*																			*
+****************************************************************************/
+
+//bool Supervisor::opIsIdle() const
+//{
+////  Check for an idle operator
+//    
+//    for (int i = 0; i < NUM_OPS; i++)
+//        if (ops[i].isIdle())
+//            return true;
+//    
+////  If not found, return false
+//    
+//    return false;
+//}
 
 /****************************************************************************
 *																			*
@@ -232,7 +203,7 @@ void Supervisor::procArr(Task* task)
 
 Operator& Supervisor::getIdleOp()
 {
-//  Search for idle operator
+//  Check for an idle operator
     
     for (int i = 0; i < NUM_OPS; i++)
         if (ops[i].isIdle())
@@ -246,41 +217,74 @@ Operator& Supervisor::getIdleOp()
 
 /****************************************************************************
 *																			*
-*	Function:	procIntrp                                                   *
+*	Function:	procArr                                                     *
 *																			*
-*	Purpose:	To process an interuption for the appropriate operator      *
+*	Purpose:	To process a task arrival								 	*
 *																			*
 ****************************************************************************/
 
-void Supervisor::procIntrp(float currTime)
-{
-//  Check to interrupt the operator working on the lowest priority
+void Supervisor::procArr(Task* task)
+{	
+//	Get task attributes
     
-    if (ops[0].needToIntrp(sharedQueue) && ops[1].needToIntrp(sharedQueue))
-    {
-        if (cmpPrty(ops[0].getCurrTask(), ops[1].getCurrTask()))
-            ops[0].procIntrp(currTime);
-        else
-            ops[1].procIntrp(currTime);
-    }
+	float currTime = task->getArrTime();
+    int opNum = task->getOpNum();
+    if (DEBUG_ON) cout << "\t Task arriving at " << currTime << endl;
     
-//  Check to interrupt engineer
+//	Add task to the appropriate queue
     
-    else if (ops[0].needToIntrp(sharedQueue))
-        ops[0].procIntrp(currTime);
-    
-//  Check to interrupt conductor
-    
-    else if (ops[1].needToIntrp(sharedQueue))
-        ops[1].procIntrp(currTime);
-
+    if (opNum != NUM_OPS)
+        ops[opNum].procArr(task);
     else
     {
-        cerr << "Error: Cannot interrupt either operator. Exiting..." << endl;
-        exit(1);
+    //  Find shortest queue (include current task)
+        
+//        cout << "SHARED TASK ARRIVING" << endl;
+//        
+//        for (int i = 0; i < NUM_OPS; i++)
+//        {
+//            if (ops[i].isBusy())
+//                cout << ops[i].getName() << " is busy with " << 1+ops[i].getQueueSize() << " tasks including " << *(ops[i].getCurrTask()) << endl;
+//            else
+//                cout << ops[i].getName() << " is idle." << endl;
+//        }
+        
+        int queueSize;
+        int minSize = ops[0].getQueueSize() + 1;
+        int minIndex = 0;
+        
+        for (int i = 0; i < NUM_OPS; i++)
+        {
+        //  Get queue size
+            
+            if (ops[i].isBusy())
+                queueSize = 1;
+            else
+                queueSize = 0;
+                
+            queueSize += ops[i].getQueueSize();
+            
+        //  Check for new minimum
+            
+            if (queueSize < minSize)
+            {
+                minSize = queueSize;
+                minIndex = i;
+            }
+        }
+        
+//        cout << "Going to " << ops[minIndex].getName() << endl;
+        
+        ops[minIndex].procArr(task);
     }
     
-    return;
+//  Update stat
+
+    int type = task->getType();
+    int timeInt = currTime/INT_SIZE;
+	stats.incNumTasksIn(type, timeInt, 1);
+    
+	return;
 }
 
 /****************************************************************************
@@ -300,11 +304,11 @@ void Supervisor::procDep(Task* task)
     for (int i = 0; i < NUM_OPS; i++)
         if (task == ops[i].getCurrTask())
         {
-            ops[i].procDep(task);
             taskFound = true;
+            ops[i].procDep(task);
         }
     
-//  If task was not found, ouput error
+//  If task was not found, output error
     
     if (!taskFound)
     {
@@ -339,11 +343,53 @@ void Supervisor::endRep()
     for (int i = 0; i < NUM_OPS; i++)
         ops[i].endRep();
     
-//  Clear shared queue
+    return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	plot                                                        *
+*																			*
+*	Purpose:	To plot each operator's utilization                         *
+*																			*
+****************************************************************************/
+
+void Supervisor::plot()
+{
+//  Initialize Python
     
-    cout << "Ending Rep... sharedQueue.size() = " << sharedQueue.size() << endl;
-    while (!sharedQueue.empty())
-        sharedQueue.pop();
+    Py_Initialize();
+    
+//  Plot each utilization
+    
+    for (int i = 0; i < NUM_OPS; i++)
+        ops[i].plot();
+    
+//  Finalize Python
+    
+    Py_Finalize();
+    
+    return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	output                                                      *
+*																			*
+*	Purpose:	To output...                                                *
+*																			*
+****************************************************************************/
+
+void Supervisor::output(ostream& out) const
+{
+//  Output global stats
+    
+    out << stats << endl;
+    
+//  Output operators
+    
+    for (int i = 0; i < NUM_OPS; i++)
+        out << ops[i] << endl;
     
     return;
 }

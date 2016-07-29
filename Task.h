@@ -231,11 +231,13 @@ float Task::adjArrForTraff(float arrival, float prevArrTime, int phase)
 					 		 	};	
 
 //	Adjust arrival time, if applicable
-
-//	if (isinf(arrival)) return;
-
+    
+	if (isinf(arrival)) return arrival;
+    
 	if (affByTraff[type][phase] && TRAFFIC_ON) 
 	{
+        cout << "\t\t\t OLD ARR = " << arrival << endl;
+
 	//	Calculate previous arrival
 	
 //		int prevHour = prevArrTime/60;										* fix for when an hour is skipped
@@ -266,9 +268,11 @@ float Task::adjArrForTraff(float arrival, float prevArrTime, int phase)
 			beginInt = 60 * newHour;
 			level = TRAFFIC[newHour]/level;
 			arrival = beginInt + (newArrival - beginInt)/level;
-		}		
-	}	
-	
+		}
+        
+        cout << "\t\t\t NEW ARR = " << arrival << endl;
+	}
+    
 	return arrival;
 }
 

@@ -49,11 +49,10 @@ class Operator
 		
 	//	Constructor
 	
-        Operator(string nm, Statistics& sts, Queue& sharedQ) :
+        Operator(string nm, Statistics& sts) :
             name(nm),
             currTask(NULL),
             taskQueue(&cmpPrty),
-            sharedQueue(sharedQ),
             sharedStats(sts),
             stats() {}
 		
@@ -62,7 +61,7 @@ class Operator
         string getName() const {return name;}
         bool isIdle() const {return currTask == NULL;}
 		bool isBusy() const {return !isIdle();}
-        int queueSize() const {return taskQueue.size();}
+        int getQueueSize() const {return taskQueue.size();}
 //		bool isQueueEmpty() const {return taskQueue.empty();}
 //		int tasksLeft() const {return taskQueue.size();}
 //		Task* getTop() {return taskQueue.top();}
@@ -73,7 +72,7 @@ class Operator
 	//	Mutators
     
 		void procArr(Task* task);
-		void procIntrp(float currTime);  //, Queue &queue
+		void procIntrp(float currTime);
 		void procDep(Task* task);
         void servNextTask(float currTime);
         void endRep();
@@ -87,7 +86,6 @@ class Operator
     
     private:
         float getFatigueFactor(float time) {return 1 + (time/60 * 0.01);}
-        Task* getNextTask();
         bool currTaskExp();
         void procExp(float currTime);
         void updateUtil(Task* task, float currTime);
@@ -98,7 +96,7 @@ class Operator
         string name;
 		Task* currTask;             // current task
 		Queue taskQueue;            // task queue
-        Queue& sharedQueue;         // shared queue
+//        Queue taskQueues[NUM_OPS];  // task queues
 		Statistics& sharedStats;	// shared stats
         Statistics stats;           // local stats
 };
@@ -208,13 +206,7 @@ void Operator::procIntrp(float currTime)
 
 //	Add current task to queue and service next task
     
-//    taskQueue.push(currTask);
-
-    if (currTask->getOpNum() != NUM_OPS)
-        taskQueue.push(currTask);
-    else
-        sharedQueue.push(currTask);
-    
+    taskQueue.push(currTask);
     currTask = NULL;
     servNextTask(currTime);
     
@@ -316,57 +308,6 @@ void Operator::endRep()
 
 /****************************************************************************
 *																			*
-*	Function:	getNextTask                                                 *
-*																			*
-*	Purpose:	To get the next task to be serviced                         *
-*																			*
-****************************************************************************/
-
-Task* Operator::getNextTask()
-{
-//  Initialize variable
-    
-    Task* nextTask;
-    
-//  Compare the next two tasks
-    
-    if (!taskQueue.empty() && !sharedQueue.empty())
-    {
-        Task* myTask = taskQueue.top();
-        Task* sharedTask = sharedQueue.top();
-        
-        if (cmpPrty(myTask, sharedTask))
-        {
-            nextTask = sharedTask;
-            sharedQueue.pop();
-        }
-        else
-        {
-            nextTask = myTask;
-            taskQueue.pop();
-        }
-    }
-    else if (!taskQueue.empty())
-    {
-        nextTask = taskQueue.top();
-        taskQueue.pop();
-    }
-    else if (!sharedQueue.empty())
-    {
-        nextTask = sharedQueue.top();
-        sharedQueue.pop();
-    }
-    else
-    {
-        cerr << "Error: Cannot access next task. Exiting..." << endl;
-        exit(1);
-    }
-    
-    return nextTask;
-}
-
-/****************************************************************************
-*																			*
 *	Function:	servNextTask												*
 *																			*
 *	Purpose:	To service the next task in the queue, if applicable		*
@@ -379,16 +320,14 @@ void Operator::servNextTask(float currTime)
 {
 //  Check that a task can be serviced
     
-	if (!taskQueue.empty() || !sharedQueue.empty())
+	if (!taskQueue.empty())
 	{
 	//	Get next task
         
         if (DEBUG_ON) cout << "\t " << name << ": Task starting at " << currTime << endl;
         
-//        currTask = taskQueue.top();
-//        taskQueue.pop();
-        
-        currTask = getNextTask();
+        currTask = taskQueue.top();
+        taskQueue.pop();
         currTask->setBegTime(currTime);
         
 	//	Account for fatigue, if applicable
