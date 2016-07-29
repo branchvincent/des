@@ -45,6 +45,8 @@ using namespace params;
 //  Notes
 //  - Shared task to op with current lowest priority
 //  - Add num_op and names
+//  - Add fatigue for just human operators
+//  - Add shared task ID as a subset
 
 class Supervisor
 {
