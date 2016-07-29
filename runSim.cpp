@@ -18,6 +18,7 @@
 
 using namespace std;
 using namespace params;
+//using namespace tparams;
 
 /****************************************************************************
 *																			*
@@ -30,7 +31,17 @@ using namespace params;
 
 int main() 
 {
-    Simulation sim;
+//  Input parameter file
+    
+//    string paramFile;
+//    cout << "Input parameter file location: ";
+//    cin >> paramFile;
+    
+    string paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/Input/params.txt";
+
+//  Intialize and run simulation
+    
+    Simulation sim(paramFile);
 	sim.run();
     
 	return 0;

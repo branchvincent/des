@@ -42,13 +42,11 @@ bool cmpTaskArrs(Task* t1, Task* t2)
 ****************************************************************************/
 
 //  Notes
-//  - Intialize stats at constructor or run(numRuns)?
+//  - Intialize stats at constructor or run()?
 //  - Add utilization count for tasks cut off at end of phase (processAllDepts)
 //  - Add destructor
 //  - Add feature to plot timeline of events
 //  - Think about keeping a single taskList for all phases
-//  - change all -1 to inf
-//  - create traffic as global variable
 
 class Simulation
 {
@@ -58,7 +56,7 @@ class Simulation
 		
 	//	Constructors
 	
-        Simulation(int t = END_TIME); // , vector<float> trafficLevels);
+        Simulation(string paramFile);
 //		~Simulation() {del Task*;}
 
 	//	Other member functions
@@ -84,11 +82,9 @@ class Simulation
 //	Data members
 
 	private:
-		vector<int> endTimes;       // phase end times
-//        int endTimes[NUM_PHASES];   // phase end times
-		list<Task*> taskList;		// task list
-		Supervisor spv;             // operator supervisor
-		vector<float> traffic; 		// traffic levels
+        Supervisor spv;         // operator supervisor
+		vector<int> endTimes;   // phase end times
+		list<Task*> taskList;	// task list
 };
 
 //	Operators
@@ -103,15 +99,14 @@ ostream& operator<<(ostream& out, const Simulation& sim) {sim.output(out); retur
 *																			*
 ****************************************************************************/
 
-Simulation::Simulation(int t) : //, vector<float> trafficLevels) :
-    endTimes{30, t-30, t},
-    taskList(),
+Simulation::Simulation(string paramFile) :
     spv(),
-    traffic(TRAFFIC)
+    endTimes{30, END_TIME - 30, END_TIME},
+    taskList()
 {
 //	Check duration of simulation
 
-	if (t < 90 || t%10 != 0)
+	if (END_TIME < 90 || END_TIME % 10 != 0)
     {
 		cerr << "Error: Invalid simulation time. Exiting..." << endl;
 		exit(1);
@@ -119,7 +114,7 @@ Simulation::Simulation(int t) : //, vector<float> trafficLevels) :
 	
 //	Check traffic array
 	
-	if (traffic.size() != NUM_HOURS)
+	if (TRAFFIC.size() != NUM_HOURS)
 	{
 		cerr << "Error: Invalid traffic array. Exiting..." << endl;
 		exit(1);
@@ -264,7 +259,7 @@ void Simulation::genTasks(int type, int phase)
 //	Create temporary list and first task
     
     list<Task*> tmpList;
-    Task* task = new Task(type, currTime, phase, traffic);
+    Task* task = new Task(type, currTime, phase);
     float arrTime = task->getArrTime();
     float serTime = task->getSerTime();
     
@@ -278,7 +273,7 @@ void Simulation::genTasks(int type, int phase)
         
     //	Get next task
         
-        task = new Task(type, arrTime, phase, traffic);
+        task = new Task(type, arrTime, phase);
         arrTime = task->getArrTime();
         serTime = task->getSerTime();
     }
@@ -316,9 +311,7 @@ void Simulation::procAllArrs()
         arrTime = arrTask->getArrTime();
         depTask = spv.getNextDepature();
         depTime = spv.getNextDeptTime();
-        
-//        cout << "arrTime = " << arrTime << " and depTime = " << depTime << endl;
-        
+                
     //	Process next event
         
         if (arrTime <= depTime)

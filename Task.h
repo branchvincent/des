@@ -39,7 +39,7 @@ class Task
 
 	//	Constructor
 		
-		Task(int tp, float prevArrTime, int phase, vector<float> traffLevel);
+		Task(int tp, float prevArrTime, int phase);
 
 	//	Inspectors
 
@@ -79,10 +79,10 @@ class Task
 	//	Used by constructor
 	
 		int getPriority(int phase);
-		float genArrTime(float prevArrTime, int phase, vector<float> traffLevel, int seed);
-		float adjArrForTraff(float arrival, float prevArrTime, int phase, vector<float> traffLevel);
+		float genArrTime(float prevArrTime, int phase, int seed);
+		float adjArrForTraff(float arrival, float prevArrTime, int phase);
 		float genSerTime(int seed);
-		float genExpTime(int phase, vector<float> traffLevel, int seed);
+		float genExpTime(int phase, int seed);
 		float genRandNum(char distType, int seed, float arg1, float arg2 = 0);
         int initOpNum();
 	
@@ -114,13 +114,13 @@ ostream& operator<<(ostream& out, const Task& t) {t.output(out); return out;}
 *																			*
 ****************************************************************************/
 
-Task::Task(int tp, float prevArrTime, int phase, vector<float> traffLevel) :
+Task::Task(int tp, float prevArrTime, int phase) :
     type(tp),
     priority(getPriority(phase)),
-    arrTime(genArrTime(prevArrTime, phase, traffLevel, rand())),
+    arrTime(genArrTime(prevArrTime, phase, rand())),
     serTime(genSerTime(rand())),
     depTime(INFINITY),
-    expTime(genExpTime(phase, traffLevel, rand())),
+    expTime(genExpTime(phase, rand())),
     begTime(0),
     queTime(arrTime),
     serLeft(serTime),
@@ -180,13 +180,13 @@ int Task::getPriority(int phase)
 *																			*
 ****************************************************************************/
 
-float Task::genArrTime(float prevArrTime, int phase, vector<float> traffLevel, int seed)
+float Task::genArrTime(float prevArrTime, int phase, int seed)
 {	
 //	Exponential distribution parameters (task types vs. phases)
 
 							//	P0,		P1,		P2
 	float lambda[9][3] = 	{	{1/3., 	0.2, 	1/3.},		// Communicating
-								{0, 	.1/30, 	.1/30}, 	// Exception handling	*change 0 to determinisitic*
+								{0, 	.1/30, 	.1/30}, 	// Exception handling
 								{1/3., 	1/30., 	1/3.},		// Paperwork
 								{0, 	.05/30, .5/30},		// Maintenance of way
 								{0, 	1/30., 	0},			// Temp speed restriction
@@ -200,7 +200,7 @@ float Task::genArrTime(float prevArrTime, int phase, vector<float> traffLevel, i
 
 	float interArrTime = genRandNum('E', seed, lambda[type][phase]);
 	float arrival = prevArrTime + interArrTime; 
-	arrival = adjArrForTraff(arrival, prevArrTime, phase, traffLevel);
+	arrival = adjArrForTraff(arrival, prevArrTime, phase);
 
 	return arrival;
 }
@@ -214,7 +214,7 @@ float Task::genArrTime(float prevArrTime, int phase, vector<float> traffLevel, i
 *																			*
 ****************************************************************************/
 
-float Task::adjArrForTraff(float arrival, float prevArrTime, int phase, vector<float> traffLevel)
+float Task::adjArrForTraff(float arrival, float prevArrTime, int phase)
 {
 //	Tasks affected by traffic level (task types vs. phases)
 
@@ -243,28 +243,28 @@ float Task::adjArrForTraff(float arrival, float prevArrTime, int phase, vector<f
 //		
 //		while (prevHour != currHour)
 //		{
-//			arrival = traffLevel[prevHour]
+//			arrival = TRAFFIC[prevHour]
 //			prevHour++;
 //		}
 		
 	//	Calculate new arrival 
 	
 		int currHour = arrival/60;
-		if (currHour >= traffLevel.size()) return arrival;
+		if (currHour >= TRAFFIC.size()) return arrival;
 		
 		int beginInt = 60 * currHour;
-		float level = traffLevel[currHour];
+		float level = TRAFFIC[currHour];
 		float newArrival = beginInt + (arrival - beginInt)/level;
 	
 	//	Adjust arrival if new traffic level varies
 		
 		int newHour = newArrival/60;
-		if (newHour >= traffLevel.size()) return arrival;
+		if (newHour >= TRAFFIC.size()) return arrival;
 
 		if (newHour != currHour)			
 		{
 			beginInt = 60 * newHour;
-			level = traffLevel[newHour]/level;
+			level = TRAFFIC[newHour]/level;
 			arrival = beginInt + (newArrival - beginInt)/level;
 		}		
 	}	
@@ -316,7 +316,7 @@ float Task::genSerTime(int seed)
 *																			*
 ****************************************************************************/
 
-float Task::genExpTime(int phase, vector<float> traffLevel, int seed)
+float Task::genExpTime(int phase, int seed)
 {
 //	Exponential distribution parameters (task types vs. phases)						* returns infinity for lda = 0
 
@@ -352,9 +352,9 @@ float Task::genExpTime(int phase, vector<float> traffLevel, int seed)
 	
 //	Set lambda
 	
-	if (hour >= traffLevel.size())
+	if (hour >= TRAFFIC.size())
 		return arrTime;
-	else if (traffLevel[hour] == 2)
+	else if (TRAFFIC[hour] == 2)
 		lambda = highTraffLambda[type][phase];
 	else
 		lambda = otherLambda[type][phase];

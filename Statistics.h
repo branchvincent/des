@@ -227,6 +227,7 @@ void Statistics::incStat(Matrix2D& stat, int i, int j, float val)
     int lastRow = util[0].size() - 1;
     int lastCol = util[0][0].size() - 1;
 
+
 //	Increment stat values for the current run
 
 	stat[i][j] += val;					// increment value
@@ -417,7 +418,7 @@ void Statistics::endRep()
 		cmpStats[i + NUM_INTS + 3*NUM_TASK_TYPES][currRep] = numTasksOut[currRep][i][lastCol];
 		cmpStats[i + NUM_INTS + 4*NUM_TASK_TYPES][currRep] = numTasksExp[currRep][i][lastCol];
 	}
-	
+    
 //	Increment current run
 	
 	currRep++;
@@ -495,7 +496,7 @@ void Statistics::plot(string opName)
     
     for (int i = 0; i < NUM_INTS; i++)
     {
-        time.push_back(interval[i]);
+        time.push_back(interval[i] + INT_SIZE/2);
         util.push_back(cmpStats[i][NUM_REPS]);
         err.push_back(cmpStats[i][NUM_REPS + 1]);
     }

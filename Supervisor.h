@@ -42,7 +42,9 @@ using namespace params;
 *																			*
 ****************************************************************************/
 
-//  Shared task to op with current lowest priority
+//  Notes
+//  - Shared task to op with current lowest priority
+//  - Add num_op and names
 
 class Supervisor
 {
@@ -55,20 +57,17 @@ class Supervisor
 	public:
 	
 	//	Constructor
-		
-//        Supervisor(Statistics* sts) : sharedQueue(), eng(sts, sharedQueue),
-//                                        con(sts, sharedQueue), stats(sts) {}
 	
-        Supervisor() : stats(), sharedQueue(&cmpPrty), eng(stats, sharedQueue, "Engineer"), con(stats, sharedQueue, "Conductor") {}
+        Supervisor() : stats(), sharedQueue(&cmpPrty), ops{Operator("Engineer", stats, sharedQueue), Operator("Conductor", stats, sharedQueue)} {}
 
 	// 	Inspector
 		
         Task* getNextDepature();
         float getNextDeptTime();
-		bool isBusy() const {return (eng.isBusy() || con.isBusy());}
-        bool opIsIdle() {return (eng.isIdle() || con.isIdle());}
+		bool isBusy() const {return (ops[0].isBusy() || ops[1].isBusy());}
+        bool opIsIdle() {return (ops[0].isIdle() || ops[1].isIdle());}
         Operator& getIdleOp();
-        bool needToIntrp() {return (eng.needToIntrp(sharedQueue) || con.needToIntrp(sharedQueue));}
+        bool needToIntrp() {return (ops[0].needToIntrp(sharedQueue) || ops[1].needToIntrp(sharedQueue));}
 	
     // 	Mutators
 		
@@ -76,20 +75,19 @@ class Supervisor
         void procIntrp(float currTime);
 		void procDep(Task* task);
         void endRep();
-        void plot() {Py_Initialize(); eng.plot(); con.plot(); Py_Finalize();}
+        void plot() {Py_Initialize(); ops[0].plot(); ops[1].plot(); Py_Finalize();}
     
     //  Other member functions
     
         void output(ostream& out) const
-            {out << stats << endl << eng << endl << con << endl;}
+            {out << stats << endl << ops[0] << endl << ops[1] << endl;}
 
 //	Data members
 
 	private:
         Statistics stats;
         Queue sharedQueue;
-        Operator eng;
-		Operator con;
+        Operator ops[NUM_OPS];
 };
 
 ostream& operator<<(ostream& out, const Supervisor& s) {s.output(out); return out;}
@@ -104,17 +102,32 @@ ostream& operator<<(ostream& out, const Supervisor& s) {s.output(out); return ou
 
 Task* Supervisor::getNextDepature()
 {
-//	Get the depature times
+//	Initialize variables
+    
+    float currDepTime;
+    float minTime = ops[0].getDepTime();
+    int minIndex = 0;
+    
+//  Get depature time and index of soonest depature
+    
+    for (int i = 0; i < NUM_OPS; i++)
+    {
+    //  Get depature time
+        
+        currDepTime = ops[i].getDepTime();
+        
+    //  Check for new minimum
+        
+        if (currDepTime < minTime)
+        {
+            minTime = currDepTime;
+            minIndex = i;
+        }
+    }
 
-    float engDep = eng.getDepTime();
-    float conDep = con.getDepTime();
-	
-//	Return the task with the soonest depature
-
-	if (engDep <= conDep)
-        return eng.getCurrTask();
-    else
-        return con.getCurrTask();
+//  Return task with minimum depature time
+    
+    return ops[minIndex].getCurrTask();
 }
 
 /****************************************************************************
@@ -157,19 +170,37 @@ void Supervisor::procArr(Task* task)
     
 //	Add task to the appropriate queue
     
-    if (opNum == 0)
-        eng.procArr(task);
-    else if (opNum == 1)
-        con.procArr(task);
+//    ops[1].procArr(task);
+
+    if (opNum != NUM_OPS)
+        ops[opNum].procArr(task);
     else
     {
-        if (eng.queueSize() < con.queueSize())
-            eng.procArr(task);
-        else
-            con.procArr(task);
+        sharedQueue.push(task);
+    
+    //  See operator should service task
+        
+        cout << "SHARED TASK ARRIVAL" << endl;
+        
+        for (int i = 0; i < NUM_OPS; i++)
+        {
+            if (ops[i].isBusy())
+                cout << ops[i].getName() << " is busy with " << *(ops[i].getCurrTask()) << endl;
+            else
+                cout << ops[i].getName() << " is idle." << endl;
+        }
+        
+        if (opIsIdle()) getIdleOp().servNextTask(currTime);
+        else if (needToIntrp()) procIntrp(currTime);
     }
 //    else
-//        sharedQueue.push(task);
+//    {
+//        if (ops[0].queueSize() < ops[1].queueSize())
+//            ops[0].procArr(task);
+//        else
+//            ops[1].procArr(task);
+//    }
+
 
 //  Determine if an operator should change behavior
     
@@ -199,17 +230,16 @@ void Supervisor::procArr(Task* task)
 
 Operator& Supervisor::getIdleOp()
 {
-    if (eng.isIdle())
-        return eng;
+//  Search for idle operator
     
-    else if (con.isIdle())
-        return con;
+    for (int i = 0; i < NUM_OPS; i++)
+        if (ops[i].isIdle())
+            return ops[i];
     
-    else
-    {
-        cerr << "Error: No idle operator. Exiting..." << endl;
-        exit(1);
-    }
+//  If not found, return error
+    
+    cerr << "Error: No idle operator. Exiting..." << endl;
+    exit(1);
 }
 
 /****************************************************************************
@@ -224,23 +254,23 @@ void Supervisor::procIntrp(float currTime)
 {
 //  Check to interrupt the operator working on the lowest priority
     
-    if (eng.needToIntrp(sharedQueue) && con.needToIntrp(sharedQueue))
+    if (ops[0].needToIntrp(sharedQueue) && ops[1].needToIntrp(sharedQueue))
     {
-        if (cmpPrty(eng.getCurrTask(), con.getCurrTask()))
-            eng.procIntrp(currTime);
+        if (cmpPrty(ops[0].getCurrTask(), ops[1].getCurrTask()))
+            ops[0].procIntrp(currTime);
         else
-            con.procIntrp(currTime);
+            ops[1].procIntrp(currTime);
     }
     
 //  Check to interrupt engineer
     
-    else if (eng.needToIntrp(sharedQueue))
-        eng.procIntrp(currTime);
+    else if (ops[0].needToIntrp(sharedQueue))
+        ops[0].procIntrp(currTime);
     
 //  Check to interrupt conductor
     
-    else if (con.needToIntrp(sharedQueue))
-        con.procIntrp(currTime);
+    else if (ops[1].needToIntrp(sharedQueue))
+        ops[1].procIntrp(currTime);
 
     else
     {
@@ -263,11 +293,18 @@ void Supervisor::procDep(Task* task)
 {
 //  Process depature from appropriate operator
     
-    if (task == eng.getCurrTask())
-        eng.procDep(task);
-    else if (task == con.getCurrTask())
-        con.procDep(task);
-    else
+    bool taskFound = false;
+    
+    for (int i = 0; i < NUM_OPS; i++)
+        if (task == ops[i].getCurrTask())
+        {
+            ops[i].procDep(task);
+            taskFound = true;
+        }
+    
+//  If task was not found, ouput error
+    
+    if (!taskFound)
     {
         cerr << "Error: Could not process task depature. Exiting..." << endl;
         exit(1);
@@ -297,11 +334,12 @@ void Supervisor::endRep()
     
 //  Clear operators
     
-    con.endRep();
-    eng.endRep();
+    for (int i = 0; i < NUM_OPS; i++)
+        ops[i].endRep();
     
 //  Clear shared queue
     
+    cout << "Ending Rep... sharedQueue.size() = " << sharedQueue.size() << endl;
     while (!sharedQueue.empty())
         sharedQueue.pop();
     

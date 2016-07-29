@@ -49,7 +49,7 @@ class Operator
 		
 	//	Constructor
 	
-        Operator(Statistics& sts, Queue& sharedQ, string nm) :
+        Operator(string nm, Statistics& sts, Queue& sharedQ) :
             name(nm),
             currTask(NULL),
             taskQueue(&cmpPrty),
@@ -59,6 +59,7 @@ class Operator
 		
 	//	Inspectors
 
+        string getName() const {return name;}
         bool isIdle() const {return currTask == NULL;}
 		bool isBusy() const {return !isIdle();}
         int queueSize() const {return taskQueue.size();}
@@ -133,11 +134,6 @@ float Operator::getDepTime()
 
 bool Operator::needToIntrp(Queue& queue)
 {
-//    cout << "isBusy = " << isBusy() << endl;
-//    cout << "taskQueue.size() = " << taskQueue.size() << endl;
-//    cout << "currTask = " << *currTask << endl;
-//    cout << "taskQueue.top() = " << *taskQueue.top() << endl;
-    
     if (isBusy() && queue.size() > 0)
         return cmpPrty(currTask, queue.top());
     else
@@ -200,7 +196,7 @@ void Operator::procIntrp(float currTime)
         exit(1);
     }
     
-    if (DEBUG_ON) cout << "\t\t" << name << ": Task interrupted at " << currTime << endl; //" " << *currTask << endl;
+    if (DEBUG_ON) cout << "\t\t " << name << ": Task interrupted at " << currTime << endl; //" " << *currTask << endl;
     
 //	Update stats
     
@@ -212,9 +208,12 @@ void Operator::procIntrp(float currTime)
 
 //	Add current task to queue and service next task
     
-    taskQueue.push(currTask);
-    
-//  Service next task
+//    taskQueue.push(currTask);
+
+    if (currTask->getOpNum() != NUM_OPS)
+        taskQueue.push(currTask);
+    else
+        sharedQueue.push(currTask);
     
     currTask = NULL;
     servNextTask(currTime);
@@ -241,7 +240,7 @@ void Operator::procDep(Task* task)
 
 //	Update stats
     
-    if (DEBUG_ON) cout << "\t" << name << ": Task departing at " << depTime << endl;
+    if (DEBUG_ON) cout << "\t " << name << ": Task departing at " << depTime << endl;
     updateUtil(task, depTime);
     stats.incNumTasksOut(type, timeInt, 1);
 
@@ -380,24 +379,17 @@ void Operator::servNextTask(float currTime)
 {
 //  Check that a task can be serviced
     
-    if (!taskQueue.empty())
-//	if (!taskQueue.empty() && !sharedQueue.empty())
+	if (!taskQueue.empty() || !sharedQueue.empty())
 	{
 	//	Get next task
         
-        if (DEBUG_ON) cout << "\t" << name << ": Task starting at " << currTime << endl;
+        if (DEBUG_ON) cout << "\t " << name << ": Task starting at " << currTime << endl;
         
-        currTask = taskQueue.top();
-        taskQueue.pop();
+//        currTask = taskQueue.top();
+//        taskQueue.pop();
         
-//        currTask = getNextTask();
+        currTask = getNextTask();
         currTask->setBegTime(currTime);
-       
-//        cout << "\t\t currTask =  " << *currTask << endl;
-//        if (taskQueue.size() > 0)
-//            cout << "\t\t taskQueue.top = " << *taskQueue.top() << endl;
-//        if (sharedQueue.size() > 0)
-//            cout << "\t\t sharedQueue.top = " << *sharedQueue.top() << endl;
         
 	//	Account for fatigue, if applicable
 		
@@ -406,7 +398,6 @@ void Operator::servNextTask(float currTime)
 		if (FATIGUE_ON)
 		{
 			serTime *= getFatigueFactor(currTime);
-//			currTask->setSerTime(serTime);          //  error: set time left
             currTask->setSerLeft(serTime);
             serTime = currTask->getSerLeft();
 		}

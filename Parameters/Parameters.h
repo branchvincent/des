@@ -37,12 +37,13 @@ namespace params
     const bool RAND_RUN_ON = 0;
 		
     const int END_TIME = NUM_HOURS * 60;
-    const int INT_SIZE = 10;
+    const int INT_SIZE = 30;
     
     const int NUM_INTS = END_TIME/INT_SIZE;
 	const int NUM_TASK_TYPES = pms.getParam(i++);
     const int NUM_PHASES = 3;
 	const int NUM_STATS = 6;
+    const int NUM_OPS = 2;
     
     const vector<float> TRAFFIC = pms.getTraffic();
     const bool TRAFFIC_ON = 0;
