@@ -17,6 +17,7 @@
 #include <string>
 #include <random>
 #include <cmath>
+#include <algorithm>
 #include "Parameters/Parameters.h"
 
 using namespace std;
@@ -234,9 +235,11 @@ float Task::adjArrForTraff(float arrival, float prevArrTime, int phase)
     
 	if (isinf(arrival)) return arrival;
     
+    float newArrival = arrival;
+    
 	if (affByTraff[type][phase] && TRAFFIC_ON) 
 	{
-        cout << "\t\t\t OLD ARR = " << arrival << endl;
+//        cout << "\t\t\t OLD ARR = " << arrival << endl;
 
 	//	Calculate previous arrival
 	
@@ -254,26 +257,32 @@ float Task::adjArrForTraff(float arrival, float prevArrTime, int phase)
 		int currHour = arrival/60;
 		if (currHour >= TRAFFIC.size()) return arrival;
 		
-		int beginInt = 60 * currHour;
+//        cout << "\t\t\t\t type = " << type << endl;
+//        cout << "\t\t\t\t currLevel = " << TRAFFIC[currHour] << endl;
+        
+		int beginInt = max((float)60 * currHour, prevArrTime);
 		float level = TRAFFIC[currHour];
-		float newArrival = beginInt + (arrival - beginInt)/level;
+		newArrival = beginInt + (arrival - beginInt)/level;
 	
+//        cout << "\t\t\t\t newArrival = " << newArrival << endl;
+
 	//	Adjust arrival if new traffic level varies
 		
 		int newHour = newArrival/60;
 		if (newHour >= TRAFFIC.size()) return arrival;
 
-		if (newHour != currHour)			
-		{
-			beginInt = 60 * newHour;
-			level = TRAFFIC[newHour]/level;
-			arrival = beginInt + (newArrival - beginInt)/level;
-		}
+//		if (newHour != currHour)			
+//		{
+//            cout << "\t\t\t\t newLevel = " << TRAFFIC[newHour] << endl;
+//			beginInt = 60 * newHour;
+//			level = TRAFFIC[newHour]/level;
+//			newArrival = beginInt + (newArrival - beginInt)/level;
+//		}
         
-        cout << "\t\t\t NEW ARR = " << arrival << endl;
+//        cout << "\t\t\t NEW ARR = " << newArrival << endl;
 	}
     
-	return arrival;
+	return newArrival;
 }
 
 /****************************************************************************

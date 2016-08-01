@@ -66,6 +66,10 @@ PyPlot::PyPlot()
 {
     _pythoncmd = "";
 //    Py_Initialize(); // Might already have been called?
+//    run("import sys");
+//    run("print(sys.path)");
+//    run("sys.path.append(\".\")");
+//    run("print(sys.path)");
     run("import matplotlib.pyplot as plt");
     run("plt.clf()");
 }

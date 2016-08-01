@@ -485,6 +485,14 @@ void Statistics::getMeanAndStdDev(vector<float>& data)
 	return;           
 }
 
+/****************************************************************************
+*																			*
+*	Function:	plot                                                        *
+*																			*
+*	Purpose:	To plot the utilization										*
+*																			*
+****************************************************************************/
+
 void Statistics::plot(string opName)
 {
     int lastRow = util[0].size() - 1;
@@ -511,6 +519,11 @@ void Statistics::plot(string opName)
     plt.set_ylim(0, 1.1);
     plt.set_axis();
     plt.plot_bar(time, util, err);
+    for (int i = 0; i < NUM_HOURS; i++)
+    {
+        string hr = to_string(60 * (i + 1));
+        plt.run_cmd("plt.plot((" + hr + ", " + hr + "), (0, 1.10), 'm--')");
+    }
     plt.save_fig(OUTPUT_PATH + "/" + opName + "_Util.pdf");
     
     return;

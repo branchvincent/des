@@ -250,19 +250,14 @@ void Supervisor::procArr(Task* task)
 //        }
         
         int queueSize;
-        int minSize = ops[0].getQueueSize() + 1;
+        int minSize = ops[0].getQueueSize() + ops[0].isBusy();
         int minIndex = 0;
         
         for (int i = 0; i < NUM_OPS; i++)
         {
         //  Get queue size
-            
-            if (ops[i].isBusy())
-                queueSize = 1;
-            else
-                queueSize = 0;
-                
-            queueSize += ops[i].getQueueSize();
+  
+            queueSize = ops[i].getQueueSize() + ops[i].isBusy();
             
         //  Check for new minimum
             
