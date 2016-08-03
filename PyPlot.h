@@ -32,7 +32,7 @@ class PyPlot
     
     //  Destructor
         
-        ~PyPlot() {cout << "- Python plot command:\n" << _pythoncmd << "\n";}
+        ~PyPlot() {if(DEBUG_ON) cout << "- Python plot command:\n" << _pythoncmd << "\n";}
 
     //  Mutators
     

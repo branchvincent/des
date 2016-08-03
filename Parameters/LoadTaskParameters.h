@@ -86,7 +86,6 @@ LoadTaskParameters::LoadTaskParameters() :
 
     arrDist('E'),                                                      //  not mutable
 
-
     serDists{   'E',	// Communicating
                 'L', 	// Exception handling
                 'U',	// Paperwork

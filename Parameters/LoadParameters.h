@@ -33,7 +33,7 @@ class LoadParameters
 
 	//	Constructor
 		
-		LoadParameters();
+		LoadParameters(string file);
 
 	//	Inspectors
     
@@ -57,15 +57,15 @@ class LoadParameters
 *																			*
 ****************************************************************************/
 
-LoadParameters::LoadParameters()
+LoadParameters::LoadParameters(string file)
 {
 //  Get parameter file
     
     string paramFile;
-    cout << "Input parameter file location: ";
-    cin >> paramFile;
-    
-//    paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/Input/params.txt";
+//    cout << "Input parameter file location: ";
+//    cin >> paramFile;
+
+    paramFile = file;
     
 //  Open parameter file
     
@@ -85,8 +85,11 @@ LoadParameters::LoadParameters()
     
 //	Read in output file
     
-    fin >> paramName >> outFile;
-    replace(outFile.begin(), outFile.end(), '_', ' ');
+    fin >> paramName;
+    fin.ignore();
+    fin.ignore();
+    getline(fin, outFile);
+    cout << "outFile = " << outFile << endl;
     
 //  Read in number of hours
     

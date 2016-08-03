@@ -23,6 +23,7 @@
 #include "Supervisor.h"
 #include "Task.h"
 #include "Parameters/Parameters.h"
+#include "Parameters/NewParams.h"
 #include "Statistics.h"
 
 using namespace std;
@@ -82,6 +83,7 @@ class Simulation
 //	Data members
 
 	private:
+//        NewParams params;       // run parameters
         Supervisor spv;         // operator supervisor
 		vector<int> endTimes;   // phase end times
 		list<Task*> taskList;	// task list
@@ -100,6 +102,8 @@ ostream& operator<<(ostream& out, const Simulation& sim) {sim.output(out); retur
 ****************************************************************************/
 
 Simulation::Simulation(string paramFile) :
+//    params(paramFile),
+//    spv(params),
     spv(),
     endTimes{30, END_TIME - 30, END_TIME},
     taskList()
@@ -132,7 +136,6 @@ Simulation::Simulation(string paramFile) :
     cout << "Simulation Parameters" << endl;
     cout << "Number of hours = " << NUM_HOURS << endl;
     cout << "Number of replications = " << NUM_REPS << endl;
-    
     cout << "Traffic levels = ";
     for (int i = 0; i < TRAFFIC.size(); i++)
         cout << TRAFFIC[i] << ", ";
@@ -179,7 +182,6 @@ void Simulation::run()
         
         spv.plot();
     }
-    
     
     return;
 }

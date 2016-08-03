@@ -38,7 +38,8 @@ class Statistics
 		
 	//	Constructor
 	
-		Statistics(int xDim = NUM_TASK_TYPES + 1,
+		Statistics( //NewParams& pms,
+                   int xDim = NUM_TASK_TYPES + 1,
                    int yDim = NUM_INTS + 1,
                    int zDim = NUM_REPS, int val = 0);
 		
@@ -87,10 +88,10 @@ class Statistics
 //	Data members
 
 	private:
+//        NewParams pms;              // parameters
 		int currRep;				// current run counter
         int cmpStatsIndex[NUM_STATS];  // index in cmpStats
 		vector<int> interval;		// time interval
-//        int interval[NUM_INTS];		// time interval
 		Matrix3D util;				// utilization
 		Matrix3D avgServiceTime;	// average service time
 		Matrix3D avgWaitTime;		// average wait time in queue

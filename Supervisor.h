@@ -53,7 +53,7 @@ class Supervisor
 {
 //  Friend class
     
-    friend Operator;
+//    friend Operator;
     
 //	Public member functions
 	
@@ -61,8 +61,11 @@ class Supervisor
 	
 	//	Constructor
 	
+//        Supervisor(NewParams& pms) : params(pms), stats(pms), ops{Operator("Engineer", pms, stats), Operator("Conductor", pms, stats)} {}
+    
         Supervisor() : stats(), ops{Operator("Engineer", stats), Operator("Conductor", stats)} {}
 
+    
 	// 	Inspector
 		
         Task* getNextDepature();
@@ -85,6 +88,7 @@ class Supervisor
 //	Data members
 
 	private:
+//        NewParams& params;
         Statistics stats;
         Operator ops[NUM_OPS];
 };

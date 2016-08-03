@@ -44,7 +44,7 @@ def main():
 #	Set input and output files
 	
 	inFile = '/Users/Branch/Desktop/DES/DES/Output/Results/eng.csv'
-	outFile = '/Users/Branch/Desktop/DES/DES/Output/Results/engGraph.pdf'
+	outFile = '/Users/Branch/Desktop/DES/DES/Output/Results/engGraph.jpg'
 	
 #	if oneRun:
 #		inFile = filePath + 'singleRun.csv'

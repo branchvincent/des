@@ -81,7 +81,7 @@ class Task
 	
 		int getPriority(int phase);
 		float genArrTime(float prevArrTime, int phase, int seed);
-		float adjArrForTraff(float arrival, float prevArrTime, int phase);
+		float adjArrForTraff(float prevArrTime, float interArrTime, int phase);
 		float genSerTime(int seed);
 		float genExpTime(int phase, int seed);
 		float genRandNum(char distType, int seed, float arg1, float arg2 = 0);
@@ -200,8 +200,7 @@ float Task::genArrTime(float prevArrTime, int phase, int seed)
 //	Generate random interarrival time and adjust for traffic
 
 	float interArrTime = genRandNum('E', seed, lambda[type][phase]);
-	float arrival = prevArrTime + interArrTime; 
-	arrival = adjArrForTraff(arrival, prevArrTime, phase);
+	float arrival = adjArrForTraff(prevArrTime, interArrTime, phase);
 
 	return arrival;
 }
@@ -215,7 +214,7 @@ float Task::genArrTime(float prevArrTime, int phase, int seed)
 *																			*
 ****************************************************************************/
 
-float Task::adjArrForTraff(float arrival, float prevArrTime, int phase)
+float Task::adjArrForTraff(float prevArrTime, float interArrTime, int phase)
 {
 //	Tasks affected by traffic level (task types vs. phases)
 
@@ -231,58 +230,49 @@ float Task::adjArrForTraff(float arrival, float prevArrTime, int phase)
 									{0, 1, 	0}		// Planning ahead
 					 		 	};	
 
+    float newArrTime = prevArrTime + interArrTime;
+    
+	if (isinf(newArrTime)) return INFINITY;
+    
 //	Adjust arrival time, if applicable
-    
-	if (isinf(arrival)) return arrival;
-    
-    float newArrival = arrival;
-    
+
 	if (affByTraff[type][phase] && TRAFFIC_ON) 
 	{
-//        cout << "\t\t\t OLD ARR = " << arrival << endl;
-
-	//	Calculate previous arrival
-	
-//		int prevHour = prevArrTime/60;										* fix for when an hour is skipped
-//		int currHour = arrival/60;
-//		
-//		while (prevHour != currHour)
-//		{
-//			arrival = TRAFFIC[prevHour]
-//			prevHour++;
-//		}
-		
-	//	Calculate new arrival 
-	
-		int currHour = arrival/60;
-		if (currHour >= TRAFFIC.size()) return arrival;
-		
-//        cout << "\t\t\t\t type = " << type << endl;
-//        cout << "\t\t\t\t currLevel = " << TRAFFIC[currHour] << endl;
-        
-		int beginInt = max((float)60 * currHour, prevArrTime);
-		float level = TRAFFIC[currHour];
-		newArrival = beginInt + (arrival - beginInt)/level;
-	
-//        cout << "\t\t\t\t newArrival = " << newArrival << endl;
-
-	//	Adjust arrival if new traffic level varies
-		
-		int newHour = newArrival/60;
-		if (newHour >= TRAFFIC.size()) return arrival;
-
-//		if (newHour != currHour)			
-//		{
-//            cout << "\t\t\t\t newLevel = " << TRAFFIC[newHour] << endl;
-//			beginInt = 60 * newHour;
-//			level = TRAFFIC[newHour]/level;
-//			newArrival = beginInt + (newArrival - beginInt)/level;
-//		}
-        
-//        cout << "\t\t\t NEW ARR = " << newArrival << endl;
-	}
+        float budget = interArrTime;
+        float currTime = prevArrTime;
+        int currHour = currTime/60;
+        float traffLevel = TRAFFIC[currHour];
+        float timeToAdj = (currHour + 1) * 60 - currTime;
+        float adjTime = timeToAdj * traffLevel;
     
-	return newArrival;
+    //  If time is left in budget, proceed
+        
+        while (budget > adjTime)
+        {
+        //  Decrement budget
+            
+            budget -= adjTime;
+            
+        //	Calculate new values
+            
+            currTime += timeToAdj;
+            currHour++;
+            
+            if (currHour >= TRAFFIC.size())
+            {
+                if (DEBUG_ON) cout << "OVERFLOW" << endl;
+                return INFINITY;
+            }
+            
+            traffLevel = TRAFFIC[currHour];
+            timeToAdj = (currHour + 1) * 60 - currTime;
+            adjTime = timeToAdj * traffLevel;
+        }
+        
+        newArrTime = currTime + budget/traffLevel;
+    }
+    
+	return newArrTime;
 }
 
 /****************************************************************************

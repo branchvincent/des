@@ -49,8 +49,10 @@ class Operator
 		
 	//	Constructor
 	
+//        Operator(string nm, NewParams& pms, Statistics& sts) :
         Operator(string nm, Statistics& sts) :
             name(nm),
+//            params(pms),
             currTask(NULL),
             taskQueue(&cmpPrty),
             sharedStats(sts),
@@ -94,6 +96,7 @@ class Operator
 
 	private:
         string name;
+//        NewParams params;           // parameters
 		Task* currTask;             // current task
 		Queue taskQueue;            // task queue
 //        Queue taskQueues[NUM_OPS];  // task queues
