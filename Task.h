@@ -433,15 +433,15 @@ float Task::genRandNum(char distType, int seed, float arg1, float arg2)
 
 int Task::initOpNum()
 {
-    int opNum[9] = 	{	0,	// Communicating
-                        0, 	// Exception handling
-                        0,	// Paperwork
-                        0,	// Maintenance of way
-                        0,	// Temp speed restriction
-                        2,	// Signal response management
-                        2,	// Monitoring inside
-                        0,	// Monitoring outisde
-                        2	// Planning ahead
+    int opNum[9] = 	{	0,          // Communicating
+                        0,          // Exception handling
+                        0,          // Paperwork
+                        0,          // Maintenance of way
+                        0,          // Temp speed restriction
+                        NUM_OPS,	// Signal response management
+                        NUM_OPS,	// Monitoring inside
+                        0,          // Monitoring outisde
+                        NUM_OPS     // Planning ahead
                     };
 				
     return opNum[type];

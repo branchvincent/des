@@ -40,7 +40,7 @@ namespace params
 	const int NUM_TASK_TYPES = 9;
     const int NUM_PHASES = 3;
 	const int NUM_STATS = 6;
-    const int NUM_OPS = 2;
+    const int NUM_OPS = 1;
     
     vector<float> TRAFFIC;
     const bool TRAFFIC_ON = 1;

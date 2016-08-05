@@ -63,7 +63,7 @@ class Supervisor
 	
 //        Supervisor(NewParams& pms) : params(pms), stats(pms), ops{Operator("Engineer", pms, stats), Operator("Conductor", pms, stats)} {}
     
-        Supervisor() : stats(), ops{Operator("Engineer", stats), Operator("Conductor", stats)} {}
+        Supervisor() : stats(), ops{Operator("Engineer", stats), Operator("Engineer", stats)} {}
 
     
 	// 	Inspector
@@ -237,7 +237,12 @@ void Supervisor::procArr(Task* task)
     
 //	Add task to the appropriate queue
     
-    if (opNum != NUM_OPS)
+    if (opNum > NUM_OPS)
+    {
+        cerr << "Error: Incompatible operator ID. Exiting..." << opNum << endl;
+        exit(1);
+    }
+    else if (opNum != NUM_OPS)
         ops[opNum].procArr(task);
     else
     {
