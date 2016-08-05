@@ -1,0 +1,68 @@
+#top_panel{
+background-color: #0000ff;
+height:25% ;
+width:100%;
+opacity: 0.5;
+}
+
+#title{
+position: absolute;
+top: 0px;
+opacity: 1.0;
+}
+
+h1{
+color: #19334d;
+font-family: verdana;
+font-size: 210%;
+}
+
+#uses{
+text-align: center;
+color: #19334d;
+}
+
+h3{
+color: #5D7B85;
+}
+
+#button{
+position: relative;
+top: 20%;
+}
+
+
+footer{
+position: relative;
+top: 65px;
+font-size: 85%
+}
+
+#note{
+position:relative;
+left: 0px;
+}
+
+#note1{
+position:relative;
+left: 50px;
+}
+
+#note2{
+position:relative;
+left: 50px;
+}
+
+#link{
+position: relative;
+top: 5%;
+
+}
+
+
+
+
+li { 
+    padding-left: 12px; 
+}
+
