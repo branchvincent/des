@@ -1,5 +1,6 @@
 function calculate_time(divName)
-{
+{			
+			
 			var starttime=document.getElementById("start_time").value;	
 			var stoptime=document.getElementById("stop_time").value;	
 			
@@ -71,6 +72,9 @@ function calculate_time(divName)
 				cell4.innerHTML="Other<input type='radio' name='extra' value='other' id='other'>";
 				
 				}
+				
+				document.getElementById("start_time").disabled=true;
+				document.getElementById("stop_time").disabled=true;
 			}
 			
 
