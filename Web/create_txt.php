@@ -56,7 +56,7 @@ button[type=submit] {
 	
 	fclose($myfile);
 	
-	echo passthru("./DES parameters.txt");
+	exec("./DES parameters.txt");
 	
 	include('read_csv_mod.php');
 ?>
