@@ -49,7 +49,7 @@ namespace params
     vector<int> OPS;
     const bool TRAFFIC_ON = 1;
     const bool FATIGUE_ON = 1;
-    const bool DEBUG_ON = 0;
+    const bool DEBUG_ON = 1;
     
 //  Task parameters
     
