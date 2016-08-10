@@ -63,6 +63,7 @@ int main(int argc, char* argv[])
     auto end = get_time::now();
     auto diff = end - start;
     cout<<"Elapsed time = " << (float)chrono::duration_cast<ns>(diff).count()/1000000000 << " s" <<endl;
+    cout << "New version" << endl;
     
 	return 0;
 }
