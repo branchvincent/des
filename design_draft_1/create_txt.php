@@ -4,7 +4,7 @@
 <?php
 
 	$myfile=fopen("parameters.txt", "w") or die("unable to open");
-	fwrite($myfile,"output_path		/Users/Branch/Documents/Academic/Year_1/Summer/DES_Code/DES/Output \n");
+	fwrite($myfile,"output_path		/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/design_draft_1\n");
 	$start_time=(int)substr($_POST ["time1"],0,2);
 	$stop_time=(int)substr($_POST ["time2"],0,2);
 	$start_min=(int)substr($_POST ["time1"],3,strlen($_POST ["time1"]));
@@ -32,6 +32,10 @@
 	
 <style>
 
+<?php
+	echo passthru("./DES parameters.txt")
+?>
+
 #submit{
 position: relative;
 left: 47% ;
@@ -49,4 +53,3 @@ button[type=submit] {
 </style>
 </body>
 </html>
-  

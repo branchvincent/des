@@ -50,6 +50,12 @@ class Operator
 	//	Constructor
 	
 //        Operator(string nm, NewParams& pms, Statistics& sts) :
+//        Operator() :
+//            name(""),
+//            currTask(NULL),
+//            taskQueue(&cmpPrty),
+//            sharedStats(NULL),
+//            stats() {}
         Operator(string nm, Statistics& sts) :
             name(nm),
 //            params(pms),
@@ -77,12 +83,14 @@ class Operator
 		void procIntrp(float currTime);
 		void procDep(Task* task);
         void servNextTask(float currTime);
-        void endRep();
+        void clear();
+        void endRep() {stats.endRep(); clear();}
 				
 	//	Other member functions
 
+        void output();
         void output(ostream& out) const {out << stats << endl;}
-        void plot() {stats.plot(name);}
+//        void plot() {stats.plot(name);}
 
 //  Private member functions
     
@@ -154,7 +162,10 @@ void Operator::procArr(Task* task)
 //	Enqueue task
     
     taskQueue.push(task);
-
+    
+    if (DEBUG_ON) cout << name << ": Adding " << *task << " of " << taskQueue.size() << endl;
+//    if (taskQueue.size() > 50) cout << "\t\t\tQueue size = " << taskQueue.size() << endl;
+    
 //  Get task attributes
     
     float currTime = task->getArrTime();
@@ -241,6 +252,7 @@ void Operator::procDep(Task* task)
 
 //  Start next task, if applicable
     
+    delete currTask;
     currTask = NULL;
     servNextTask(depTime);
 
@@ -249,18 +261,14 @@ void Operator::procDep(Task* task)
 
 /****************************************************************************
 *																			*
-*	Function:	endRep														*
+*	Function:	clear														*
 *																			*
-*	Purpose:	To end the current replication                              *
+*	Purpose:	To clear the operator                                       *
 *																			*
 ****************************************************************************/
 
-void Operator::endRep()
+void Operator::clear()
 {
-//  Update stats
-    
-    stats.endRep();
-    
 //  Clear current task
     
     currTask = NULL;
@@ -327,11 +335,13 @@ void Operator::servNextTask(float currTime)
 	{
 	//	Get next task
         
-        if (DEBUG_ON) cout << "\t " << name << ": Task starting at " << currTime << endl;
+        if (DEBUG_ON) cout << "\t " << name << ": Task starting at " << currTime;
         
         currTask = taskQueue.top();
         taskQueue.pop();
         currTask->setBegTime(currTime);
+        
+        if (DEBUG_ON) cout << " " << *currTask << endl;
         
 	//	Account for fatigue, if applicable
 		
@@ -354,8 +364,8 @@ void Operator::servNextTask(float currTime)
         int timeInt = currTime/INT_SIZE;
         int type = currTask->getType();
         float waitTime = currTime - currTask->getQueTime();
-        stats.incAvgWaitTime(type, timeInt, waitTime);
-        sharedStats.incAvgWaitTime(type, timeInt, waitTime);
+        stats.incWaitTime(type, timeInt, waitTime);
+        sharedStats.incWaitTime(type, timeInt, waitTime);
 
     //	Check to see if task expired
         
@@ -457,8 +467,8 @@ void Operator::updateUtil(Task* task, float currTime)
 		timeBusy = endInt - max(begTime, beginInt);
 		percBusy = timeBusy/INT_SIZE;
 		stats.incUtil(type, timeInt, percBusy);
-		stats.incAvgServiceTime(type, timeInt, timeBusy);
-        sharedStats.incAvgServiceTime(type, timeInt++, timeBusy);
+		stats.incSerTime(type, timeInt, timeBusy);
+        sharedStats.incSerTime(type, timeInt++, timeBusy);
         
         if (timeBusy < 0)
         {
@@ -473,8 +483,8 @@ void Operator::updateUtil(Task* task, float currTime)
 	timeBusy = currTime - max(begTime, beginInt);
 	percBusy = timeBusy/INT_SIZE;
 	stats.incUtil(type, timeInt, percBusy);
-	stats.incAvgServiceTime(type, timeInt, timeBusy);
-    sharedStats.incAvgServiceTime(type, timeInt, timeBusy);
+	stats.incSerTime(type, timeInt, timeBusy);
+    sharedStats.incSerTime(type, timeInt, timeBusy);
 
     if (timeBusy < 0)
     {
@@ -483,6 +493,30 @@ void Operator::updateUtil(Task* task, float currTime)
     }
     
 	return;
+}
+
+/****************************************************************************
+ *																			*
+ *	Function:	output                                                      *
+ *																			*
+ *	Purpose:	To output...                                                *
+ *																			*
+ ****************************************************************************/
+
+void Operator::output()
+{
+//  Output stats
+    
+    ofstream fout(OUTPUT_PATH + "/" + name + "_stats.csv");
+    if (!fout)
+    {
+        cerr << "Error: Cannot open file. Exiting..." << endl;
+        exit(1);
+    }
+    
+    fout << stats;
+    
+    return;
 }
 
 #endif

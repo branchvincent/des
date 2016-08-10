@@ -43,7 +43,6 @@ bool cmpTaskArrs(Task* t1, Task* t2)
 ****************************************************************************/
 
 //  Notes
-//  - Intialize stats at constructor or run()?
 //  - Add utilization count for tasks cut off at end of phase (processAllDepts)
 //  - Add destructor
 //  - Add feature to plot timeline of events
@@ -139,6 +138,9 @@ Simulation::Simulation(string paramFile) :
     cout << "Traffic levels = ";
     for (int i = 0; i < TRAFFIC.size(); i++)
         cout << TRAFFIC[i] << ", ";
+    cout << endl << "Operators = ";
+    for (int i = 0; i < OPS.size(); i++)
+        cout << OPS[i] << ", ";
     cout << endl << endl;
 }
 
@@ -157,30 +159,17 @@ void Simulation::run()
     
 	for (int i = 0; i < NUM_REPS; i++)
 	{
-		cout << "Rep " << i << endl;
+		if (DEBUG_ON) cout << "Rep " << i << endl;
 		runRep();
+        cout << (float)(i + 1)/NUM_REPS * 100 << "% Completed" << endl;
 	}
     
 //  Output data, if applicable
     
     if (OUTPUT_ON)
     {
-    //  Open stats file
-        
-        ofstream fout(OUTPUT_PATH + "/results.csv");
-        if (!fout)
-        {
-            cerr << "Error: Cannot open file. Exiting..." << endl;
-            exit(1);
-        }
-        
-    //  Output stats
-        
-        fout << *this << endl;
-
-    //  Plot utilization
-        
-        spv.plot();
+        spv.output();
+//        spv.plot();
     }
     
     return;
@@ -196,7 +185,7 @@ void Simulation::run()
 
 void Simulation::runRep()
 {
-	cout << "Beginning simulation..." << endl;
+	if (DEBUG_ON) cout << "Beginning simulation..." << endl;
 
 //	Run all phases 
 	
@@ -207,7 +196,7 @@ void Simulation::runRep()
 
     spv.endRep();
     
-    cout << "Simulation completed." << endl;
+    if (DEBUG_ON) cout << "Simulation completed." << endl;
     
 	return;
 }
@@ -222,22 +211,31 @@ void Simulation::runRep()
 
 void Simulation::runPhase(int phase)
 {
-    cout << "Beginning Phase " << phase << "." << endl;
+    if (DEBUG_ON) cout << "Beginning Phase " << phase << "." << endl;
+//    cout << "Queue size = " << spv.getQueueSize() << endl;
 
 //	Generate all task types
 	
 	for (int i = 0; i < NUM_TASK_TYPES; i++)
 		genTasks(i, phase);
     
-//	Process all events and clear task list
+//	Process all events
 	
     if (DEBUG_ON) outputTaskList();
-
+    
     procAllArrs();
     procAllDepts();
+    
+//  Clear task list
+    
+//    for (list<Task*>::iterator it = taskList.begin(); it != taskList.end(); it++)
+//    {
+//        cout << "Deleting " << **it << endl;
+//        delete *it;
+//    }
     taskList.clear();
     
-	cout << "Phase " << phase << " completed." << endl << endl;
+	if (DEBUG_ON) cout << "Phase " << phase << " completed." << endl << endl;
 
 	return;
 }
@@ -358,15 +356,18 @@ void Simulation::procAllDepts()
         depTime = spv.getNextDeptTime();
     }
     
+//    if (!spv.isBusy())
+//        cout << "Operators are idle. Finishing Phase..." << endl;
+//    else
+//        cout << "Depature Time exceeded end time." << endl;
+    
 //  Depart any current tasks
     
 //	if (spv.isBusy())
 //	{
-//		float serTime = depTask->getSerLeft();
-//		int type = depTask->getType();
+//        depTask->setDepTime(endTimes[2]);
 //		procDep(depTask);
-//		stats->getAvgServiceTime(type) -= serTime;
-//		stats->getNumTasksIn(type)--;
+//        spv.clear();
 //	}
 
     return;

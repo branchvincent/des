@@ -22,9 +22,7 @@ using namespace std;
 namespace tparams
 {
 //  Load parameters
-    
-    cout << "Called TASK PARAMETERS" << endl;
-    
+        
     LoadTaskParameters T_PMS;
 }
 

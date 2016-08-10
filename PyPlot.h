@@ -42,7 +42,6 @@ class PyPlot
         void set_xlim(float min, float max) {run("plt.xlim(" + to_string(min) + ", " + to_string(max) + ")");}
         void set_ylim(float min, float max) {run("plt.ylim(" + to_string(min) + ", " + to_string(max) + ")");}
         void set_axis() {run("ax = plt.gca()");}
-//        void set_legend() {}
         void plot_bar(vector<float> x, vector<float> y, vector<float> yerr);
         void save_fig(string outputFile) {run("plt.savefig('" + outputFile + "')");}
         void run_cmd(string command) {run(command);}

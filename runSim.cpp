@@ -31,7 +31,7 @@ using get_time = chrono::steady_clock;
 
 //  Notes:
 //  - change rand() to default_random_engine (minstd_rand0 rand; rand();)
-//  - executable is not plotting (not recongizing matplotib)
+//  - executable is not recongizing matplotib
 
 int main(int argc, char* argv[])
 {
@@ -43,6 +43,8 @@ int main(int argc, char* argv[])
 
     if (argc > 1)
         paramFile = argv[1];
+    
+    cout << "inFile = " << paramFile << endl;
 
 //  Initialize parameters
     
@@ -51,6 +53,7 @@ int main(int argc, char* argv[])
     setNumHours(pms.getParam(0));
     setNumReps(pms.getParam(1));
     setTraffic(pms.getTraffic());
+    setOps(pms.getOps());
 
 //  Intialize and run simulation
     
@@ -59,7 +62,7 @@ int main(int argc, char* argv[])
     
     auto end = get_time::now();
     auto diff = end - start;
-    cout<<"Elapsed time = " << chrono::duration_cast<ns>(diff).count()/1000000000 << " s" <<endl;
+    cout<<"Elapsed time = " << (float)chrono::duration_cast<ns>(diff).count()/1000000000 << " s" <<endl;
     
 	return 0;
 }

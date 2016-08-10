@@ -1,5 +1,5 @@
 output_path		/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/Output
-num_hours		12
-traffic			h h h h h h h h h h h h
-num_reps		10000
-num_task_types	9
+num_hours		2
+traffic			h h
+num_reps		10
+ops             0 1

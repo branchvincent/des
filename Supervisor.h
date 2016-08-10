@@ -44,7 +44,6 @@ using namespace params;
 
 //  Notes
 //  - Shared task to op with current lowest priority
-//  - Add num_op and names
 //  - Add fatigue for just human operators
 //  - Add shared task ID as a subset
 //  - Pass all queues to each operator for interruptions
@@ -60,14 +59,15 @@ class Supervisor
 	public:
 	
 	//	Constructor
-	
-//        Supervisor(NewParams& pms) : params(pms), stats(pms), ops{Operator("Engineer", pms, stats), Operator("Conductor", pms, stats)} {}
     
-        Supervisor() : stats(), ops{Operator("Engineer", stats), Operator("Engineer", stats)} {}
-
+        Supervisor() : stats(), ops() {ops.push_back(Operator("Engineer", stats)); if (NUM_OPS > 1) ops.push_back(Operator("Conductor", stats));}
+        //ops{Operator("Engineer", stats), Operator("Conductor", stats)} {}
+//            ops(NUM_OPS) {ops[0] = Operator("Engineer", stats);
+//                            ops[1] = Operator("Conductor", stats);}
     
 	// 	Inspector
 		
+        int getQueueSize() {return ops[0].getQueueSize();}
         Task* getNextDepature();
         float getNextDeptTime();
         bool isBusy() const;
@@ -78,11 +78,13 @@ class Supervisor
 		
         void procArr(Task* task);
 		void procDep(Task* task);
+        void clear() {for (int i = 0; i < NUM_OPS; i++) ops[i].clear();};
         void endRep();
         void plot();
     
     //  Other member functions
     
+        void output();
         void output(ostream& out) const;
     
 //	Data members
@@ -90,7 +92,7 @@ class Supervisor
 	private:
 //        NewParams& params;
         Statistics stats;
-        Operator ops[NUM_OPS];
+        vector<Operator> ops;
 };
 
 ostream& operator<<(ostream& out, const Supervisor& s) {s.output(out); return out;}
@@ -232,18 +234,18 @@ void Supervisor::procArr(Task* task)
 //	Get task attributes
     
 	float currTime = task->getArrTime();
-    int opNum = task->getOpNum();
+    vector<int> opNums = task->getOpNums();
     if (DEBUG_ON) cout << "\t Task arriving at " << currTime << endl;
     
 //	Add task to the appropriate queue
     
-    if (opNum > NUM_OPS)
-    {
-        cerr << "Error: Incompatible operator ID. Exiting..." << opNum << endl;
-        exit(1);
-    }
-    else if (opNum != NUM_OPS)
-        ops[opNum].procArr(task);
+//    if (opNum > NUM_OPS)
+//    {
+//        cerr << "Error: Incompatible operator ID. Exiting..." << opNum << endl;
+//        exit(1);
+//    }
+    if (opNums.size() == 1)
+        ops[opNums[0]].procArr(task);
     else
     {
     //  Find shortest queue (include current task)
@@ -362,16 +364,16 @@ void Supervisor::plot()
 {
 //  Initialize Python
     
-    Py_Initialize();
+//    Py_Initialize();
     
 //  Plot each utilization
     
-    for (int i = 0; i < NUM_OPS; i++)
-        ops[i].plot();
+//    for (int i = 0; i < NUM_OPS; i++)
+//        ops[i].plot();
     
 //  Finalize Python
     
-    Py_Finalize();
+//    Py_Finalize();
     
     return;
 }
@@ -388,13 +390,44 @@ void Supervisor::output(ostream& out) const
 {
 //  Output global stats
     
-    out << stats << endl;
+//    out << stats << endl;
+    
+//  Output operators
+
+    out << ops[0] << endl;
+    
+//    for (int i = 0; i < NUM_OPS; i++)
+//        out << ops[i] << endl;
+//    
+    return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	output                                                      *
+*																			*
+*	Purpose:	To output...                                                *
+*																			*
+****************************************************************************/
+
+void Supervisor::output()
+{
+//  Output global stats
+    
+    ofstream fout(OUTPUT_PATH + "/Total_stats.csv");
+    if (!fout)
+    {
+        cerr << "Error: Cannot open file. Exiting..." << endl;
+        exit(1);
+    }
+    
+    fout << stats;
     
 //  Output operators
     
     for (int i = 0; i < NUM_OPS; i++)
-        out << ops[i] << endl;
-    
+        ops[i].output();
+
     return;
 }
 

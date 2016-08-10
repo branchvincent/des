@@ -39,6 +39,7 @@ class LoadParameters
     
         string getOutFile() {return outFile;}
         vector<float> getTraffic() {return traffic;}
+        vector<int> getOps() {return ops;}
         float getParam(int i) {return params[i];}
 	
 //	Data members
@@ -46,6 +47,7 @@ class LoadParameters
 	public:
         string outFile;
         vector<float> traffic;
+        vector<int> ops;
         vector<float> params;
 };
 
@@ -59,17 +61,9 @@ class LoadParameters
 
 LoadParameters::LoadParameters(string file)
 {
-//  Get parameter file
-    
-    string paramFile;
-//    cout << "Input parameter file location: ";
-//    cin >> paramFile;
-
-    paramFile = file;
-    
 //  Open parameter file
     
-    fstream fin(paramFile);
+    fstream fin(file);
     
     if (!fin)
     {
@@ -112,10 +106,18 @@ LoadParameters::LoadParameters(string file)
         }
     }
     
-//	Read in rest of parameters
+//	Read in number of replications
     
-    while (fin >> paramName >> paramVal)
-        params.push_back(paramVal);
+    fin >> paramName >> paramVal;
+    params.push_back(paramVal);
+    
+//  Read in operators
+    
+    fin >> paramName;
+    
+    int paramInt;
+    while (fin >> paramInt)
+        ops.push_back(paramInt);
     
     return;
 }

@@ -29,9 +29,6 @@ using namespace params;
 *																			*
 ****************************************************************************/
 
-// Notes
-// - Fix traffic
-
 class Task
 {
 //	Public member functions
@@ -55,7 +52,7 @@ class Task
         const float& getQueTime() {return queTime;}
         const float& getSerLeft() {return serLeft;}
 //        const float getPercLeft() {return serLeft/serTime;}
-        const int getOpNum() {return opNum;}
+        const vector<int> getOpNums() {return opNums;}
 
 	//	Mutators
 	
@@ -65,7 +62,6 @@ class Task
         void setSerLeft(float t) {serLeft = t;}
         void setBegTime(float t) {begTime = t;}
         void setQueTime(float t) {queTime = t;}
-        void setOpNum(int n) {opNum = n;}
 
 	//	Other member functions
 
@@ -79,13 +75,10 @@ class Task
 		
 	//	Used by constructor
 	
-		int getPriority(int phase);
-		float genArrTime(float prevArrTime, int phase, int seed);
-		float adjArrForTraff(float prevArrTime, float interArrTime, int phase);
-		float genSerTime(int seed);
-		float genExpTime(int phase, int seed);
+		float genArrTime(float prevArrTime, int phase);
+		float genSerTime();
+		float genExpTime(int phase);
 		float genRandNum(char distType, int seed, float arg1, float arg2 = 0);
-        int initOpNum();
 	
 //	Data members
 
@@ -99,7 +92,7 @@ class Task
 		float begTime;		// begin service time (min)
         float queTime;      // enter queue time (min)
         float serLeft;      // service time left
-        int opNum;          // operator id number
+        vector<int> opNums;  // operator id number
 };
 
 //	Operators
@@ -117,15 +110,15 @@ ostream& operator<<(ostream& out, const Task& t) {t.output(out); return out;}
 
 Task::Task(int tp, float prevArrTime, int phase) :
     type(tp),
-    priority(getPriority(phase)),
-    arrTime(genArrTime(prevArrTime, phase, rand())),
-    serTime(genSerTime(rand())),
+    priority(PRTY[type][phase]),
+    arrTime(genArrTime(prevArrTime, phase)),
+    serTime(genSerTime()),
     depTime(INFINITY),
-    expTime(genExpTime(phase, rand())),
+    expTime(genExpTime(phase)),
     begTime(0),
     queTime(arrTime),
     serLeft(serTime),
-    opNum(initOpNum())
+    opNums(OP_NUM[type])
 {
 //	Check type
 
@@ -146,34 +139,6 @@ Task::Task(int tp, float prevArrTime, int phase) :
 
 /****************************************************************************
 *																			*
-*	Function:	getPriority													*
-*																			*
-*	Purpose:	To return the priority based on the task type and specified *
-*				phase			 											*
-*																			*
-****************************************************************************/
-
-int Task::getPriority(int phase)
-{	
-//	Priority array (task types vs. phases)
-
-						//	P0,	P1,	P2
-	int prty[9][3] = 	{	{4, 3, 	4},		// Communicating
-							{5, 4, 	5}, 	// Exception handling
-							{3,	0, 	2},		// Paperwork
-							{0, 5, 	0},		// Maintenance of way
-							{0, 5, 	0},		// Temp speed restriction
-							{0, 5, 	0},		// Signal response management
-							{2, 2, 	1},		// Monitoring inside
-							{1, 1, 	3},		// Monitoring outisde
-							{0, 5, 	0}		// Planning ahead
-					 	};	
-					
-	return prty[type][phase];
-}
-
-/****************************************************************************
-*																			*
 *	Function:	genArrTime													*
 *																			*
 *	Purpose:	To generate an arrival time based on the specified task		*
@@ -181,70 +146,26 @@ int Task::getPriority(int phase)
 *																			*
 ****************************************************************************/
 
-float Task::genArrTime(float prevArrTime, int phase, int seed)
-{	
-//	Exponential distribution parameters (task types vs. phases)
-
-							//	P0,		P1,		P2
-	float lambda[9][3] = 	{	{1/3., 	0.2, 	1/3.},		// Communicating
-								{0, 	.1/30, 	.1/30}, 	// Exception handling
-								{1/3., 	1/30., 	1/3.},		// Paperwork
-								{0, 	.05/30, .5/30},		// Maintenance of way
-								{0, 	1/30., 	0},			// Temp speed restriction
-								{1/30., 0.1, 	1/15.},		// Signal response management
-								{1/15., 0.1, 	0},			// Monitoring inside
-								{0.1, 	0.2, 	0.1},		// Monitoring outisde
-								{1/30., 1/15., 1/30.}		// Planning ahead
-					 	 	};	
-
-//	Generate random interarrival time and adjust for traffic
-
-	float interArrTime = genRandNum('E', seed, lambda[type][phase]);
-	float arrival = adjArrForTraff(prevArrTime, interArrTime, phase);
-
-	return arrival;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	adjArrForTraffic											*
-*																			*
-*	Purpose:	To adjust the arrival time based on the current traffic		* 
-*				level														*
-*																			*
-****************************************************************************/
-
-float Task::adjArrForTraff(float prevArrTime, float interArrTime, int phase)
+float Task::genArrTime(float prevArrTime, int phase)
 {
-//	Tasks affected by traffic level (task types vs. phases)
+//	Generate random interarrival time
 
-								//	P0, P1,	P2
-	bool affByTraff[9][3] = 	{	{0,	1,	0},		// Communicating
-									{0, 1, 	0}, 	// Exception handling
-									{0, 1, 	1},		// Paperwork
-									{0, 1, 	0},		// Maintenance of way
-									{0, 1, 	0},		// Temp speed restriction
-									{0, 1, 	0},		// Signal response management
-									{0, 0, 	0},		// Monitoring inside
-									{0, 1, 	0},		// Monitoring outisde
-									{0, 1, 	0}		// Planning ahead
-					 		 	};	
-
+	float interArrTime = genRandNum(ARR_DIST, rand(), ARR_DIST_PARAMS[type][phase]);
+    
+//  Adjust for arrival time for traffic, if applicable
+    
     float newArrTime = prevArrTime + interArrTime;
+    if (isinf(newArrTime)) return INFINITY;
     
-	if (isinf(newArrTime)) return INFINITY;
-    
-//	Adjust arrival time, if applicable
-
-	if (affByTraff[type][phase] && TRAFFIC_ON) 
-	{
+    if (AFF_BY_TRAFF[type][phase] && TRAFFIC_ON)
+    {
         float budget = interArrTime;
         float currTime = prevArrTime;
         int currHour = currTime/60;
         float traffLevel = TRAFFIC[currHour];
         float timeToAdj = (currHour + 1) * 60 - currTime;
         float adjTime = timeToAdj * traffLevel;
-    
+        
     //  If time is left in budget, proceed
         
         while (budget > adjTime)
@@ -284,30 +205,25 @@ float Task::adjArrForTraff(float prevArrTime, float interArrTime, int phase)
 *																			*
 ****************************************************************************/
 
-float Task::genSerTime(int seed)
+float Task::genSerTime()
 {
-//	Generate service time, based on type
-
-	switch (type)
-	{
-		case 0:	return genRandNum('E', seed, 1/0.133);				// Communicating
-		case 1:	return genRandNum('L', seed, 0.980297, 1.389685);	// Exception handling
-		case 2: return genRandNum('U', seed, 0.05, 2);				// Paperwork	
-		case 3: return genRandNum('U', seed, 0.167, 1);				// Maintenance of way
-		case 4:	return genRandNum('U', seed, 0.1, 0.5);				// Temp speed restriction
-		case 5:	return genRandNum('U', seed, 0.1, 0.5);				// Signal response management
-		case 6:	return genRandNum('E', seed, 1/0.133);				// Monitoring inside
-		case 7:	return genRandNum('E', seed, 1/0.1);				// Monitoring outside
-		case 8:	return genRandNum('E', seed, 1/0.33);				// Planning ahead
-	
-	//	Error message
-		
-		default:
-		{
-			cerr << "Error:  Incompatible task type. Exiting..." << endl;
-			exit(1);
-		}
-	}
+//	Get service time parameters
+    
+    char distType = SER_DISTS[type];
+    float param1 = SER_DIST_PARAMS[type][0];
+    float param2 = SER_DIST_PARAMS[type][1];
+    
+//  Return random number
+    
+//    float num = genRandNum(distType, rand(), param1, param2);
+//    
+//    if (isinf(num))
+//    {
+//        cout << "ERROR:  " << *this << endl;
+//        cout << distType << " " << param1 << " " << param2 << endl;
+//    }
+    
+    return genRandNum(distType, rand(), param1, param2);
 }
 
 /****************************************************************************
@@ -315,41 +231,15 @@ float Task::genSerTime(int seed)
 *	Function:	genExpTime													*
 *																			*
 *	Purpose:	To generate an expiration time based on the specified task	*
-*				type, ..., and distribution seed			*
+*				type                                                        *
 *																			*
 ****************************************************************************/
 
-float Task::genExpTime(int phase, int seed)
+float Task::genExpTime(int phase)
 {
-//	Exponential distribution parameters (task types vs. phases)						* returns infinity for lda = 0
-
-//	High traffic
-									//	P0,	P1,				P2
-	float highTraffLambda[9][3] = 	{	{0,	0.086333333,	0},				// Communicating
-										{0,	0.055166667,	0.055166667}, 	// Exception handling
-										{0,	0,				0},				// Paperwork
-										{0,	0.184,			0},				// Maintenance of way
-										{0,	0.184,			0},				// Temp speed restriction
-										{0,	0.184,			0.184},			// Signal response management
-										{0,	0,				0},				// Monitoring inside
-										{0,	0,				0},				// Monitoring outisde
-										{0,	0.1795,			0}				// Planning ahead
-							 	 	};
-
-//	Low and normal traffic
-								//	P0,	P1,				P2
-	float otherLambda[9][3] =	{	{0,	0.107166667,	0},				// Communicating
-									{0,	0.044666667,	0.044666667}, 	// Exception handling
-									{0,	0,				0},				// Paperwork
-									{0,	0.184,			0},				// Maintenance of way
-									{0,	0.184,			0},				// Temp speed restriction
-									{0,	0.184,			0.184},			// Signal response management
-									{0,	0,				0},				// Monitoring inside
-									{0,	0,				0},				// Monitoring outisde
-									{0,	0.166,			0}				// Planning ahead
-						 	 	};		
-	
-	float lambda;
+//  Initialize variables
+    
+	float param;
 	float expiration = 0;
 	int hour = arrTime/60;
 	
@@ -358,14 +248,15 @@ float Task::genExpTime(int phase, int seed)
 	if (hour >= TRAFFIC.size())
 		return arrTime;
 	else if (TRAFFIC[hour] == 2)
-		lambda = highTraffLambda[type][phase];
+		param = EXP_DIST_PARAMS_HIGH[type][phase];
 	else
-		lambda = otherLambda[type][phase];
+		param = EXP_DIST_PARAMS_LOW[type][phase];
 	
 //	Get random number
 
-	while (expiration <= serTime)
-		expiration = genRandNum('E', seed++, lambda);
+    expiration = 2*serTime;
+//	while (expiration <= serTime)
+//		expiration = genRandNum('E', rand(), param);
 
 	return arrTime + expiration;
 }
@@ -421,30 +312,6 @@ float Task::genRandNum(char distType, int seed, float arg1, float arg2)
 			exit(1);
 		}
 	}
-}
-
-/****************************************************************************
-*																			*
-*	Function:	initOpNum													*
-*																			*
-*	Purpose:	To initialize the operator number                           *
-*																			*
-****************************************************************************/
-
-int Task::initOpNum()
-{
-    int opNum[9] = 	{	0,          // Communicating
-                        0,          // Exception handling
-                        0,          // Paperwork
-                        0,          // Maintenance of way
-                        0,          // Temp speed restriction
-                        NUM_OPS,	// Signal response management
-                        NUM_OPS,	// Monitoring inside
-                        0,          // Monitoring outisde
-                        NUM_OPS     // Planning ahead
-                    };
-				
-    return opNum[type];
 }
 
 #endif

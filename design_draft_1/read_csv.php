@@ -1,26 +1,31 @@
 <?php
 
-	$file_handle=fopen('results_by_type.csv','r');
+	$file_handle=fopen('results.csv','r');
 	$file=fopen("mod_type_data.txt","w");
 	$count=array();
 	$temp_count=0;
 	$ind=0;
 	while (! feof($file_handle) ) 
 	{
-		$ind=0;
 		$line_of_text = fgetcsv($file_handle,1024,',');
 		$num=count($line_of_text);
-		$count[$temp_count]=array();
-		$count[$temp_count][$ind]=(int)$line_of_text[0];
-		for($i=1;$i<$num;$i=$i+2)
+		
+		if($num>1)
 		{
-			$ind++;
-			$count[$temp_count][$ind]=(float)$line_of_text[$i];
+      $ind=0;
+			$count[$temp_count]=array();
+			$count[$temp_count][$ind]=(int)$line_of_text[0];
+			for($i=1;$i<$num;$i=$i+2)
+			{
+				$ind++;
+				$count[$temp_count][$ind]=(float)$line_of_text[$i];
+				
+				
+			}
 			
-			
+			$temp_count++;
 		}
 		
-		$temp_count++;
 	}
 	
 	fclose($file_handle);
