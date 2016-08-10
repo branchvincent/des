@@ -1,0 +1,5 @@
+output_path		/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/design_draft_1
+num_hours		8
+traffic 		l m h l m h l m 
+num_reps		100 
+num_task_types	9

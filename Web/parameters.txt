@@ -1,0 +1,5 @@
+output_path		/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/Web
+num_hours		4
+traffic 		m m m m 
+num_reps		100 
+ops				0
