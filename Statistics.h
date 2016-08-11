@@ -137,7 +137,7 @@ void Statistics::endRep()
 {
 //  Output statistics for current replication
     
-    if (DEBUG_ON)
+    if (false) //DEBUG_ON)
     {
         string file = OUTPUT_PATH + "/rep" + to_string(currRep) + ".csv";
         ofstream fout(file);
@@ -301,7 +301,8 @@ void Statistics::outputAvg(ostream& out) const
     
     for (int i = 0; i < NUM_INTS; i++)
         out << ", " << i * INT_SIZE << " min";
-    out << ", Sum" << endl;
+    out << "," << endl;
+//    out << ",Sum" << endl;
     
 //  Output arrays
     
@@ -339,17 +340,17 @@ void Statistics::outputAvgArr(ostream& out, string arrName, const Matrix3D& arr)
         if (i != arr[0].size() - 1)
             out << ", " << i;
         else
-            out << ", Sum";
+            out << ",Sum";
         
     //	Output averages
         
-        for (int j = 0; j < arr[0][0].size(); j++)
+        for (int j = 0; j < arr[0][0].size() - 1; j++)
             out << ", " << arr[NUM_REPS][i][j];
         out << endl << ", ";
         
     //  Output std devs
         
-        for (int j = 0; j < arr[0][0].size(); j++)
+        for (int j = 0; j < arr[0][0].size() - 1; j++)
             out << ", " << arr[NUM_REPS + 1][i][j];
         out << endl;
     }

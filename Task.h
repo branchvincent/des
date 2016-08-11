@@ -215,15 +215,16 @@ float Task::genSerTime()
     
 //  Return random number
     
-//    float num = genRandNum(distType, rand(), param1, param2);
-//    
-//    if (isinf(num))
-//    {
-//        cout << "ERROR:  " << *this << endl;
-//        cout << distType << " " << param1 << " " << param2 << endl;
-//    }
+    float num = genRandNum(distType, rand(), param1, param2);
     
-    return genRandNum(distType, rand(), param1, param2);
+    while (isinf(num))
+    {
+        if (DEBUG_ON) cout << "ERROR:  " << *this << endl;
+        if (DEBUG_ON) cout << distType << " " << param1 << " " << param2 << endl;
+        num = genRandNum(distType, rand(), param1, param2);
+    }
+    
+    return num;
 }
 
 /****************************************************************************
