@@ -20,8 +20,8 @@
 using namespace std;
 using namespace params;
 
-using  ns = chrono::nanoseconds;
-using get_time = chrono::steady_clock;
+/* using  ns = chrono::nanoseconds;
+using get_time = chrono::steady_clock; */
 
 /****************************************************************************
 *																			*
@@ -35,7 +35,7 @@ using get_time = chrono::steady_clock;
 
 int main(int argc, char* argv[])
 {
-    auto start = get_time::now();
+    //auto start = get_time::now();
     
 //  Readin parameter file
     
@@ -60,9 +60,9 @@ int main(int argc, char* argv[])
     Simulation sim(paramFile);
 	sim.run();
     
-    auto end = get_time::now();
+    /* auto end = get_time::now();
     auto diff = end - start;
-    cout<<"Elapsed time = " << (float)chrono::duration_cast<ns>(diff).count()/1000000000 << " s" <<endl;
+    cout<<"Elapsed time = " << (float)chrono::duration_cast<ns>(diff).count()/1000000000 << " s" <<endl; */
     
 	return 0;
 }
