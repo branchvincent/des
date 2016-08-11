@@ -59,6 +59,14 @@ input[type=submit] {
     border-radius: 25px; 
 }
 
+button
+{
+padding:5px 15px; 
+    border: 2px solid #5D7B85;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 25px; }
+	
 #assistants {
 	position: relative;
 	top: 15px;
@@ -103,5 +111,12 @@ border-radius: 25px;
 table{
 border-collapse: collapse; /* IE7 and lower */
 border-spacing: 2px; 
+}
+
+#refresh{
+position: relative;
+left: 90% ;
+top: 2%;
+
 }
 

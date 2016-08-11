@@ -29,14 +29,18 @@ function calculate_time(divName)
 				stop_minutes=parseFloat(time.slice(ind+1,len));
 				
 				total_time=60-start_minutes+stop_minutes+(stop_hours-start_hours-1)*60;
+				total_time=Math.ceil(total_time/60);
 				
 				
-				total_time=Math.round(total_time/60);
+				
 				var divobj = document.getElementById('totalTime');
+				
 				divobj.innerHTML=divobj.innerHTML+"<table id='table' border='1'><tr>";
 				
 				var table=document.getElementById('table');
 				var row=table.insertRow(0);
+				
+				
 				for(i=0; i<total_time; i++)
 				{
 					var str="";
@@ -66,15 +70,17 @@ function calculate_time(divName)
 				var cell2=row.insertCell(1);
 				var cell3=row.insertCell(2);
 				var cell4=row.insertCell(3);
-				cell1.innerHTML="Conductor<input type='radio' name='extra' value='cond' id='conductor' />";
-				cell2.innerHTML="Positive Train Control<input type='radio' name='extra' value='train_c' id='train_c' />";
-				cell3.innerHTML="Cruise Control<input type='radio' name='extra' value='cruise_c' id='cruise_control' />";
-				cell4.innerHTML="Other<input type='radio' name='extra' value='other' id='other'>";
+				cell1.innerHTML="Conductor<input type='radio' name='extra1' value='1' id='conductor' />";
+				cell2.innerHTML="Positive Train Control<input type='radio' name='extra2' value='2' id='train_c' />";
+				cell3.innerHTML="Cruise Control<input type='radio' name='extra3' value='3' id='cruise_control' />";
+				cell4.innerHTML="Other<input type='radio' name='extra4' value='4' id='other'>";
 				
 				}
+				var divobj = document.getElementById('refresh');
+				divobj.innerHTML="<button onclick='window.location.href=window.location.href'>Refresh</button>";
 				
-				document.getElementById("start_time").disabled=true;
-				document.getElementById("stop_time").disabled=true;
+				document.getElementById("start_time").readOnly=true;
+				document.getElementById("stop_time").readOnly=true;
 			}
 			
 

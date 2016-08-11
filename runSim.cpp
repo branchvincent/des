@@ -62,8 +62,6 @@ int main(int argc, char* argv[])
     Simulation sim(paramFile);
 	sim.run();
     
-//  End timer
-    
 //    runTime = ((float)(clock() - runTime)); ///CLOCKS_PER_SEC;
 //    runTime /= CLOCKS_PER_SEC;
 //    
