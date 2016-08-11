@@ -16,6 +16,7 @@
 #include <iostream>
 #include <list>
 #include <queue>
+#include <algorithm>
 #include "Task.h"
 #include "Operator.h"
 #include "Statistics.h"
@@ -60,7 +61,11 @@ class Supervisor
 	
 	//	Constructor
     
-        Supervisor() : stats(), ops() {ops.push_back(Operator("Engineer", stats)); if (NUM_OPS > 1) ops.push_back(Operator("Conductor", stats));}
+        Supervisor() : stats(), ops() {ops.push_back(Operator("Engineer", stats));
+                            if (find(OPS.begin(), OPS.end(), 1) != OPS.end()) ops.push_back(Operator("Conductor", stats));
+                            if (find(OPS.begin(), OPS.end(), 2) != OPS.end()) ops.push_back(Operator("PTC", stats));
+                            if (find(OPS.begin(), OPS.end(), 3) != OPS.end()) ops.push_back(Operator("Cruise", stats));}
+    
         //ops{Operator("Engineer", stats), Operator("Conductor", stats)} {}
 //            ops(NUM_OPS) {ops[0] = Operator("Engineer", stats);
 //                            ops[1] = Operator("Conductor", stats);}
@@ -264,21 +269,30 @@ void Supervisor::procArr(Task* task)
         int minSize = ops[0].getQueueSize() + ops[0].isBusy();
         int minIndex = 0;
         
-        for (int i = 0; i < NUM_OPS; i++)
+        int end = opNums.size() - 1;
+        int j = 0;
+        
+        for (int i = opNums[0]; i <= opNums[end]; i++)
         {
         //  Get queue size
-  
-            queueSize = ops[i].getQueueSize() + ops[i].isBusy();
             
-        //  Check for new minimum
-            
-            if (queueSize < minSize)
+            if (find(OPS.begin(), OPS.end(), i) != OPS.end())
             {
-                minSize = queueSize;
-                minIndex = i;
+                queueSize = ops[j].getQueueSize() + ops[j].isBusy();
+                
+            //  Check for new minimum
+                
+                if (queueSize < minSize)
+                {
+                    minSize = queueSize;
+                    minIndex = j;
+                }
+                j++;
             }
         }
         
+//        cout << "Operator size = " << ops.size() << endl;
+//        cout << "Index = " << minIndex << endl;
 //        cout << "Going to " << ops[minIndex].getName() << endl;
         
         ops[minIndex].procArr(task);
@@ -414,10 +428,11 @@ void Supervisor::output()
 {
 //  Output global stats
     
-    ofstream fout(OUTPUT_PATH + "/Total_stats.csv");
+    string file = OUTPUT_PATH + "/Total_stats.csv";
+    ofstream fout(file);
     if (!fout)
     {
-        cerr << "Error: Cannot open file. Exiting..." << endl;
+        cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
         exit(1);
     }
     

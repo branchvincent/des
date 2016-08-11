@@ -140,15 +140,15 @@ namespace params
                                         {0, 1, 	0}		// Planning ahead
                                     };                                                          // set (if add new, choose for that specific task type)
     
-    const Matrix OP_NUM{    {0},	// Communicating
-                            {0}, 	// Exception handling
-                            {0},	// Paperwork
-                            {0},	// Maintenance of way
-                            {0},	// Temp speed restriction
-                            {0, 1},	// Signal response management
-                            {0, 1},	// Monitoring inside
-                            {0},	// Monitoring outisde
-                            {0, 1},	// Planning ahead
+    const Matrix OP_NUM{    {0},        // Communicating
+                            {0, 2}, 	// Exception handling
+                            {0},        // Paperwork
+                            {0},     // Maintenance of way
+                            {0},     // Temp speed restriction
+                            {0, 1, 2},	// Signal response management
+                            {0, 1, 2},	// Monitoring inside
+                            {0},        // Monitoring outisde
+                            {0, 1, 3},	// Planning ahead
                         };
 
 //  Set parameters

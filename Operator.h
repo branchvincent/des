@@ -507,10 +507,11 @@ void Operator::output()
 {
 //  Output stats
     
-    ofstream fout(OUTPUT_PATH + "/" + name + "_stats.csv");
+    string file = OUTPUT_PATH + "/" + name + "_stats.csv";
+    ofstream fout(file);
     if (!fout)
     {
-        cerr << "Error: Cannot open file. Exiting..." << endl;
+        cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
         exit(1);
     }
     

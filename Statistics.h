@@ -141,6 +141,11 @@ void Statistics::endRep()
     {
         string file = OUTPUT_PATH + "/rep" + to_string(currRep) + ".csv";
         ofstream fout(file);
+        if (!fout)
+        {
+            cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
+            exit(1);
+        }
         outputRep(fout, currRep);
     }
 
