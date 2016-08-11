@@ -34,7 +34,7 @@ namespace params
     int NUM_HOURS;
 	int NUM_REPS;
     const bool OUTPUT_ON = 1;
-    const bool RAND_RUN_ON = 0;
+    const bool RAND_RUN_ON = 1;
 		
     int END_TIME;
     const int INT_SIZE = 10;
@@ -49,7 +49,7 @@ namespace params
     vector<int> OPS;
     const bool TRAFFIC_ON = 1;
     const bool FATIGUE_ON = 1;
-    const bool DEBUG_ON = 1;
+    const bool DEBUG_ON = 0;
     
 //  Task parameters
     

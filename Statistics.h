@@ -137,7 +137,7 @@ void Statistics::endRep()
 {
 //  Output statistics for current replication
     
-    if (DEBUG_ON)
+    if (false) //DEBUG_ON)
     {
         string file = OUTPUT_PATH + "/rep" + to_string(currRep) + ".csv";
         ofstream fout(file);
