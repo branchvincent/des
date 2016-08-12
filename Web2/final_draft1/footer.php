@@ -1,11 +1,13 @@
 </div>
 	
 	<footer id="fixedFooter">
-		<p id="note">NOTE: This decision support tool is not intended to dictate final decisions.</p>
-		<p id="note1">Designed by Duke University researchers.</p>
-		<p id="note2">Contact information: <a href="http://hal.pratt.duke.edu">
-		hal.pratt.duke.edu</a>.</p>
-		<img id="footerLogo" src="hal.png" width=400 align="center" />
+		<p class="noteLabel">NOTE:</p>
+		<div class="note">
+			<p>This decision support tool is not intended to dictate final decisions.</p>
+			<p>Designed by Duke University researchers.</p>
+			<p>Contact information: <a href="http://hal.pratt.duke.edu">hal.pratt.duke.edu</a>.</p>
+		</div>
+		<img id="footerLogo" src="hal.png" width=200 align="center" />
 	</footer>
 		
 		<div id="next_page">
