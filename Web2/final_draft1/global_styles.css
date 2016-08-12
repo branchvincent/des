@@ -1,6 +1,10 @@
 
+#siteHead {
 
-#main{
+}
+
+
+#main {
 	border: 2px solid white;
 	width: 1280px;
 	height: 600px;
@@ -13,14 +17,13 @@ h1{
 	opacity: 1.0;
 }
 
-#title
-{
+#title {
 	background: rgba(0,0,255,0.4);
 	height:120px ;
 	width:1280px;
 }
 
-#uses{
+#uses {
 	text-align: center;
 	color: #19334d;
 }
@@ -29,52 +32,51 @@ li {
     padding-left: 12px; 
 }
 
-h3{
+h3 {
 	color: #5D7B85;
 }
 
-#button{
+#button {
 	position: relative;
 	top: 130px;
 }
 
-footer{
+footer {
 	position: relative;
 	top: 60px;
 	font-size: 15px;
 }
 
-#note{
-position:relative;
-left: 0%;
+#note {
+	position:relative;
+	left: 0%;
 }
 
-#note1{
-position:relative;
-left: 3.5%;
+#note1 {
+	position:relative;
+	left: 3.5%;
 }
 
-#note2{
-position:relative;
-left: 3.5%;
+#note2 {
+	position:relative;
+	left: 3.5%;
 }
 
-#next_page{
-position: absolute;
-left: 1150px;
-top: 550px;
+#next_page {
+	position: absolute;
+	left: 1150px;
+	top: 550px;
 }
 
-.style_button
-{
-background: #0000ff;
-opacity: 0.5;
-padding:8px 20px;
-color:#cfebf3;
-font-family:'Helvetica Neue',sans-serif;
-font-size:13px;
-border-radius:40px;
--moz-border-radius:40px;
--webkit-border-radius:40px;
-border:5px solid #C0C0C0
+.style_button {
+	background: #0000ff;
+	opacity: 0.5;
+	padding:8px 20px;
+	color:#cfebf3;
+	font-family:'Helvetica Neue',sans-serif;
+	font-size:13px;
+	border-radius:40px;
+	-moz-border-radius:40px;
+	-webkit-border-radius:40px;
+	border:5px solid #C0C0C0
 }
