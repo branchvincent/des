@@ -1,15 +1,8 @@
-<html>
-<head>
-		<meta charset="UTF-8">
-		<title>Title.</title>
-		<link rel="stylesheet" href="page1_mod.css">
-		
-		
-</head>
-
-<body>
+<?php	
 	
-	<div id="page">
+	require_once("header.php");
+?>
+	
 	
 	
 		<img src="rail.jpg" alt=" " style="position:absolute; top:0px; left:0px; width:1300px; height:600px; opacity:0.15;"/>
@@ -52,7 +45,8 @@
 		<div id="next_page">
 			<input type="button" class="style_button" name="b1" value="Get Started" onclick=location.href="page2.html" />
 		</div>
-	</div>
-
-</body>
-</html>
+	<?php
+	require_once("footer.php");
+	?>
+	
+	
