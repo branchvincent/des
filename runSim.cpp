@@ -16,13 +16,9 @@
 #include <string>
 #include "Simulation.h"
 #include "Parameters/LoadParameters.h"
-//#include <time.h>
 
 using namespace std;
 using namespace params;
-
-//using  ns = chrono::nanoseconds;
-//using get_time = chrono::steady_clock;
 
 /****************************************************************************
 *																			*
@@ -36,16 +32,14 @@ using namespace params;
 
 int main(int argc, char* argv[])
 {
-//    auto start = get_time::now();
-//    clock_t startTime = clock();
+//  Start timer
+    
+    clock_t start = clock();
 
 //  Readin parameter file
     
     string paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/Input/params.txt";
-
-    if (argc > 1)
-        paramFile = argv[1];
-    
+    if (argc > 1) paramFile = argv[1];
     cout << "inFile = " << paramFile << endl;
 
 //  Initialize parameters
@@ -62,13 +56,10 @@ int main(int argc, char* argv[])
     Simulation sim(paramFile);
 	sim.run();
     
-//    runTime = ((float)(clock() - runTime)); ///CLOCKS_PER_SEC;
-//    runTime /= CLOCKS_PER_SEC;
-//    
-//    auto end = get_time::now();
-//    auto diff = end - start;
-//    cout<<"Elapsed time = " << (float)chrono::duration_cast<ns>(diff).count()/1000000000 << " s" <<endl;
-//    cout << "Elapsed time = " << runTime << " s" <<endl;
+//  End timer
+    
+    float time = (clock() - start) / (float)CLOCKS_PER_SEC;
+    cout << "Elapsed time = " << time << " s" <<endl;
 
 	return 0;
 }
