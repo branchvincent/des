@@ -4,7 +4,7 @@
 ?>
 	
 	
-	
+	<div id="page1" class="page">
 		<img src="rail.jpg" alt=" " style="position:absolute; top:0px; left:0px; width:1300px; height:600px; opacity:0.15;"/>
 		
 		<div id="top_panel"></div>
@@ -45,6 +45,38 @@
 		<div id="next_page">
 			<input type="button" class="style_button" name="b1" value="Get Started" onclick=location.href="page2.html" />
 		</div>
+	</div>
+	
+	
+	
+	<div id="page2" class="page">
+		
+
+		<form action="create_txt.php" method="post">
+					
+							
+					<h3 id="text_start">Enter Start Time:</h3> <br><input id="start_time" type="time" name="time1" oninput="calculate_time()">
+							
+					<br>
+				
+					<h3 id="text_stop">Enter Stop Time:</h3> <br><input id="stop_time" type="time" name="time2" oninput="calculate_time()">
+					
+					<br>
+					<div id="totalTime" style="overflow-x:auto;"></div>
+					<div id="assist" style="overflow-x:auto;"></div>
+					
+					<input type="submit" id="submit"></input>
+					
+					
+					
+		</form>
+	</div>
+	
+	
+	
+	
+	
+	
 	<?php
 	require_once("footer.php");
 	?>
