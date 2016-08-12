@@ -8,9 +8,7 @@
 		
 		<br><br>
 
-		<div id="uses">
-			<h2>Use this tool to answer the following questions</h2>
-		</div>
+		<h2 class='sectionHead'>Use this tool to answer the following questions</h2>
 		
 		<hr style="height: 0px; border-bottom: 2px solid #e9e7e5;">
 		
