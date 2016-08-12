@@ -35,16 +35,7 @@
 			<hr style=" width: 60px; height: 0px; border-bottom: 2px solid #e9e7e5;">
 		</div>
 
-		<footer>
-		  <p id="note">NOTE: This decision support tool is not intended to dictate final decisions.</p>
-		  <p id="note1">Designed by Duke University researchers.</p>
-		  <p id="note2">Contact information: <a href="http://hal.pratt.duke.edu">
-		  hal.pratt.duke.edu</a>.</p>
-		</footer>
 		
-		<div id="next_page">
-			<input type="button" class="style_button" name="b1" value="Get Started" onclick=location.href="page2.html" />
-		</div>
 	</div>
 	
 	
@@ -55,17 +46,17 @@
 		<form action="create_txt.php" method="post">
 					
 							
-					<h3 id="text_start">Enter Start Time:</h3> <br><input id="start_time" type="time" name="time1" oninput="calculate_time()">
-							
-					<br>
-				
-					<h3 id="text_stop">Enter Stop Time:</h3> <br><input id="stop_time" type="time" name="time2" oninput="calculate_time()">
+			<h3 id="text_start">Enter Start Time:</h3> <br><input id="start_time" type="time" name="time1" oninput="calculate_time()">
 					
-					<br>
-					<div id="totalTime" style="overflow-x:auto;"></div>
-					<div id="assist" style="overflow-x:auto;"></div>
-					
-					<input type="submit" id="submit"></input>
+			<br>
+		
+			<h3 id="text_stop">Enter Stop Time:</h3> <br><input id="stop_time" type="time" name="time2" oninput="calculate_time()">
+			
+			<br>
+			<div id="totalTime" style="overflow-x:auto;"></div>
+			<div id="assist" style="overflow-x:auto;"></div>
+			
+			<input type="submit" id="submit"></input>
 					
 					
 					
