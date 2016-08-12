@@ -9,7 +9,7 @@ body {
 #fixedHead {
 	position: fixed;
 	top: 0;
-	
+	text-align: center;
 	height: 200px;
 	width: 100%;
 	z-index: 999;
@@ -26,6 +26,20 @@ body {
 
 #fixedHead h1 {
 	margin: 0;
+	padding: 40px;
+}
+
+#fixedFooter {
+	position: fixed;
+	bottom: 0;
+	background-color: white;
+	width: 100%;
+}
+
+#fixedFooter #footerLogo {
+	position: absolute;
+	right: 0;
+	bottom: 0;
 }
 
 #main {
@@ -38,6 +52,7 @@ h1{
 	color: #19334d;
 	font-family: verdana;
 	font-size: 32px;
+
 }
 
 #title {
