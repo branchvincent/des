@@ -20,9 +20,6 @@
 using namespace std;
 using namespace params;
 
-/* using  ns = chrono::nanoseconds;
-using get_time = chrono::steady_clock; */
-
 /****************************************************************************
 *																			*
 *	Function:	main														*
@@ -35,15 +32,14 @@ using get_time = chrono::steady_clock; */
 
 int main(int argc, char* argv[])
 {
-    //auto start = get_time::now();
+//  Start timer
     
+    clock_t start = clock();
+
 //  Readin parameter file
     
     string paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/Input/params.txt";
-
-    if (argc > 1)
-        paramFile = argv[1];
-    
+    if (argc > 1) paramFile = argv[1];
     cout << "inFile = " << paramFile << endl;
 
 //  Initialize parameters
@@ -60,11 +56,10 @@ int main(int argc, char* argv[])
     Simulation sim(paramFile);
 	sim.run();
     
-  
-
-    cout<<"Elapsed time = " << (float)chrono::duration_cast<ns>(diff).count()/1000000000 << " s" <<endl;
-    cout << "New version" << endl;
-
+//  End timer
     
+    float time = (clock() - start) / (float)CLOCKS_PER_SEC;
+    cout << "Elapsed time = " << time << " s" <<endl;
+
 	return 0;
 }
