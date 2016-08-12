@@ -1,10 +1,13 @@
 
 #siteHead {
-
+	position: fixed;
+	height: 200px;
+	top: 0;
 }
 
 
 #main {
+	margin-top: 200px;
 	border: 2px solid white;
 	width: 1280px;
 	height: 600px;
@@ -18,7 +21,7 @@ h1{
 }
 
 #title {
-	background: rgba(0,0,255,0.4);
+	background: rgba(100,100,255,1);
 	height:120px ;
 	width:1280px;
 }
