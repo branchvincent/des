@@ -44,7 +44,7 @@
 	<div id="page" class='page'>
 		<div id="operators" class="operatorSummaryOuter">
 		
-			<div id="operator1" class='stepBox'>
+			<div id="operator1">
 				<h2>On average, your engineer is projected to experience:</h2>
 			
 			
