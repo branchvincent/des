@@ -1,7 +1,35 @@
 
+window.onload = init;
 
-function calculate_time(divName)
-{			
+function init() {
+	console.log("Window has loaded!");
+	calculate_time();
+	setup_nav();
+}	
+
+		
+// function setup_nav() {
+// 	var navToStartTime = document.getElementById("navToStartTime");
+// 	navToStartTime.onclick = 
+// 	console.log(navToStartTime);
+
+// }
+
+function navClick(domElement) {
+
+	if (domElement.id == "navToStartTime") {
+		$('html, body').animate({
+			scrollTop: $(".startEndTimeStepOuter").offset().top -120
+		}, 500);
+	}
+
+}
+
+function scrollTo(domElement) {
+
+}
+
+function calculate_time(divName) {			
 
 	console.log("time changed!");
 
@@ -126,15 +154,3 @@ function calculate_time(divName)
 	//document.getElementById("stop_time").readOnly=true;
 }
 
-
-//
-
-window.onload = init;
-
-function init() {
-	console.log("Window has loaded!");
-	calculate_time();
-	// calculate_time();
-}	
-
-		
