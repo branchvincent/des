@@ -1,4 +1,4 @@
-output_path		/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/Output
+output_path		/var/www/html/des-platform
 num_hours		2
 traffic			h h
 num_reps		1000

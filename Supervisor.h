@@ -222,6 +222,7 @@ Operator& Supervisor::getIdleOp()
     
 //  If not found, return error
     
+    cout << "Error: No idle operator. Exiting..." << endl;
     cerr << "Error: No idle operator. Exiting..." << endl;
     exit(1);
 }
@@ -432,6 +433,7 @@ void Supervisor::output()
     ofstream fout(file);
     if (!fout)
     {
+        cout << "Error: Cannot open " << file << ". Exiting..." << endl;
         cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
         exit(1);
     }
