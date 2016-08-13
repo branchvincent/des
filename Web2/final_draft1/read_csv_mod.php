@@ -3,9 +3,9 @@
 	$assistant=$_SESSION['operator1'];
 	$file_handle=fopen('Engineer_stats.csv','r');
 	$count=0;
-	$low_count=0;
-	$normal_count=0;
-	$high_count=0;
+	$low_count=1;
+	$normal_count=1;
+	$high_count=1;
 	$skip=0;
 	while (! feof($file_handle) ) 
 	{
