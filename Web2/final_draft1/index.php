@@ -75,13 +75,55 @@ Pellentesque placerat mattis libero eget viverra. Interdum et malesuada fames ac
 			<div class="startEndTime">
 				<div class='stepCircle'>1</div>
 				<h3 id="text_start">Start Time</h3>
-				<input id="start_time" type="time" name="time1" oninput="calculate_time()">
+				<select id='startHour' onchange="calculate_time();">
+					<?php
+						
+						for ($i = 1; $i <= 12; $i++) {
+							if ($i==9) { $selected_string = ' selected="selected"'; } else { $selected_string = ''; }
+							$val = sprintf('%02d', $i);
+							echo "<option$selected_string>$val</option>";
+						} 
+					?>
+				</select>:<select id='startMin' onchange="calculate_time();">
+					<?php
+						for ($i = 0; $i <= 50; $i+=10) {
+							$val = sprintf('%02d', $i);
+							echo "<option>$val</option>";
+						} 
+					?>
+				</select>
+				<select id='startAmpm' onchange="calculate_time();">
+					<option>AM</option>
+					<option>PM</option>
+				</select>
+				<!-- <input id="start_time" type="time" name="time1" oninput="calculate_time()"> -->
 			</div>
 
 			<div class="startEndTime">
 				<div class='stepCircle'>2</div>
 				<h3 id="text_stop">Stop Time</h3>
-				<input id="stop_time" type="time" name="time2" oninput="calculate_time()">
+				<select id='endHour' onchange="calculate_time();">
+					<?php
+						
+						for ($i = 1; $i <= 12; $i++) {
+							if ($i==5) { $selected_string = ' selected="selected"'; } else { $selected_string = ''; }
+							$val = sprintf('%02d', $i);
+							echo "<option$selected_string>$val</option>";
+						} 
+					?>
+				</select>:<select id='endMin' onchange="calculate_time();">
+					<?php
+						for ($i = 0; $i <= 50; $i+=10) {
+							$val = sprintf('%02d', $i);
+							echo "<option>$val</option>";
+						} 
+					?>
+				</select>
+				<select id='endAmpm' onchange="calculate_time();">
+					<option>AM</option>
+					<option selected="selected">PM</option>
+				</select>
+				<!-- <input id="stop_time" type="time" name="time2" oninput="calculate_time()"> -->
 			</div>
 
 			<div id="totalTime" style="overflow-x:auto;"></div>

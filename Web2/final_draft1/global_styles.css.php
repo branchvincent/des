@@ -106,6 +106,7 @@ body {
 	margin: 20px;
 	position: relative;
 	padding-top: 25px;
+	padding-bottom: 20px;
 	padding-left:  35px;
 	padding-right: 35px;
 	text-align: center;
