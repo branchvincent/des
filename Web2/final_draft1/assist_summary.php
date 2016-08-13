@@ -41,20 +41,34 @@
 		
 		<br><br>
 		 -->
+		 
+	
+	
+	<style>		
+		#low_work_0, #high_work_0{ color: <?php if(($low_count_0+$high_count_0)>$normal_count_0){ echo "red";} else{ echo "black";}?>;}
+		#normal_work_0{ color: <?php if(($low_count_0+$high_count_0)<$normal_count_0){ echo "green";} else{ echo "black";}?>;}
+		
+		#low_work_1, #high_work_1{ color: <?php if(($low_count_1+$high_count_1)>$normal_count_1){ echo "red";} else{ echo "black";}?>;}
+		#normal_work_1{ color: <?php if(($low_count_1+$high_count_1)<$normal_count_1){ echo "green";} else{ echo "black";}?>;}
+	</style>
+		
+	
+
+	
 	<div id="page" class='page'>
 		<div id="operators" class="operatorSummaryOuter">
 		
 			<div id="operator1">
 				<h2>On average, your engineer is projected to experience:</h2>
 			
-			
+				
 		
 			
 				<div id="bullets">
 					<ul style="list-style-type:circle">
-						<li><h3>low workload range for <?php echo $low_count_0*10; ?> minutes</h3></li>
-						<li><h3>moderate workload range for <?php echo $normal_count_0*10; ?> minutes</h3></li>
-						<li><h3>high workload range for <?php echo $high_count_0*10; ?> minutes</h3></li>
+						<li><h3 id="low_work_0">low workload range for <?php echo $low_count_0*10; ?> minutes</h3></li>
+						<li><h3 id="normal_work_0">moderate workload range for <?php echo $normal_count_0*10; ?> minutes</h3></li>
+						<li><h3 id="high_work_0">high workload range for <?php echo $high_count_0*10; ?> minutes</h3></li>
 					</ul>
 				</div>
 			
@@ -67,9 +81,9 @@
 				<h2>On average, your conductor is projected to experience:</h2>
 				<div id="bullets">
 					<ul style="list-style-type:circle">
-						<li><h3>low workload range for <?php echo $low_count_1*10; ?> minutes</h3></li>
-						<li><h3>moderate workload range for <?php echo $normal_count_1*10; ?> minutes</h3></li>
-						<li><h3>high workload range for <?php echo $high_count_1*10; ?> minutes</h3></li>
+						<li><h3 id="low_work_1">low workload range for <?php echo $low_count_1*10; ?> minutes</h3></li>
+						<li><h3 id="normal_work_1">moderate workload range for <?php echo $normal_count_1*10; ?> minutes</h3></li>
+						<li><h3 id="high_work_1">high workload range for <?php echo $high_count_1*10; ?> minutes</h3></li>
 					</ul>
 				</div>
 		

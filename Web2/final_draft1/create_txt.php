@@ -1,8 +1,8 @@
 <?php
 	
 	session_start();
-	$myfile=fopen("parameters.txt", "w") or die("unable to open");
-	fwrite($myfile,"output_path		/Users/Branch/Documents/Academic/Year_1/Summer/DES_Code/DES/Output \n");
+	$myfile=fopen("parameters.txt", "w") or fopen("/home/hal/des_data/parameters.txt", "w") or die("unable to open");
+	fwrite($myfile,"output_path		/var/www/html/des-platform/Web2/final_draft1\n");
 	$start_time=(int)substr($_POST ["time1"],0,2);
 	$stop_time=(int)substr($_POST ["time2"],0,2);
 	$start_min=(int)substr($_POST ["time1"],3,strlen($_POST ["time1"]));
@@ -25,7 +25,7 @@
 		if(isset($_POST["extra".$i]))
 			{
 				fwrite($myfile," ".$_POST["extra".$i]);
-				$_SESSION['operator'.$i]=$operator;
+				$_SESSION['operator'.$i]=1;
 			}
 			else{
 				$_SESSION['operator'.$i]=-1;
@@ -35,7 +35,8 @@
 	
 	fclose($myfile);
 	
-	passthru("./DES parameters.txt");
+
+	exec("./DES parameters.txt");
 	
 	include('read_csv_mod.php');
 ?>

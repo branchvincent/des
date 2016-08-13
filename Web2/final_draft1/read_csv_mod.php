@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	$assistant=$_SESSION['operator1'];
+	$assistant= $_SESSION['operator1'];
 	$file_handle=fopen('Engineer_stats.csv','r');
 	$count=0;
 	$low_count=0;
@@ -14,7 +14,9 @@
 		$skip++;
 		if($skip==20)
 		{
-			$num=count($line_of_text);2
+			// echo var_dump($line_of_text);
+			// echo "<br>";
+			$num=count($line_of_text);
 			for($i=2;$i<$num;$i++)
 			{
 				$var=(float)$line_of_text[$i];
@@ -60,6 +62,8 @@
 			$skip++;
 			if($skip==20)
 			{
+				// echo var_dump($line_of_text);
+				// echo "<br>";
 				$num=count($line_of_text);
 				for($i=2;$i<$num;$i++)
 				{
@@ -81,6 +85,7 @@
 					}
 					
 				}
+				/* echo "LOW: $low_count;   NORMAL: $normal_count;   HIGH: $high_count;\n"; */
 				break;
 				
 			}
@@ -94,10 +99,10 @@
 	
 	if($assistant==-1)
 	{
-		include("assist0.html");
+		include("assist_summary.php");  // include("assist0.html");
 	}
 	else{
-		include("assist1.html");
+		include("assist_summary.php");
 	}
 	
 	

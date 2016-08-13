@@ -1,5 +1,6 @@
 <?php
-
+	
+	require_once('header.php');
 	$file_handle=fopen('Engineer_stats.csv','r');
 	$file=fopen("mod_type_data_engineer.txt","w");
 	$count=array();
@@ -71,46 +72,37 @@
 <meta charset="utf-8">
 <body>
 	
-	<div id="page">
-		<img src="rail.jpg" alt=" " style="position:absolute; top:0px; left:0px; width:1300px; height:700px; opacity:0.15;"/>
-		<div id="top_panel"></div>
-		
-		<div id="title">
-				<h1>Simulator of Human Operator Workload (SHOW)<img src="hal.png" width=400 align="middle" /> </h1>
-		</div>
-		
-		<br><br>
-		
+	<div id="page" class="page">
 		<div id="graph"></div>
 	</div>
-		
+	
+	
+	<?php
+		require_once('footer.php');
+	?>
+			
 </body>		
 <style>
 
-#page{
-	border: 2px solid white;
-	width: 1280px;
-	height: 700px;
-}
-
-h1{
-	color: #19334d;
-	font-family: verdana;
-	font-size: 32px;
-	opacity: 1.0;
-}
-
-#title
-{
-	background: rgba(0,0,255,0.4);
-	height:120px ;
-	width:1280px;
+.page{
+	text-align: center;
 }
 
 #graph{
-	position: absolute;
-	font: 7px sans-serif;
-	left: 100px;
+	padding:5px 15px; 
+	width:fit-content; 
+	width:-webkit-fit-content; 
+	width:-moz-fit-content;
+	border: 3px solid #5D7B85;
+	cursor:pointer;
+	-webkit-border-radius: 5px;
+	border-radius: 25px; 
+	display: inline-block;
+	width: 1200px;
+	margin: 0 auto;
+	text-align: left;
+	background-color: rgba(255, 255, 255, 0.6);
+	
 	
 }
 

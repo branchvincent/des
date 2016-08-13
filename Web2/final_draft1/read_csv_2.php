@@ -1,5 +1,6 @@
 <?php
-
+	
+	require_once('header.php');
 	$file_handle=fopen('Conductor_stats.csv','r');
 	$file=fopen("mod_type_data_conductor.txt","w");
 	$count=array();
@@ -44,7 +45,7 @@
 		}
 		
 	}
-	print_r($temp_count);
+	
 	fclose($file_handle);
 	$count[0][0]='time';
 	for($i=0;$i<$temp_counter-1;$i++)
@@ -67,10 +68,44 @@
 	
 ?>
 
-
 <!DOCTYPE html>
 <meta charset="utf-8">
+<body>
+	
+	<div id="page" class="page">
+		<div id="graph"></div>
+	</div>
+	
+	
+	<?php
+		require_once('footer.php');
+	?>
+			
+</body>		
 <style>
+
+.page{
+	text-align: center;
+}
+
+#graph{
+	padding:5px 15px; 
+	width:fit-content; 
+	width:-webkit-fit-content; 
+	width:-moz-fit-content;
+	border: 3px solid #5D7B85;
+	cursor:pointer;
+	-webkit-border-radius: 5px;
+	border-radius: 25px; 
+	display: inline-block;
+	width: 1200px;
+	margin: 0 auto;
+	text-align: left;
+	background-color: rgba(255, 255, 255, 0.6);
+	
+	
+}
+
 body {
   font: 10px sans-serif;
 }
@@ -97,8 +132,6 @@ body {
   fill: blue;
 }
 </style>
-<body>
-
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 var legend_width = 120;
@@ -129,7 +162,7 @@ var yAxisAbsolute = d3.svg.axis()
 	    .scale(yAbsolute)
 	    .orient("left");
 	    
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#graph").append("svg")
     .attr("width", width + margin.left + margin.right+legend_width)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -284,3 +317,4 @@ d3.csv("mod_type_data_conductor.txt", function(error, data) {
 });
 
 </script>
+
