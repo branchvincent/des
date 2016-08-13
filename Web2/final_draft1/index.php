@@ -22,10 +22,10 @@
 		
 		<br>
 
-		<div id="navToStartTime" onclick="navClick(this);">
-			<hr id="hi" style=" width: 60px; height: 0px; border-bottom: 2px solid #e9e7e5;">
+		<div id="navToStartTime" class="navArrow" onclick="navClick(this);">
+<!-- 			<hr id="hi" style=" width: 60px; height: 0px; border-bottom: 2px solid #e9e7e5;">
 			<hr id="hi"  style=" width: 60px; height: 0px; border-bottom: 2px solid #e9e7e5;">
-			<hr id="hi"  style=" width: 60px; height: 0px; border-bottom: 2px solid #e9e7e5;">
+			<hr id="hi"  style=" width: 60px; height: 0px; border-bottom: 2px solid #e9e7e5;"> -->
 		</div>
 
 

@@ -79,6 +79,14 @@ body {
 	margin-bottom: 150px;
 }
 
+.navArrow {
+	background-image: url("nav-arrow.png");
+	height: 50px;
+	width: 50px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .page {
 	margin-left: 30px;
 	margin-right: 30px;
