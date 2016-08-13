@@ -119,6 +119,10 @@ body {
 	margin: 0 auto;
 }
 
+.trafficTable {
+	border-collapse: collapse;
+}
+
 h1 {
 	color: #19334d;
 	font-family: verdana;
