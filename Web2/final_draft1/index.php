@@ -26,7 +26,7 @@
 			<hr style=" width: 60px; height: 0px; border-bottom: 2px solid #e9e7e5;">
 		</div>
 
-		
+
 		<p>
 		
 			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce semper convallis libero nec sodales. Aliquam eu scelerisque enim, sit amet sollicitudin est. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce varius turpis at lacus tincidunt aliquam. Sed tincidunt mauris vel ultricies faucibus. Praesent tristique ligula a leo malesuada, ac pellentesque odio pharetra. In vel sapien neque. Praesent eu augue lorem.
@@ -69,19 +69,25 @@ Pellentesque placerat mattis libero eget viverra. Interdum et malesuada fames ac
 	<div id="page2" class="page">
 		
 
-		<form action="create_txt.php" method="post">
-					
-							
-			<h3 id="text_start">Enter Start Time:</h3> <br><input id="start_time" type="time" name="time1" oninput="calculate_time()">
-					
-			<br>
-		
-			<h3 id="text_stop">Enter Stop Time:</h3> <br><input id="stop_time" type="time" name="time2" oninput="calculate_time()">
-			
-			<br>
+		<form id="timeEntry" action="create_txt.php" method="post">
+				
+
+			<div class="startEndTime">
+				<div class='stepCircle'>1</div>
+				<h3 id="text_start">Enter Start Time:</h3>
+				<input id="start_time" type="time" name="time1" oninput="calculate_time()">
+			</div>
+
+			<div class="startEndTime">
+				<h3 id="text_stop">Enter Stop Time:</h3>
+				<input id="stop_time" type="time" name="time2" oninput="calculate_time()">
+			</div>
+
 			<div id="totalTime" style="overflow-x:auto;"></div>
 			<div id="assist" style="overflow-x:auto;"></div>
 			
+			<br>
+			<br>
 			<input type="submit" id="submit"></input>
 					
 					

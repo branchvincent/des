@@ -1,3 +1,9 @@
+<?php 
+
+	$color_theme_dark_blue = 'rgba(70,127,201,1)'
+
+?>
+
 
 body {
 	margin: 0;
@@ -75,6 +81,33 @@ body {
 	margin-right: 30px;
 }
 
+.stepCircle {
+	border: 1px solid blue;
+	width: 30px;
+	height: 30px;
+	font-size: 24px;
+	border-radius: 15px;
+	text-align: center;
+	font-weight: bold;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+.startEndTime {
+	border: 1px solid red;
+	width: 200px;
+	display: inline-block;
+	margin: 20px;
+	position: relative;
+	padding-top: 25px;
+	text-align: center;
+}
+
+.startEndTime h3 {
+	background-color: <?php echo $color_theme_dark_blue; ?>;
+}
+
 h1 {
 	color: #19334d;
 	font-family: verdana;
@@ -83,7 +116,7 @@ h1 {
 }
 
 #title {
-	background: rgba(100,100,255,1);
+	background: <?php echo $color_theme_dark_blue; ?>;
 	height:120px;
 }
 

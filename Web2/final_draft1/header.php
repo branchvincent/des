@@ -2,7 +2,7 @@
 <head>
 		<meta charset="UTF-8">
 		<title>Title.</title>
-		<link rel="stylesheet" href="global_styles.css">
+		<link rel="stylesheet" href="global_styles.css.php">
 		<script type="text/javascript" src="page2.js"></script>
 		
 		
