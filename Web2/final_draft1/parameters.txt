@@ -1,5 +1,5 @@
 output_path		/Users/Branch/Documents/Academic/Year_1/Summer/DES_Code/DES/Output 
-num_hours		3
-traffic 		   
+num_hours		0
+traffic 		
 num_reps		100 
 ops				0

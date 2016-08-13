@@ -122,7 +122,9 @@
 			
 			<br>
 			<br>
-			<input type="submit" id="submit" value="Run Simulation"></input>
+			<h4 style="text-align:center;">Run Simulation</h4>
+			<div id="next_page" class="navArrow" onclick="location.href='create_txt.php'";>
+			</div>
 					
 					
 					
