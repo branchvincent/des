@@ -1,42 +1,81 @@
+
+
 function calculate_time(divName)
 {			
 
 	console.log("time changed!");
 
-	var starttime=document.getElementById("start_time").value;	
-	var stoptime=document.getElementById("stop_time").value;	
+	// var starttime=document.getElementById("start_time").value;	
+	// var stoptime=document.getElementById("stop_time").value;	
 
-	if(! starttime)
-	{
-		return 0;
-	}
+	var startHour = document.getElementById('startHour');
+	var startMin = document.getElementById('startMin');
+	var startAmpm = document.getElementById('startAmpm');
 
-	if(! stoptime)
-	{
-		return -1;
-	}
+	var endHour = document.getElementById('endHour');
+	var endMin = document.getElementById('endMin');
+	var endAmpm = document.getElementById('endAmpm');
 
-	if(starttime && stoptime)
+	// if(! starttime)
+	// {
+	// 	return 0;
+	// }
+
+	// if(! stoptime)
+	// {
+	// 	return -1;
+	// }
+
+	if(true || starttime && stoptime)
 	{
-		var time=document.getElementById("start_time").value;	
-		ind=time.indexOf(":");
-		len=time.length;
-		start_hours=parseFloat(time.slice(0,ind));
-		start_minutes=parseFloat(time.slice(ind+1,len));
-		
-		var time=document.getElementById("stop_time").value;	
-		ind=time.indexOf(":");
-		len=time.length;
-		stop_hours=parseFloat(time.slice(0,ind));
-		stop_minutes=parseFloat(time.slice(ind+1,len));
-		
-		total_time=60-start_minutes+stop_minutes+(stop_hours-start_hours-1)*60;
+		// var time=document.getElementById("start_time").value;	
+		// ind=time.indexOf(":");
+		// len=time.length;
+
+		var start_hours= parseFloat(startHour.value); //parseFloat(time.slice(0,ind));
+		var start_minutes= parseFloat(startMin.value); //parseFloat(time.slice(ind+1,len));
+		if (startAmpm.value == 'AM') {
+			if (start_hours == 12) {
+				start_hours = 0;
+			}
+		} else {
+			if (start_hours < 12) {
+				start_hours += 12;
+			}
+		}
+		console.log("start_hours=", start_hours);
+
+		// var time=document.getElementById("stop_time").value;	
+		// ind=time.indexOf(":");
+		// len=time.length;
+		var stop_hours= parseFloat(endHour.value); //parseFloat(time.slice(0,ind));
+		var stop_minutes= parseFloat(endMin.value); //parseFloat(time.slice(ind+1,len));
+		if (endAmpm.value == 'AM') {
+			if (stop_hours == 12) {
+				stop_hours = 0;
+			}
+		} else {
+			if (stop_hours < 12) {
+				stop_hours += 12;
+			}
+		}
+		console.log("stop_hours=", stop_hours);
+
+		total_hours = stop_hours-start_hours;
+
+
+		if (total_hours <= 0) {
+			total_hours+=24;
+		}
+
+		total_time=60-start_minutes+stop_minutes+(total_hours-1)*60;
 		total_time=Math.ceil(total_time/60);
 		
 		
 		
 		var divobj = document.getElementById('totalTime');
-		
+		divobj.innerHTML='';
+
 		divobj.innerHTML=divobj.innerHTML+"<table id='table' border='1'><tr>";
 		
 		var table=document.getElementById('table');
@@ -61,7 +100,10 @@ function calculate_time(divName)
 		for(i=0; i<total_time; i++)
 		{
 			var cell=row.insertCell(i);
-			cell.innerHTML="<input type='radio' name="+i+" value='l' id='load1'>Low</input>"+"<br><input type='radio' name="+i+" value='m' id='load1'>Medium</input>"+"<br><input type='radio' name="+i+" value='h' id='load1'>High</input>";
+			cell.innerHTML = "" +
+			"<input type='radio' name="+i+" value='h' id='load1'>High</input>"+
+			"<br><input type='radio' name="+i+" value='m' id='load1'>Medium</input>"+
+			"<br><input type='radio' name="+i+" value='l' id='load1'>Low</input>";
 			
 		}	
 		var divobj = document.getElementById('assist');
