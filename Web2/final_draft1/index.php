@@ -74,12 +74,13 @@ Pellentesque placerat mattis libero eget viverra. Interdum et malesuada fames ac
 
 			<div class="startEndTime">
 				<div class='stepCircle'>1</div>
-				<h3 id="text_start">Enter Start Time:</h3>
+				<h3 id="text_start">Start Time</h3>
 				<input id="start_time" type="time" name="time1" oninput="calculate_time()">
 			</div>
 
 			<div class="startEndTime">
-				<h3 id="text_stop">Enter Stop Time:</h3>
+				<div class='stepCircle'>2</div>
+				<h3 id="text_stop">Stop Time</h3>
 				<input id="stop_time" type="time" name="time2" oninput="calculate_time()">
 			</div>
 

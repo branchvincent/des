@@ -2,6 +2,8 @@
 
 	$color_theme_dark_blue = 'rgba(70,127,201,1)'
 
+	// <?php echo $color_theme_dark_blue; ?>
+
 ?>
 
 
@@ -82,7 +84,9 @@ body {
 }
 
 .stepCircle {
-	border: 1px solid blue;
+	color: <?php echo $color_theme_dark_blue; ?>;
+	border: 3px solid <?php echo $color_theme_dark_blue; ?>;
+	background-color: #eee;
 	width: 30px;
 	height: 30px;
 	font-size: 24px;
@@ -90,22 +94,28 @@ body {
 	text-align: center;
 	font-weight: bold;
 	position: absolute;
-	top: 0px;
-	left: 0px;
+	top: 5px;
+	left: 5px;
 }
 
 .startEndTime {
-	border: 1px solid red;
+	border: 1px dashed #888;
+	border-radius: 15px;
 	width: 200px;
 	display: inline-block;
 	margin: 20px;
 	position: relative;
 	padding-top: 25px;
+	padding-left:  35px;
+	padding-right: 35px;
 	text-align: center;
 }
 
 .startEndTime h3 {
 	background-color: <?php echo $color_theme_dark_blue; ?>;
+	padding: 15px;
+	width: 105px;
+	margin: 0 auto;
 }
 
 h1 {
