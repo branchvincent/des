@@ -58,7 +58,7 @@
 					</ul>
 				</div>
 			
-				<form action="read_csv.php" method="post" target="_blank">
+				<form action="read_csv.php" method="post" target="_blank" style='text-align: center;'>
 					<button type="submit" id="submit1">Result Analysis (Engineer)</button>
 				</form>
 			</div>
@@ -73,7 +73,7 @@
 					</ul>
 				</div>
 		
-				<form action="read_csv_2.php" method="post" target="_blank">
+				<form action="read_csv_2.php" method="post" target="_blank" style='text-align: center;'>
 					<button type="submit" id="submit2">Result Analysis (Conductor)</button>
 				</form>
 		    

@@ -176,7 +176,7 @@ var svg = d3.select("#graph").append("svg")
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-d3.csv("mod_type_data_engineer.txt", function(error, data) {
+d3.csv("mod_type_data_conductor.txt", function(error, data) {
   color.domain(d3.keys(data[0]).filter(function(key) { return key !== "time"; }));
   
   
