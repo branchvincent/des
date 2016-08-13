@@ -1,11 +1,11 @@
 <?php
 	session_start();
-	$assistant=$_SESSION['operator1'];
+	$assistant=-1; //$_SESSION['operator1'];
 	$file_handle=fopen('Engineer_stats.csv','r');
 	$count=0;
-	$low_count=1;
-	$normal_count=1;
-	$high_count=1;
+	$low_count=0;
+	$normal_count=0;
+	$high_count=0;
 	$skip=0;
 	while (! feof($file_handle) ) 
 	{
@@ -14,6 +14,8 @@
 		$skip++;
 		if($skip==20)
 		{
+			// echo var_dump($line_of_text);
+			// echo "<br>";
 			$num=count($line_of_text);
 			for($i=2;$i<$num;$i++)
 			{
