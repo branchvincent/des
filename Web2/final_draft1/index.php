@@ -75,7 +75,7 @@
 						<option>AM</option>
 						<option>PM</option>
 					</select>
-					<!-- <input id="start_time" type="time" name="time1" oninput="calculate_time()"> -->
+					<input id="start_time" type="hidden" name="time1">
 				</div>
 
 				<div class="startEndTime stepBox">
@@ -102,7 +102,7 @@
 						<option>AM</option>
 						<option selected="selected">PM</option>
 					</select>
-					<!-- <input id="stop_time" type="time" name="time2" oninput="calculate_time()"> -->
+					<input id="stop_time" type="hidden" name="time2">
 				</div>
 			</div>
 			
@@ -123,9 +123,9 @@
 			<br>
 			<br>
 			<h4 style="text-align:center;">Run Simulation</h4>
-			<div id="next_page" class="navArrow" onclick="location.href='create_txt.php'";>
+			<div id="next_page" class="navArrow" onclick="var submit = getElementById('submit'); submit.click()";>
 			</div>
-					
+			<input type="submit" id="submit" value="Run Simulation" style='display:none;'>
 					
 					
 		</form>

@@ -33,8 +33,8 @@ function calculate_time(divName) {
 
 	console.log("time changed!");
 
-	// var starttime=document.getElementById("start_time").value;	
-	// var stoptime=document.getElementById("stop_time").value;	
+	var starttime=document.getElementById("start_time");	
+	var stoptime=document.getElementById("stop_time");	
 
 	var startHour = document.getElementById('startHour');
 	var startMin = document.getElementById('startMin');
@@ -60,7 +60,11 @@ function calculate_time(divName) {
 
 	var start_hours= parseFloat(startHour.value); //parseFloat(time.slice(0,ind));
 	var start_minutes= parseFloat(startMin.value); //parseFloat(time.slice(ind+1,len));
-	if (startAmpm.value == 'AM') {
+	var start_ampm = startAmpm.value;
+	var start_time_string = get24TimeString(start_hours, start_minutes, start_ampm);
+	starttime.value = start_time_string;
+
+	if (start_ampm == 'AM') {
 		if (start_hours == 12) {
 			start_hours = 0;
 		}
@@ -76,7 +80,10 @@ function calculate_time(divName) {
 	// len=time.length;
 	var stop_hours= parseFloat(endHour.value); //parseFloat(time.slice(0,ind));
 	var stop_minutes= parseFloat(endMin.value); //parseFloat(time.slice(ind+1,len));
-	if (endAmpm.value == 'AM') {
+	var stop_ampm = endAmpm.value;
+	var stop_time_string = get24TimeString(stop_hours, stop_minutes, stop_ampm);
+	stoptime.value = stop_time_string;
+	if (stop_ampm == 'AM') {
 		if (stop_hours == 12) {
 			stop_hours = 0;
 		}
@@ -154,3 +161,24 @@ function calculate_time(divName) {
 	//document.getElementById("stop_time").readOnly=true;
 }
 
+// Requires hours and minutes to be numbers,
+// and ampm to be the string 'AM' 'am' 'PM' or 'pm'.
+function get24TimeString(hours, minutes, ampm) {
+
+	if (ampm == 'AM' || ampm == 'am') {
+		if (hours == 12) {
+			hours = 0;
+		}
+	} else {
+		if (hours < 12) {
+			hours += 12;
+		}
+	}
+
+	return leftZeroPad2(hours) + ':' + leftZeroPad2(minutes); 
+
+}
+
+function leftZeroPad2(num) {
+	return ("00" + num).slice(-2);
+}
