@@ -1,5 +1,5 @@
 output_path		/var/www/html/des-platform/Web2/final_draft1
 num_hours		8
-traffic 		m l l m m m m m 
+traffic 		m m m m m m m m 
 num_reps		100 
 ops				0

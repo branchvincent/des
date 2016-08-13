@@ -4,9 +4,6 @@
 		<title>Title.</title>
 		<link rel="stylesheet" href="assist1_mod.css">
 
-		
-</head>
-
 <?php
 
 	session_start();
@@ -16,7 +13,17 @@
 	$low_count_1=$_SESSION['low_count_1'];
 	$normal_count_1=$_SESSION['normal_count_1'];
 	$high_count_1=$_SESSION['high_count_1'];
+
+	if ($_SESSION['operator1'] == -1) {
+		$operator2Style = 'display:none; ';
+	} else {
+		$operator2Style = ' ';
+	}
+
 ?>
+	
+</head>
+
 <body>
 	
 	<div id="page">
@@ -50,7 +57,7 @@
 				</form>
 			</div>
 			
-			<div id="operator2">
+			<div id="operator2" style='<?php echo $operator2Style; ?>'>
 				<h2>On average, your conductor is projected to experience:</h2>
 				<div id="bullets">
 					<ul style="list-style-type:circle">

@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	$assistant=-1; //$_SESSION['operator1'];
+	$assistant=$_SESSION['operator1'];
 	$file_handle=fopen('Engineer_stats.csv','r');
 	$count=0;
 	$low_count=0;
@@ -96,7 +96,7 @@
 	
 	if($assistant==-1)
 	{
-		include("assist0.html");
+		include("assist1.html");  // include("assist0.html");
 	}
 	else{
 		include("assist1.html");
