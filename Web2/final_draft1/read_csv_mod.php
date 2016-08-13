@@ -96,10 +96,10 @@
 	
 	if($assistant==-1)
 	{
-		include("assist1.html");  // include("assist0.html");
+		include("assist1.php");  // include("assist0.html");
 	}
 	else{
-		include("assist1.html");
+		include("assist1.php");
 	}
 	
 	

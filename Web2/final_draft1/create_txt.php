@@ -36,9 +36,7 @@
 	fclose($myfile);
 	
 
-	passthru("./DES parameters.txt");
-
-	echo "<br><br>";
+	exec("./DES parameters.txt");
 	
 	include('read_csv_mod.php');
 ?>
