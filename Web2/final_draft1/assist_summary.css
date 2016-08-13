@@ -1,4 +1,4 @@
-#page{
+/*#page{
 	border: 2px solid white;
 	width: 1280px;
 	height: 600px;
@@ -16,17 +16,17 @@ h1{
 	background: rgba(0,0,255,0.4);
 	height:120px ;
 	width:1280px;
-}
+}*/
 
-#uses{
+/*#uses{
 	text-align: center;
 	color: #19334d;
-}
+}*/
 
-h3{
+/*h3{
 	color: #5D7B85;
 }
-
+*/
 #operator2{
 	padding:5px 15px; 
 	width:fit-content; 
@@ -53,7 +53,7 @@ h3{
 	position:absolute;
 	top: 200px;
 }
-#submit1{
+/*#submit1{
 	position: relative;
 	left: 180px; ;
 }
@@ -68,4 +68,4 @@ button[type=submit] {
 	cursor:pointer;
 	-webkit-border-radius: 5px;
 	border-radius: 25px; 
-}
+}*/

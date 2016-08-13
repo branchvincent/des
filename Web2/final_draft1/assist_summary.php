@@ -1,12 +1,17 @@
-<html>
+<!-- <html>
 <head>
 		<meta charset="UTF-8">
-		<title>Title.</title>
-		<link rel="stylesheet" href="assist1_mod.css">
+		<title>Title.</title> -->
+		<!-- <link rel="stylesheet" href="assist1_mod.css"> -->
 
 <?php
 
 	session_start();
+
+	$html_head_insertions .= '<link rel="stylesheet" href="assist_summary.css">';
+
+	require_once('header.php');
+
 	$low_count_0=$_SESSION['low_count_0'];
 	$normal_count_0=$_SESSION['normal_count_0'];
 	$high_count_0=$_SESSION['high_count_0'];
@@ -21,7 +26,7 @@
 	}
 
 ?>
-	
+<!-- 	
 </head>
 
 <body>
@@ -35,10 +40,11 @@
 		</div>
 		
 		<br><br>
-		
+		 -->
+	<div id="page" class='page'>
 		<div id="operators">
 		
-			<div id="operator1">
+			<div id="operator1" class='stepBox'>
 				<h2>On average, your engineer is projected to experience:</h2>
 			
 			
@@ -75,9 +81,11 @@
 		
 				
 		</div>
+
 	</div>
-	
-		
-		
-</body>
+<?php
+	require_once('footer.php');
+?>
+<!-- </body>	
 </html>
+ -->
