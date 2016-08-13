@@ -82,12 +82,13 @@ function calculate_time(divName)
 		var cell=row.insertCell(i);
 		cell.innerHTML = "" +
 		"<input type='radio' name="+i+" value='h' id='load1'>High</input>"+
-		"<br><input type='radio' name="+i+" value='m' id='load1'>Medium</input>"+
+		"<br><input type='radio' name="+i+" value='m' id='load1' checked>Med</input>"+
 		"<br><input type='radio' name="+i+" value='l' id='load1'>Low</input>";
 		
 	}
 	
 	var row=table.insertRow(1);
+	row.className += " tableTrafficHour"
 	for(i=0; i<total_time; i++)
 	{
 		var str="";
@@ -98,7 +99,7 @@ function calculate_time(divName)
 		if (i>2){str=str+"th ";}
 		
 		var cell=row.insertCell(i);
-		cell.innerHTML="Enter traffic load at "+(i+1)+str+"hour";
+		cell.innerHTML="Hour "+(i+1);
 		
 	}
 

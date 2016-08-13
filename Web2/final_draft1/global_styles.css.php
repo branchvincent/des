@@ -121,6 +121,11 @@ body {
 
 .trafficTable {
 	border-collapse: collapse;
+
+}
+
+.trafficTable .tableTrafficHour {
+	text-align: center;
 }
 
 h1 {
