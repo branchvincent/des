@@ -72,62 +72,74 @@ Pellentesque placerat mattis libero eget viverra. Interdum et malesuada fames ac
 		<form id="timeEntry" action="create_txt.php" method="post">
 				
 
-			<div class="startEndTime">
-				<div class='stepCircle'>1</div>
-				<h3 id="text_start">Start Time</h3>
-				<select id='startHour' onchange="calculate_time();">
-					<?php
-						
-						for ($i = 1; $i <= 12; $i++) {
-							if ($i==9) { $selected_string = ' selected="selected"'; } else { $selected_string = ''; }
-							$val = sprintf('%02d', $i);
-							echo "<option$selected_string>$val</option>";
-						} 
-					?>
-				</select>:<select id='startMin' onchange="calculate_time();">
-					<?php
-						for ($i = 0; $i <= 50; $i+=10) {
-							$val = sprintf('%02d', $i);
-							echo "<option>$val</option>";
-						} 
-					?>
-				</select>
-				<select id='startAmpm' onchange="calculate_time();">
-					<option>AM</option>
-					<option>PM</option>
-				</select>
-				<!-- <input id="start_time" type="time" name="time1" oninput="calculate_time()"> -->
-			</div>
+			<div class="startEndTimeStepOuter centerOuter">
 
-			<div class="startEndTime">
-				<div class='stepCircle'>2</div>
-				<h3 id="text_stop">Stop Time</h3>
-				<select id='endHour' onchange="calculate_time();">
-					<?php
-						
-						for ($i = 1; $i <= 12; $i++) {
-							if ($i==5) { $selected_string = ' selected="selected"'; } else { $selected_string = ''; }
-							$val = sprintf('%02d', $i);
-							echo "<option$selected_string>$val</option>";
-						} 
-					?>
-				</select>:<select id='endMin' onchange="calculate_time();">
-					<?php
-						for ($i = 0; $i <= 50; $i+=10) {
-							$val = sprintf('%02d', $i);
-							echo "<option>$val</option>";
-						} 
-					?>
-				</select>
-				<select id='endAmpm' onchange="calculate_time();">
-					<option>AM</option>
-					<option selected="selected">PM</option>
-				</select>
-				<!-- <input id="stop_time" type="time" name="time2" oninput="calculate_time()"> -->
-			</div>
+				<div class="startEndTime stepBox">
+					<div class='stepCircle'>1</div>
+					<h3 id="text_start">Start Time</h3>
+					<select id='startHour' onchange="calculate_time();">
+						<?php
+							
+							for ($i = 1; $i <= 12; $i++) {
+								if ($i==9) { $selected_string = ' selected="selected"'; } else { $selected_string = ''; }
+								$val = sprintf('%02d', $i);
+								echo "<option$selected_string>$val</option>";
+							} 
+						?>
+					</select>:<select id='startMin' onchange="calculate_time();">
+						<?php
+							for ($i = 0; $i <= 50; $i+=10) {
+								$val = sprintf('%02d', $i);
+								echo "<option>$val</option>";
+							} 
+						?>
+					</select>
+					<select id='startAmpm' onchange="calculate_time();">
+						<option>AM</option>
+						<option>PM</option>
+					</select>
+					<!-- <input id="start_time" type="time" name="time1" oninput="calculate_time()"> -->
+				</div>
 
-			<div id="totalTime" style="overflow-x:auto;"></div>
-			<div id="assist" style="overflow-x:auto;"></div>
+				<div class="startEndTime stepBox">
+					<div class='stepCircle'>2</div>
+					<h3 id="text_stop">Stop Time</h3>
+					<select id='endHour' onchange="calculate_time();">
+						<?php
+							
+							for ($i = 1; $i <= 12; $i++) {
+								if ($i==5) { $selected_string = ' selected="selected"'; } else { $selected_string = ''; }
+								$val = sprintf('%02d', $i);
+								echo "<option$selected_string>$val</option>";
+							} 
+						?>
+					</select>:<select id='endMin' onchange="calculate_time();">
+						<?php
+							for ($i = 0; $i <= 50; $i+=10) {
+								$val = sprintf('%02d', $i);
+								echo "<option>$val</option>";
+							} 
+						?>
+					</select>
+					<select id='endAmpm' onchange="calculate_time();">
+						<option>AM</option>
+						<option selected="selected">PM</option>
+					</select>
+					<!-- <input id="stop_time" type="time" name="time2" oninput="calculate_time()"> -->
+				</div>
+			</div>
+			
+			<div class="trafficTableStepOuter stepBox centerOuter">
+				<div class='stepCircle'>3</div>
+				<h3>Traffic Levels</h3>
+				<div id="totalTime" style="overflow-x:auto;"></div>
+			</div>
+			
+
+			<div class="assistantsSelectStepOuter stepBox">
+				<div class='stepCircle'>4</div>
+				<div id="assist" style="overflow-x:auto;"></div>
+			</div>
 			
 			<br>
 			<br>

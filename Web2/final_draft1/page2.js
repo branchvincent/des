@@ -105,7 +105,7 @@ function calculate_time(divName)
 
 		
 	var divobj = document.getElementById('assist');
-	divobj.innerHTML=divobj.innerHTML+"<h3 id='assistants'>Assistants?</h3><table id='table2' cellspacing='0' cellpadding='100'>";
+	divobj.innerHTML="<h3 id='assistants'>Assistants</h3><table id='table2' cellspacing='0' >"; //cellpadding='100'
 	var table=document.getElementById('table2');
 	var row=table.insertRow(0);
 	var cell1=row.insertCell(0);

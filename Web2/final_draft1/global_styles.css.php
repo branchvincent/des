@@ -18,7 +18,7 @@ body {
 	position: fixed;
 	top: 0;
 	text-align: center;
-	height: 200px;
+	/*height: 200px;*/
 	width: 100%;
 	z-index: 999;
 }
@@ -35,6 +35,7 @@ body {
 #fixedHead h1 {
 	margin: 0;
 	padding: 40px;
+	padding-bottom: 0;
 }
 
 #fixedFooter {
@@ -83,6 +84,12 @@ body {
 	margin-right: 30px;
 }
 
+.centerOuter {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
 .stepCircle {
 	color: <?php echo $color_theme_dark_blue; ?>;
 	border: 3px solid <?php echo $color_theme_dark_blue; ?>;
@@ -98,9 +105,26 @@ body {
 	left: 5px;
 }
 
-.startEndTime {
+.stepBox {
 	border: 1px dashed #888;
 	border-radius: 15px;
+	position: relative;
+	padding-top: 25px;
+	padding-bottom: 20px;
+	padding-left:  35px;
+	padding-right: 35px;
+	
+}
+
+form#timeEntry {
+	text-align: center;
+}
+
+.startEndTimeStepOuter {
+	text-align: center;
+}
+
+.startEndTime {
 	width: 200px;
 	display: inline-block;
 	margin: 20px;
@@ -112,20 +136,44 @@ body {
 	text-align: center;
 }
 
-.startEndTime h3 {
+.startEndTime h3, .trafficTableStepOuter h3, .assistantsSelectStepOuter h3 {
 	background-color: <?php echo $color_theme_dark_blue; ?>;
 	padding: 15px;
-	width: 105px;
 	margin: 0 auto;
+	margin-bottom: 10px;
+}
+
+.startEndTime h3 {
+	width: 105px;
+}
+
+.trafficTableStepOuter h3 {
+	width: 200px;
+}
+
+.assistantsSelectStepOuter h3 {
+	width: 160px;
+}
+
+.trafficTableStepOuter {
+	display: inline-block;
+	padding-left:  70px;
+	padding-right: 70px;
 }
 
 .trafficTable {
 	border-collapse: collapse;
+	/*margin-left: auto;
+	margin-right: auto;*/
 
 }
 
 .trafficTable .tableTrafficHour {
 	text-align: center;
+}
+
+.assistantsSelectStepOuter {
+
 }
 
 h1 {
