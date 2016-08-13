@@ -42,7 +42,7 @@
 		<br><br>
 		 -->
 	<div id="page" class='page'>
-		<div id="operators">
+		<div id="operators" class="operatorSummaryOuter">
 		
 			<div id="operator1" class='stepBox'>
 				<h2>On average, your engineer is projected to experience:</h2>
@@ -58,7 +58,7 @@
 					</ul>
 				</div>
 			
-				<form action="read_csv.php" method="post">
+				<form action="read_csv.php" method="post" target="_blank">
 					<button type="submit" id="submit1">Result Analysis (Engineer)</button>
 				</form>
 			</div>
@@ -73,7 +73,7 @@
 					</ul>
 				</div>
 		
-				<form action="read_csv_2.php" method="post">
+				<form action="read_csv_2.php" method="post" target="_blank">
 					<button type="submit" id="submit2">Result Analysis (Conductor)</button>
 				</form>
 		    
