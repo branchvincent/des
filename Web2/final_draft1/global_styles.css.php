@@ -1,6 +1,6 @@
 <?php 
 
-	$color_theme_dark_blue = 'rgba(70,127,201,1)'
+	$color_theme_dark_blue = 'rgba(70,127,201,1)';
 
 	// <?php echo $color_theme_dark_blue;
 
@@ -121,6 +121,7 @@ body {
 	padding-bottom: 20px;
 	padding-left:  35px;
 	padding-right: 35px;
+	background-color: rgba(255, 255, 255, 0.6);
 	
 }
 
