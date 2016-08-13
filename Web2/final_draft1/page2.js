@@ -105,17 +105,17 @@ function calculate_time(divName)
 
 		
 	var divobj = document.getElementById('assist');
-	divobj.innerHTML="<h3 id='assistants'>Assistants</h3><table id='table2' cellspacing='0' >"; //cellpadding='100'
-	var table=document.getElementById('table2');
+	divobj.innerHTML="<h3 id='assistants'>Assistants</h3><table id='assistantsTable' cellspacing='0' >"; //cellpadding='100'
+	var table=document.getElementById('assistantsTable');
 	var row=table.insertRow(0);
 	var cell1=row.insertCell(0);
 	var cell2=row.insertCell(1);
 	var cell3=row.insertCell(2);
 	var cell4=row.insertCell(3);
-	cell1.innerHTML="Conductor<input type='radio' name='extra1' value='1' id='conductor' />";
-	cell2.innerHTML="Positive Train Control<input type='radio' name='extra2' value='2' id='train_c' />";
-	cell3.innerHTML="Cruise Control<input type='radio' name='extra3' value='3' id='cruise_control' />";
-	cell4.innerHTML="Other<input type='radio' name='extra4' value='4' id='other'>";
+	cell1.innerHTML="<input type='checkbox' name='extra1' value='1' id='conductor' />Conductor";
+	cell2.innerHTML="<input type='checkbox' name='extra2' value='2' id='train_c' />Positive Train Control";
+	cell3.innerHTML="<input type='checkbox' name='extra3' value='3' id='cruise_control' />Cruise Control";
+	cell4.innerHTML="<input type='checkbox' name='extra4' value='4' id='other'>Other";
 		
 
 	var divobj = document.getElementById('refresh');

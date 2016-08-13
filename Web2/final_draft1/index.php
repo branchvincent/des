@@ -135,8 +135,10 @@ Pellentesque placerat mattis libero eget viverra. Interdum et malesuada fames ac
 				<div id="totalTime" style="overflow-x:auto;"></div>
 			</div>
 			
+			<br>
+			<br>
 
-			<div class="assistantsSelectStepOuter stepBox">
+			<div class="assistantsSelectStepOuter stepBox centerOuter">
 				<div class='stepCircle'>4</div>
 				<div id="assist" style="overflow-x:auto;"></div>
 			</div>

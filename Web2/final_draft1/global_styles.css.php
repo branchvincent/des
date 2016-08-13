@@ -163,8 +163,8 @@ form#timeEntry {
 
 .trafficTable {
 	border-collapse: collapse;
-	/*margin-left: auto;
-	margin-right: auto;*/
+	margin-left: auto;
+	margin-right: auto;
 
 }
 
@@ -173,7 +173,16 @@ form#timeEntry {
 }
 
 .assistantsSelectStepOuter {
+	width: 521px;
+}
 
+#assistantsTable {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#assistantsTable td {
+	padding: 5px;
 }
 
 h1 {
