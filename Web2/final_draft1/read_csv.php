@@ -172,7 +172,7 @@ d3.csv("mod_type_data_engineer.txt", function(error, data) {
   
   
   data.forEach(function(d) {
-	var mystate = d.time;
+	var mystate = d.time.slice(0,4);
     var y0 = 0;
 	d.ages = color.domain().map(function(name) { return {mystate:mystate, name: name, y0: y0, y1: y0 += +d[name]}; });
 	
@@ -190,7 +190,7 @@ d3.csv("mod_type_data_engineer.txt", function(error, data) {
 			y_height1: y_height1,
 			y_height0: y_height0,
 			name: d.ages[i].name,
-			mystate: d.time,
+			mystate: d.time.slice(0,4),
 			y_pct: y_pct
 			
 		});
@@ -203,7 +203,7 @@ d3.csv("mod_type_data_engineer.txt", function(error, data) {
   
   
   
-  x.domain(data.map(function(d) { return d.time; }));
+  x.domain(data.map(function(d) { return d.time.slice(0,4); }));
   yAbsolute.domain([0,1]);//Absolute View scale 
   yRelative.domain([0,1])// Relative View domain 
  
