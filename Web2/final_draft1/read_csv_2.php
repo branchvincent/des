@@ -288,7 +288,13 @@ d3.csv("mod_type_data_conductor.txt", function(error, data) {
 		.text("Utilization");
 		
 		
-			  
+	svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 10 - (margin.top / 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "24px") 
+        .style("text-decoration", "underline")  
+        .text("Engineer Operation");
 			  
 			  // end of define absolute
 	  

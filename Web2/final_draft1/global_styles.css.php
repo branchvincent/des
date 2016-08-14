@@ -87,6 +87,16 @@ body {
 	margin-right: auto;
 }
 
+.printPdf {
+	background-image: url("print.png");
+	height: 50px;
+	width: 50px;
+	background-size: 50px;
+	margin-left: 10px;
+	
+	
+}
+
 .page {
 	margin-left: 30px;
 	margin-right: 30px;

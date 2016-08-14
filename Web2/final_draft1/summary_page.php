@@ -1,11 +1,5 @@
-<!-- <html>
-<head>
-		<meta charset="UTF-8">
-		<title>Title.</title> -->
-		<!-- <link rel="stylesheet" href="assist1_mod.css"> -->
-
-<?php
-
+<?php	
+	
 	session_start();
 
 	$html_head_insertions .= '<link rel="stylesheet" href="assist_summary.css">';
@@ -25,46 +19,43 @@
 		$operator2Style = ' ';
 	}
 
-?>
-<!-- 	
-</head>
 
-<body>
-	
-	<div id="page">
-		<img src="rail.jpg" alt=" " style="position:absolute; top:0px; left:0px; width:1300px; height:600px; opacity:0.15;"/>
-		<div id="top_panel"></div>
-		
-		<div id="title">
-				<h1>Simulator of Human Operator Workload (SHOW)<img src="hal.png" width=400 align="middle" /> </h1>
-		</div>
-		
-		<br><br>
-		 -->
-		 
-	
-	
-	<style>		
+?>
+
+<style>		
 		#low_work_0, #high_work_0{ color: <?php if(($low_count_0+$high_count_0)>$normal_count_0){ echo "red";} else{ echo "black";}?>;}
 		#normal_work_0{ color: <?php if(($low_count_0+$high_count_0)<$normal_count_0){ echo "green";} else{ echo "black";}?>;}
 		
 		#low_work_1, #high_work_1{ color: <?php if(($low_count_1+$high_count_1)>$normal_count_1){ echo "red";} else{ echo "black";}?>;}
 		#normal_work_1{ color: <?php if(($low_count_1+$high_count_1)<$normal_count_1){ echo "green";} else{ echo "black";}?>;}
-	</style>
-	
-<?php
-		require_once("assist.html");
-?>
-	
-	<form action="summary_page.php" method="post" target="_blank" style='text-align: center;'>
-		<button type="submit" id="submit2">Create Summary</button>
+</style>
+
+<div id="print-content">
+	<form>
+			<div id="next_page" class="printPdf" onclick="var submit = getElementById('button'); button.click()";>
+			</div>			
+			<input type="button" id="button" onclick="printDiv('print-content')" value="print a div!" style='display:none;'/>
 	</form>
 
-	
-	
+	<?php
+		require_once("assist.html");
+	?>
+</div>
+
+
+<script type="text/javascript">
+
+function printDiv(divName) {
+ var printContents = document.getElementById(divName).innerHTML;
+ w=window.open();
+ w.document.write(printContents);
+ w.print();
+ w.close();
+}
+
+</script>
+
 <?php
-	require_once('footer.php');
+	
+	require_once("footer.php");
 ?>
-<!-- </body>	
-</html>
- -->
