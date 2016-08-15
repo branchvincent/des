@@ -52,6 +52,11 @@
 	<?php
 		require_once("assist.html");
 		require_once("graph_engineer.php");
+		// $assistant= $_SESSION['operator1'];
+		// if($assistant==1)
+		// {
+		// 	require_once("graph_conductor.php");
+		// }
 		
 		
 	?>

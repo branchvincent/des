@@ -1,4 +1,4 @@
-<!-- <html>
+	<!-- <html>
 <head>
 		<meta charset="UTF-8">
 		<title>Title.</title> -->
@@ -62,8 +62,15 @@
 		<button type="submit" id="summary">Create Summary</button>
 	</form>
 
-	
-	
+	<div id="back_button"  style='text-align: center;'>
+		<button id="back_button" onclick="goBack()">Run Again</button>
+		<script>
+			function goBack() {
+			    window.history.back();
+			}
+		</script>
+	</div>
+
 <?php
 	require_once('footer.php');
 ?>

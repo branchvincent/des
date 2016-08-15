@@ -95,16 +95,14 @@
 	border-radius: 25px; 
 	display: inline-block;
 	width: 1200px;
-	margin: 0 auto;
+	/*margin: 0 auto;*/
+	margin: 20px;
 	text-align: left;
 	background-color: rgba(255, 255, 255, 0.6);
 	
 	
 }
 
-body {
-  font: 10px sans-serif;
-}
 .axis path,
 .axis line {
   fill: none;
