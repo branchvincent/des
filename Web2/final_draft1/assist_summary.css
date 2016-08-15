@@ -48,7 +48,7 @@ h1{
 	background-color: rgba(255, 255, 255, 0.6);
 }
 
-#summary
+#summary, button
 {
 	padding:5px 15px; 
     border: 2px solid #5D7B85;
@@ -56,7 +56,14 @@ h1{
     -webkit-border-radius: 5px;
     border-radius: 25px; 
 }
-	
+
+#back_button
+{
+	/*position: relative;*/
+	/*top: -150px;*/
+	/*text-align: center;*/
+}
+
 /*#submit1{
 	position: relative;
 	left: 180px; ;
