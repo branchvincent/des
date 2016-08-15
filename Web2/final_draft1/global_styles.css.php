@@ -95,6 +95,7 @@ body {
 	margin-left: 10px;
 	
 	
+	
 }
 
 .page {

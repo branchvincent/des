@@ -48,6 +48,15 @@ h1{
 	background-color: rgba(255, 255, 255, 0.6);
 }
 
+#summary
+{
+	padding:5px 15px; 
+    border: 2px solid #5D7B85;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 25px; 
+}
+	
 /*#submit1{
 	position: relative;
 	left: 180px; ;

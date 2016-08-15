@@ -28,6 +28,18 @@
 		
 		#low_work_1, #high_work_1{ color: <?php if(($low_count_1+$high_count_1)>$normal_count_1){ echo "red";} else{ echo "black";}?>;}
 		#normal_work_1{ color: <?php if(($low_count_1+$high_count_1)<$normal_count_1){ echo "green";} else{ echo "black";}?>;}
+		
+		#submit1, #submit2{
+			display: none;
+		}
+		
+		@media print
+		{    
+			.no-print, .no-print *
+			{
+				display: none !important;
+			}
+		}
 </style>
 
 <div id="print-content">
@@ -39,6 +51,9 @@
 
 	<?php
 		require_once("assist.html");
+		require_once("graph_engineer.php");
+		
+		
 	?>
 </div>
 

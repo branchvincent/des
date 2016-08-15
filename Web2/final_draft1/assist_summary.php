@@ -55,9 +55,11 @@
 <?php
 		require_once("assist.html");
 ?>
-	
+	<br>
+	<br>
+	<br>
 	<form action="summary_page.php" method="post" target="_blank" style='text-align: center;'>
-		<button type="submit" id="submit2">Create Summary</button>
+		<button type="submit" id="summary">Create Summary</button>
 	</form>
 
 	
