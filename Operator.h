@@ -511,6 +511,7 @@ void Operator::output()
     ofstream fout(file);
     if (!fout)
     {
+        cout << "Error: Cannot open " << file << ". Exiting..." << endl;
         cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
         exit(1);
     }
