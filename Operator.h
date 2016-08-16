@@ -252,7 +252,7 @@ void Operator::procDep(Task* task)
 
 //  Start next task, if applicable
     
-    delete currTask;
+//    delete currTask;
     currTask = NULL;
     servNextTask(depTime);
 
@@ -496,12 +496,12 @@ void Operator::updateUtil(Task* task, float currTime)
 }
 
 /****************************************************************************
- *																			*
- *	Function:	output                                                      *
- *																			*
- *	Purpose:	To output...                                                *
- *																			*
- ****************************************************************************/
+*																			*
+*	Function:	output                                                      *
+*																			*
+*	Purpose:	To output...                                                *
+*																			*
+****************************************************************************/
 
 void Operator::output()
 {

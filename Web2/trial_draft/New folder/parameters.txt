@@ -1,5 +1,0 @@
-output_path		/Users/Branch/Documents/Academic/Year_1/Summer/DES_Code/DES/Output 
-num_hours		-11
-traffic 		
-num_reps		100 
-ops				0

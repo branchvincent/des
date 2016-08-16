@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
 //  Readin parameter file
     
-    string paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/Input/params.txt";
+    string paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params.txt";
     if (argc > 1) paramFile = argv[1];
     cout << "inFile = " << paramFile << endl;
 

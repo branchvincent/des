@@ -50,14 +50,13 @@ class Statistic
 	//	Other member functions
 
         void output(ostream& out) const {outputAvg(out); return;}
+        void outputRep(ostream& out, int rep) const;
+        void outputAvgs(ostream& out) const;
 
 //	Private member functions
 
 	private:
-		void incArr(Matrix2D& arr, int i, int j, float val);
-        void outputRep(ostream& out, int rep) const;
-        void outputAvgs(ostream& out) const;
-        void endSim();
+        void endSim(); // necessary?
         void setMeanAndStdDev(Matrix3D& data);
 
 //	Data members
