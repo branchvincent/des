@@ -14,15 +14,13 @@
 #define STATISTICS_H
 
 #include <iostream>
+#include <fstream>
 #include <string>
-#include <vector>
+#include "Statistic.h"
 //#include "PyPlot.h"
 
 using namespace std;
 using namespace params;
-
-typedef vector<vector<float> > Matrix2D;
-typedef vector<Matrix2D> Matrix3D;
 
 /****************************************************************************
 *																			*
@@ -38,10 +36,9 @@ class Statistics
 		
 	//	Constructor
 	
-		Statistics( //NewParams& pms,
-                   int xDim = NUM_TASK_TYPES + 1,
-                   int yDim = NUM_INTS + 1,
-                   int zDim = NUM_REPS + 2, int val = 0);
+		Statistics(int xDim = NUM_TASK_TYPES,
+                   int yDim = NUM_INTS,
+                   int zDim = NUM_REPS);
 		
 	//	Inspectors
 
@@ -54,12 +51,18 @@ class Statistics
 
 	//	Mutators
 
-        void incUtil(int i, int j, float val) {incArr(util, i, j, val);}
-        void incSerTime(int i, int j, float val) {incArr(serTime, i, j, val);}
-		void incWaitTime(int i, int j, float val) {incArr(waitTime, i, j, val);}
-		void incNumTasksIn(int i, int j, float val) {incArr(numTasksIn, i, j, val);}
-		void incNumTasksOut(int i, int j, float val) {incArr(numTasksOut, i, j, val);}
-		void incNumTasksExp(int i, int j, float val) {incArr(numTasksExp, i, j, val);}
+        void incUtil(int i, int j, float val)
+            {util.incData(i, j, currRep, val);}
+        void incSerTime(int i, int j, float val)
+            {serTime.incData(i, j, currRep, val);}
+		void incWaitTime(int i, int j, float val)
+            {waitTime.incData(i, j, currRep, val);}
+		void incNumTasksIn(int i, int j, float val)
+            {numTasksIn.incData(i, j, currRep, val);}
+		void incNumTasksOut(int i, int j, float val)
+            {numTasksOut.incData(i, j, currRep, val);}
+		void incNumTasksExp(int i, int j, float val)
+            {numTasksExp.incData(i, j, currRep, val);}
 		void endRep();
 
 //		void setUtil(const int& i, const int& j, const int& val) {util[i][j] = val;}
@@ -71,31 +74,26 @@ class Statistics
 	//	Other member functions
 
 //        void plot(string opName);
-        void output(ostream& out) const {outputAvg(out); return;}
+        void output(ostream& out) const {outputSim(out); return;}
 
 //	Private member functions
 
 	private:
-		void incArr(Matrix3D& arr, int i, int j, float val);
         void outputRep(ostream& out, int rep) const;
-        void outputRepArr(ostream& out, string arrName, const Matrix2D& arr) const;
-        void outputAvg(ostream& out) const;
-        void outputAvgArr(ostream& out, string arrName, const Matrix3D& arr) const;
+        void outputSim(ostream& out) const;
         void endSim();
-        void setMeanAndStdDev(Matrix3D& data);
 
 //	Data members
 
 	private:
-//        NewParams pms;            // parameters
 		int currRep;			// current run counter
 		vector<int> interval;	// time interval
-		Matrix3D util;			// utilization
-		Matrix3D serTime;       // average service time
-		Matrix3D waitTime;		// average wait time in queue
-		Matrix3D numTasksIn;	// number of tasks in
-		Matrix3D numTasksOut;	// number of tasks out
-		Matrix3D numTasksExp;	// number of tasks expired
+		Statistic util;			// utilization
+		Statistic serTime;      // average service time
+		Statistic waitTime;		// average wait time in queue
+		Statistic numTasksIn;	// number of tasks in
+		Statistic numTasksOut;	// number of tasks out
+		Statistic numTasksExp;	// number of tasks expired
 };
 
 //	Operators
@@ -110,15 +108,15 @@ ostream& operator<<(ostream& out, const Statistics& stats) {stats.output(out); r
 *																			*
 ****************************************************************************/
 
-Statistics::Statistics(int xDim, int yDim, int zDim, int val) :
+Statistics::Statistics(int xDim, int yDim, int zDim) :
     currRep(0),
     interval(NUM_INTS),
-	util(zDim, Matrix2D(xDim, vector<float>(yDim, val))),
-	serTime(zDim, Matrix2D(xDim, vector<float>(yDim, val))), 
-	waitTime(zDim, Matrix2D(xDim, vector<float>(yDim, val))), 
-	numTasksIn(zDim, Matrix2D(xDim, vector<float>(yDim, val))), 
-	numTasksOut(zDim, Matrix2D(xDim, vector<float>(yDim, val))),
-	numTasksExp(zDim, Matrix2D(xDim, vector<float>(yDim, val)))
+	util("Utilization", xDim, yDim, zDim),
+	serTime("Service Time", xDim, yDim, zDim),
+	waitTime("Wait Time", xDim, yDim, zDim),
+	numTasksIn("Number In", xDim, yDim, zDim),
+	numTasksOut("Number Out", xDim, yDim, zDim),
+	numTasksExp("Number Expired", xDim, yDim, zDim)
 {
 	for (int i = 1; i < NUM_INTS; i++)
 		interval[i] = interval[i-1] + INT_SIZE;
@@ -152,6 +150,89 @@ void Statistics::endRep()
 //	Move to next replication and end simulation, if applicable
     
     if (++currRep == NUM_REPS) endSim();
+}
+
+/****************************************************************************
+*																			*
+*	Function:	outputRep													*
+*																			*
+*	Purpose:	To output the stats for the specified replication			*
+*																			*
+****************************************************************************/
+
+void Statistics::outputRep(ostream& out, int rep) const
+{
+//	Output header
+    
+    out << "Statistic, Task, ";
+    
+    for (int i = 0; i < NUM_INTS; i++)
+        out << i * INT_SIZE << " min, ";
+    out << "Sum" << endl;
+    
+//	Output stats
+    
+    util.outputRep(out, rep);
+    serTime.outputRep(out, rep);
+    waitTime.outputRep(out, rep);
+    numTasksIn.outputRep(out, rep);
+    numTasksOut.outputRep(out, rep);
+    numTasksExp.outputRep(out, rep);
+    
+    return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	outputSim													*
+*																			*
+*	Purpose:	To output the stats averaged across all replications        *
+*																			*
+****************************************************************************/
+
+void Statistics::outputSim(ostream& out) const
+{
+//	Output header
+    
+    out << "Statistic, Task";
+    
+    for (int i = 0; i < NUM_INTS; i++)
+        out << ", " << i * INT_SIZE << " min";
+    out << "," << endl;
+//    out << ", Sum" << endl;
+    
+//  Output arrays
+    
+    util.outputSim(out);
+    serTime.outputSim(out);
+    waitTime.outputSim(out);
+    numTasksIn.outputSim(out);
+    numTasksOut.outputSim(out);
+    numTasksExp.outputSim(out);
+    
+    return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	endSim														*
+*																			*
+*	Purpose:	To average the stats across all replications                *
+*																			*
+****************************************************************************/
+
+void Statistics::endSim()
+{
+//	Calculate mean and std dev for all arrays
+    
+    util.avgData();
+    serTime.avgData();
+    waitTime.avgData();
+    numTasksIn.avgData();
+    numTasksOut.avgData();
+    numTasksExp.avgData();
+    
+    return;
 }
 
 /****************************************************************************
@@ -197,242 +278,5 @@ void Statistics::endRep()
 //
 //    return;
 //}
-
-/****************************************************************************
-*																			*
-*	Function:	incArr														*
-*																			*
-*	Purpose:	To increment the specified stat based on the specified      *
-*				indices and value 											*
-*																			*
-****************************************************************************/
-
-void Statistics::incArr(Matrix3D& arr, int i, int j, float val)
-{
-//	Calculate indices for the last row/column
-    
-    int lastRow = arr[currRep].size() - 1;
-    int lastCol = arr[currRep][0].size() - 1;
-    
-//	Increment array
-    
-    arr[currRep][i][j] += val;				// increment value
-    arr[currRep][lastRow][j] += val;		// increment row sum
-    arr[currRep][i][lastCol] += val;		// increment column sum
-    arr[currRep][lastRow][lastCol] += val; 	// increment total sum
-
-    return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	outputRep													*
-*																			*
-*	Purpose:	To output the stats for the specified replication			*
-*																			*
-****************************************************************************/
-
-void Statistics::outputRep(ostream& out, int rep) const
-{
-//	Output header
-    
-    out << "Statistic, Task, ";
-    
-    for (int i = 0; i < NUM_INTS; i++)
-        out << i * INT_SIZE << " min, ";
-    out << "Sum" << endl;
-    
-//	Output stats
-    
-    outputRepArr(out, "Utilization", util[rep]);
-    outputRepArr(out, "Avg Service Time", serTime[rep]);
-    outputRepArr(out, "Avg Wait Time", waitTime[rep]);
-    outputRepArr(out, "Number In", numTasksIn[rep]);
-    outputRepArr(out, "Number Out", numTasksOut[rep]);
-    
-    return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	outputRepArr												*
-*																			*
-*	Purpose:	To output the specified stat for a specified replication	*
-*																			*
-****************************************************************************/
-
-void Statistics::outputRepArr(ostream& out, string arrName, const Matrix2D& arr) const
-{
-//	Output array name
-    
-    out << arrName;
-    
-//	Output array
-    
-    for (int i = 0; i < arr.size(); i++)
-    {
-    //	Output task type
-        
-        if (i != arr.size() - 1)
-            out << ", " << i;
-        else
-            out << ", Sum";
-        
-    //	Output data
-        
-        for (int j = 0; j < arr[i].size(); j++)
-            out << ", " << arr[i][j];
-        out << endl;
-    }	
-    
-    out << endl << endl;
-    
-    return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	outputAvg													*
-*																			*
-*	Purpose:	To output the stats averaged across all replications        *
-*																			*
-****************************************************************************/
-
-void Statistics::outputAvg(ostream& out) const
-{
-//	Output header
-    
-    out << "Statistic, Task";
-    
-    for (int i = 0; i < NUM_INTS; i++)
-        out << ", " << i * INT_SIZE << " min";
-    out << "," << endl;
-//    out << ",Sum" << endl;
-    
-//  Output arrays
-    
-    outputAvgArr(out, "Utilization", util);
-    outputAvgArr(out, "Service Time", serTime);
-    outputAvgArr(out, "Wait Time", waitTime);
-    outputAvgArr(out, "Number In", numTasksIn);
-    outputAvgArr(out, "Number Out", numTasksOut);
-    outputAvgArr(out, "Number Expired", numTasksExp);
-    
-    return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	outputAvgArr                                                *
-*																			*
-*	Purpose:	To output the specified stat averaged across all            *
-*               replications                                                *
-*																			*
-****************************************************************************/
-
-void Statistics::outputAvgArr(ostream& out, string arrName, const Matrix3D& arr) const
-{
-//	Output stat name
-    
-    out << arrName;
-    
-//	Output stat
-    
-    for (int i = 0; i < arr[0].size(); i++)
-    {
-    //	Output task type
-        
-        if (i != arr[0].size() - 1)
-            out << ", " << i;
-        else
-            out << ",Sum";
-        
-    //	Output averages
-        
-        for (int j = 0; j < arr[0][0].size() - 1; j++)
-            out << ", " << arr[NUM_REPS][i][j];
-        out << endl << ", ";
-        
-    //  Output std devs
-        
-        for (int j = 0; j < arr[0][0].size() - 1; j++)
-            out << ", " << arr[NUM_REPS + 1][i][j];
-        out << endl;
-    }
-    
-    return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	endSim														*
-*																			*
-*	Purpose:	To average the stats across all replications                *
-*																			*
-****************************************************************************/
-
-void Statistics::endSim()
-{
-//	Calculate mean and std dev for all arrays
-    
-    setMeanAndStdDev(util);
-    setMeanAndStdDev(serTime);
-    setMeanAndStdDev(waitTime);
-    setMeanAndStdDev(numTasksIn);
-    setMeanAndStdDev(numTasksOut);
-    setMeanAndStdDev(numTasksExp);
-    
-    return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	setMeanAndStdDev											*
-*																			*
-*	Purpose:	To calculate and store the mean and standard deviation for  *
-*				the specified array	across all replications					*
-*																			*
-****************************************************************************/
-
-void Statistics::setMeanAndStdDev(Matrix3D& arr)
-{
-//	Initialize variables
-    
-    int N = 0;
-    float mean = 0;
-    float devSum = 0;
-    float delta;
-    
-//  Calculate mean and std dev across all replications
-    
-    for (int i = 0; i < arr[0].size(); i++)
-    {
-        for (int j = 0; j < arr[0][0].size(); j++)
-        {
-        //  Reset variables
-            
-            N = 0;
-            mean = 0;
-            devSum = 0;
-            
-        //  Calculate values using Welford's algorithm
-            
-            for (int k = 0; k < arr.size() - 2; k++)
-            {
-                N++;
-                delta = arr[k][i][j] - mean;
-                mean += delta/N;
-                devSum += delta * (arr[k][i][j] - mean);
-            }
-            
-        //  Store values
-            
-            arr[N][i][j] = mean;
-            arr[N + 1][i][j] = sqrt(devSum / (N - 1));
-        }
-    }
-    
-    return;           
-}
 
 #endif

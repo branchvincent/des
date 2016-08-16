@@ -18,7 +18,6 @@
 #include <string>
 //#include "LoadTaskParameters.h"
 
-
 using namespace std;
 typedef vector<vector<int> > Matrix;
 
@@ -34,7 +33,7 @@ namespace params
     int NUM_HOURS;
 	int NUM_REPS;
     const bool OUTPUT_ON = 1;
-    const bool RAND_RUN_ON = 1;
+    const bool RAND_RUN_ON = 0;
 		
     int END_TIME;
     const int INT_SIZE = 10;

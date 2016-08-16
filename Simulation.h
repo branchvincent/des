@@ -31,8 +31,6 @@ using namespace params;
 
 // Helper functions and definitions
 
-typedef vector<vector<float> > Matrix2D;
-typedef vector<Matrix2D> Matrix3D;
 bool cmpTaskArrs(Task* t1, Task* t2)
 	{return t1->getArrTime() < t2->getArrTime();}
 

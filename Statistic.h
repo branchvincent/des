@@ -16,8 +16,11 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
 
 using namespace std;
+
+//  Type definitions
 
 typedef vector<vector<float> > Matrix2D;
 typedef vector<Matrix2D> Matrix3D;
@@ -27,6 +30,9 @@ typedef vector<Matrix2D> Matrix3D;
 *	Definition of Statistic class											*
 *																			*
 ****************************************************************************/
+
+// Notes
+// - Assert for positive dimensions
 
 class Statistic
 {
@@ -38,39 +44,37 @@ class Statistic
 	
         Statistic(string nm, int xDim, int yDim, int zDim) :
             name(nm),
-            stat(xDim + 1, Matrix2D(yDim + 1, vector<float>(zDim, 0)))
+            data(xDim + 1, Matrix2D(yDim + 1, vector<float>(zDim, 0))),
             avgs(xDim + 1, vector<float>(yDim + 1, 0)),
             devs(xDim + 1, vector<float>(yDim + 1, 0)) {}
 
 	//	Mutators
 
         void incData(int i, int j, int k, float val);
-		void endRep();
+        void avgData();
 
 	//	Other member functions
 
-        void output(ostream& out) const {outputAvg(out); return;}
+//        void output(ostream& out) const {outputSim(out); return;}
         void outputRep(ostream& out, int rep) const;
-        void outputAvgs(ostream& out) const;
+        void outputSim(ostream& out) const;
 
 //	Private member functions
 
-	private:
-        void endSim(); // necessary?
-        void setMeanAndStdDev(Matrix3D& data);
+//	private:
 
 //	Data members
 
 	private:
         string name;    // stat name
 		Matrix3D data;	// stat data
-        Matrix2D avgs;  // averages
-        Matrix2D devs;  // std devs
+        Matrix2D avgs;  // sim averages
+        Matrix2D devs;  // sim std devs
 };
 
 //	Operators
 
-ostream& operator<<(ostream& out, const Statistic& stat) {stat.output(out); return out;}
+//ostream& operator<<(ostream& out, const Statistic& stat) {stat.output(out); return out;}
 
 /****************************************************************************
 *																			*
@@ -85,22 +89,22 @@ void Statistic::incData(int i, int j, int k, float val)
 {
 //	Calculate indices for the last row/column
     
-    int lastRow = data.size() - 1;
-    int lastCol = data[i].size() - 1;
+    int rowSum = (int)data.size() - 1;
+    int colSum = (int)data[i].size() - 1;
     
 //  Increment replication sums
     
     data[i][j][k] += val;
-    data[lastRow][j][k] += val;			// row sum
-    data[i][lastCol][k] += val;			// col sum
-    data[lastRow][lastCol][k] += val; 	// row + col sum
+    data[rowSum][j][k] += val;			// row sum
+    data[i][colSum][k] += val;			// col sum
+    data[rowSum][colSum][k] += val;     // row + col sum
     
-//  Increment average sums
+//  Increment simulation sums
     
-    avg[i][j] += val;
-    avg[lastRow][j] += val;             // avg row sum
-    avg[i][lastCol] += val;             // avg col sum
-    avg[lastRow][lastCol] += val;       // avg row + col sum
+//    avg[i][j] += val;
+//    avg[rowSum][j] += val;          // avg row sum
+//    avg[i][colSum] += val;          // avg col sum
+//    avg[rowSum][colSum] += val;     // avg row + col sum
     
     return;
 }
@@ -142,35 +146,38 @@ void Statistic::outputRep(ostream& out, int rep) const
 
 /****************************************************************************
 *																			*
-*	Function:	outputAvgs                                                  *
+*	Function:	outputSim                                                   *
 *																			*
 *	Purpose:	To output the data averaged across all replications         *
 *																			*
 ****************************************************************************/
 
-void Statistic::outputAvgs(ostream& out) const
+void Statistic::outputSim(ostream& out) const
 {
 //	Output stat name
     
-    out << arrName;
+    out << name;
     
-//	Output stat
+//	Output data
     
     for (int i = 0; i < avgs.size(); i++)
     {
     //	Output task type
         
-        out << ", " << i;
+        if (i != data.size() - 1)
+            out << ", " << i;
+        else
+            out << ",Sum";
         
     //	Output averages
         
-        for (int j = 0; j < avgs[i].size(); j++)
+        for (int j = 0; j < avgs[i].size() - 1; j++)
             out << ", " << avgs[i][j];
         out << endl << ", ";
         
     //  Output std devs
         
-        for (int j = 0; j < devs[i].size(); j++)
+        for (int j = 0; j < devs[i].size() - 1; j++)
             out << ", " << devs[i][j];
         out << endl;
     }
@@ -180,14 +187,14 @@ void Statistic::outputAvgs(ostream& out) const
 
 /****************************************************************************
 *																			*
-*	Function:	setMeanAndStdDev											*
+*	Function:	avgData                                                     *
 *																			*
 *	Purpose:	To calculate and store the mean and standard deviation for  *
 *				the specified array	across all replications					*
 *																			*
 ****************************************************************************/
 
-void Statistic::setMeanAndStdDev(Matrix3D& arr)
+void Statistic::avgData()
 {
 //	Initialize variables
     
@@ -198,9 +205,9 @@ void Statistic::setMeanAndStdDev(Matrix3D& arr)
     
 //  Calculate mean and std dev across all replications
     
-    for (int i = 0; i < arr[0].size(); i++)
+    for (int i = 0; i < data.size(); i++)
     {
-        for (int j = 0; j < arr[0][0].size(); j++)
+        for (int j = 0; j < data[i].size(); j++)
         {
         //  Reset variables
             
@@ -210,18 +217,18 @@ void Statistic::setMeanAndStdDev(Matrix3D& arr)
             
         //  Calculate values using Welford's algorithm
             
-            for (int k = 0; k < arr.size() - 2; k++)
+            for (int k = 0; k < data[i][j].size(); k++)
             {
                 N++;
-                delta = arr[k][i][j] - mean;
+                delta = data[i][j][k] - mean;
                 mean += delta/N;
-                devSum += delta * (arr[k][i][j] - mean);
+                devSum += delta * (data[i][j][k] - mean);
             }
             
         //  Store values
             
-            arr[N][i][j] = mean;
-            arr[N + 1][i][j] = sqrt(devSum / (N - 1));
+            avgs[i][j] = mean;
+            devs[i][j] = sqrt(devSum / (N - 1));
         }
     }
     

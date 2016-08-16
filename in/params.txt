@@ -1,6 +1,6 @@
 output_path		/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/out
 num_hours		2
-traffic			h h
-num_reps		1000
-ops             0 2
+traffic         m m
+num_reps		100
+ops             0
 output_path		/var/www/html/des-platform
