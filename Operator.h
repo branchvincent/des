@@ -69,7 +69,7 @@ class Operator
         string getName() const {return name;}
         bool isIdle() const {return currTask == NULL;}
 		bool isBusy() const {return !isIdle();}
-        int getQueueSize() const {return taskQueue.size();}
+        int getQueueSize() const {return (int)taskQueue.size();}
 //		bool isQueueEmpty() const {return taskQueue.empty();}
 //		int tasksLeft() const {return taskQueue.size();}
 //		Task* getTop() {return taskQueue.top();}

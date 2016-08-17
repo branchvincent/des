@@ -270,7 +270,7 @@ void Supervisor::procArr(Task* task)
         int minSize = ops[0].getQueueSize() + ops[0].isBusy();
         int minIndex = 0;
         
-        int end = opNums.size() - 1;
+        int end = (int)opNums.size() - 1;
         int j = 0;
         
         for (int i = opNums[0]; i <= opNums[end]; i++)

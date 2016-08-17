@@ -51,18 +51,12 @@ class Statistics
 
 	//	Mutators
 
-        void incUtil(int i, int j, float val)
-            {util.incData(i, j, currRep, val);}
-        void incSerTime(int i, int j, float val)
-            {serTime.incData(i, j, currRep, val);}
-		void incWaitTime(int i, int j, float val)
-            {waitTime.incData(i, j, currRep, val);}
-		void incNumTasksIn(int i, int j, float val)
-            {numTasksIn.incData(i, j, currRep, val);}
-		void incNumTasksOut(int i, int j, float val)
-            {numTasksOut.incData(i, j, currRep, val);}
-		void incNumTasksExp(int i, int j, float val)
-            {numTasksExp.incData(i, j, currRep, val);}
+        void incUtil(int i, int j, float val) {util.incData(i, j, currRep, val);}
+        void incSerTime(int i, int j, float val) {serTime.incData(i, j, currRep, val);}
+		void incWaitTime(int i, int j, float val) {waitTime.incData(i, j, currRep, val);}
+		void incNumTasksIn(int i, int j, float val) {numTasksIn.incData(i, j, currRep, val);}
+		void incNumTasksOut(int i, int j, float val) {numTasksOut.incData(i, j, currRep, val);}
+		void incNumTasksExp(int i, int j, float val) {numTasksExp.incData(i, j, currRep, val);}
 		void endRep();
 
 //		void setUtil(const int& i, const int& j, const int& val) {util[i][j] = val;}
@@ -110,7 +104,7 @@ ostream& operator<<(ostream& out, const Statistics& stats) {stats.output(out); r
 
 Statistics::Statistics(int xDim, int yDim, int zDim) :
     currRep(0),
-    interval(NUM_INTS),
+    interval(yDim),
 	util("Utilization", xDim, yDim, zDim),
 	serTime("Service Time", xDim, yDim, zDim),
 	waitTime("Wait Time", xDim, yDim, zDim),
@@ -118,7 +112,9 @@ Statistics::Statistics(int xDim, int yDim, int zDim) :
 	numTasksOut("Number Out", xDim, yDim, zDim),
 	numTasksExp("Number Expired", xDim, yDim, zDim)
 {
-	for (int i = 1; i < NUM_INTS; i++)
+//  Set time intervals
+    
+	for (int i = 1; i < interval.size(); i++)
 		interval[i] = interval[i-1] + INT_SIZE;
 }
 
@@ -166,8 +162,8 @@ void Statistics::outputRep(ostream& out, int rep) const
     
     out << "Statistic, Task, ";
     
-    for (int i = 0; i < NUM_INTS; i++)
-        out << i * INT_SIZE << " min, ";
+    for (int i = 0; i < interval.size(); i++)
+        out << interval[i] << " min, ";
     out << "Sum" << endl;
     
 //	Output stats
@@ -196,8 +192,8 @@ void Statistics::outputSim(ostream& out) const
     
     out << "Statistic, Task";
     
-    for (int i = 0; i < NUM_INTS; i++)
-        out << ", " << i * INT_SIZE << " min";
+    for (int i = 0; i < interval.size(); i++)
+        out << ", " << interval[i] << " min";
     out << "," << endl;
 //    out << ", Sum" << endl;
     
@@ -223,7 +219,7 @@ void Statistics::outputSim(ostream& out) const
 
 void Statistics::endSim()
 {
-//	Calculate mean and std dev for all arrays
+//	Calculate mean and std dev across all replications
     
     util.avgData();
     serTime.avgData();
@@ -252,7 +248,7 @@ void Statistics::endSim()
 //    vector<float> util;
 //    vector<float> err;
 //
-//    for (int i = 0; i < NUM_INTS; i++)
+//    for (int i = 0; i < interval.size(); i++)
 //    {
 //        time.push_back(interval[i] + INT_SIZE/2);
 //        util.push_back(stats[i][NUM_REPS]);

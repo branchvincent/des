@@ -28,7 +28,6 @@ using namespace params;
 
 //  Notes:
 //  - change rand() to default_random_engine (minstd_rand0 rand; rand();)
-//  - executable is not recongizing matplotib
 
 int main(int argc, char* argv[])
 {

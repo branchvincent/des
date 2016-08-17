@@ -159,7 +159,7 @@ namespace params
     void setTraffic(vector<float> traff)
         {for (int i = 0; i < traff.size(); i++) TRAFFIC.push_back(traff[i]);}
     void setOps(vector<int> ops)
-        {NUM_OPS = ops.size(); for (int i = 0; i < ops.size(); i++) OPS.push_back(ops[i]);}
+        {NUM_OPS = (int)ops.size(); for (int i = 0; i < ops.size(); i++) OPS.push_back(ops[i]);}
 }
 
 #endif
