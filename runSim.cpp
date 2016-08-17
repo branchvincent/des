@@ -45,16 +45,16 @@ int main(int argc, char* argv[])
     
     LoadParameters pms(paramFile);
     setOutputPath(pms.getOutFile());
-    setNumHours(pms.getParam(0));
-    setNumReps(pms.getParam(1));
+    setNumHours(pms.getNumHours());
+    setNumReps(pms.getNumReps());
     setTraffic(pms.getTraffic());
     setOps(pms.getOps());
 
 //  Intialize and run simulation
     
-    Simulation sim(paramFile);
-	sim.run();
-    
+//    Simulation sim(paramFile);
+//	sim.run();
+	
 //  End timer
     
     float time = (clock() - start) / (float)CLOCKS_PER_SEC;

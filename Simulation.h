@@ -131,6 +131,7 @@ Simulation::Simulation(string paramFile) :
 //  Output run parameters
     
     cout << "Simulation Parameters" << endl;
+    cout << "Output path = " << OUTPUT_PATH << endl;
     cout << "Number of hours = " << NUM_HOURS << endl;
     cout << "Number of replications = " << NUM_REPS << endl;
     cout << "Traffic levels = ";

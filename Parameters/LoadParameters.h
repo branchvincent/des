@@ -40,15 +40,45 @@ class LoadParameters
         string getOutFile() {return outFile;}
         vector<float> getTraffic() {return traffic;}
         vector<int> getOps() {return ops;}
-        float getParam(int i) {return params[i];}
+        float getNumHours() {return numHours;}
+        float getNumReps() {return numReps;}
 	
+	//	Other
+	
+		void readChar(fstream& fin, char& param);
+		void readString(fstream& fin, string& param);
+		void readInt(fstream& fin, int& param);
+		void readFloat(fstream& fin, float& param);
+		void readInt(fstream& fin, char& param);
+		void readCharArr(fstream& fin, vector<char>& paramArr);
+		void readIntArr(fstream& fin, vector<int>& paramArr);
+		void readFloatArr(fstream& fin, vector<float>& paramArr);
+
 //	Data members
 
 	public:
+	//	General settings
+	
         string outFile;
+        float numHours;
         vector<float> traffic;
+        float numReps;
         vector<int> ops;
-        vector<float> params;
+	
+	//	Task settings
+	
+		int numTaskTypes;
+        vector<string> taskNames;
+        Matrix2D taskPrty;
+        vector<char> arrDists;
+        Matrix2D arrPms;
+        vector<char> serDists;
+        Matrix2D serPms;
+        vector<char> expDists;
+        Matrix2D expPmsLo;
+        Matrix2D expPmsHi;
+		Matrix2D affByTraff;
+		Matrix2D opNums;
 };
 
 /****************************************************************************
@@ -73,8 +103,6 @@ LoadParameters::LoadParameters(string file)
     
 //  Initialize variables
     
-    char paramChar;
-    float paramVal;
     string paramName;
     
 //	Read in output file
@@ -83,21 +111,21 @@ LoadParameters::LoadParameters(string file)
     fin.ignore();
     fin.ignore();
     getline(fin, outFile);
-    cout << "outFile = " << outFile << endl;
     
 //  Read in number of hours
     
-    fin >> paramName >> paramVal;
-    params.push_back(paramVal);
+    fin >> paramName >> numHours;
     
 //  Read in traffic
     
+    char traffLevel;
     fin >> paramName;
-    for (int i = 0; i < params[0]; i++)
+    
+    for (int i = 0; i < numHours; i++)
     {
-        fin >> paramChar;
+        fin >> traffLevel;
         
-        switch (paramChar)
+        switch (traffLevel)
         {
             case 'l': traffic.push_back(0.5); break;
             case 'm': traffic.push_back(1); break;
@@ -108,18 +136,111 @@ LoadParameters::LoadParameters(string file)
     
 //	Read in number of replications
     
-    fin >> paramName >> paramVal;
-    params.push_back(paramVal);
+    fin >> paramName >> numReps;
     
 //  Read in operators
     
+    int opNum;
     fin >> paramName;
     
-    int paramInt;
-    while (fin >> paramInt)
-        ops.push_back(paramInt);
+    while (fin >> opNum)
+        ops.push_back(opNum);
     
+//  Read in task parameters
+
+	fin >> paramName >> numTaskTypes;
+	taskNames.resize(numTaskTypes);
+	taskPrty.resize(numTaskTypes);
+	arrDists.resize(numTaskTypes);
+	arrPms.resize(numTaskTypes);
+	serDists.resize(numTaskTypes);
+	serPms.resize(numTaskTypes);
+	expDists.resize(numTaskTypes);
+	expPmsLo.resize(numTaskTypes);
+	expPmsHi.resize(numTaskTypes);
+	affByTraff.resize(numTaskTypes);
+	opNums.resize(numTaskTypes);
+	
+//	for (int i = 0; i < numTaskTypes; i++)
+//	{
+		readString(fin, taskNames[0]);		// name
+//		readFloatArr(fin, taskPrty[i]);		// priority
+//		readChar(fin, arrDists[i]);			// arrival dist
+//		readFloatArr(fin, arrPms[i]);		// arrival params
+//		readChar(fin, serDists[i]);			// service dist
+//		readFloatArr(fin, serPms[i]);		// service params
+//		readChar(fin, expDists[i]);			// expiration dist
+//		readFloatArr(fin, expPmsLo[i]);		// expiration params
+//		readFloatArr(fin, expPmsHi[i]);		// expiration params
+//		readFloatArr(fin, affByTraff[i]);	// traffic
+//		readFloatArr(fin, opNums[i]);		// operator nums
+//	}
+	
     return;
+}
+
+void readChar(fstream& fin, char& param)
+{
+	string paramName;
+	fin >> paramName >> param;
+	return;
+}
+
+void readCharArr(fstream& fin, vector<char>& paramArr)
+{
+	string paramName;
+	fin >> paramName;
+	
+	char temp;
+	while (fin >> temp)
+		paramArr.push_back(temp);
+	
+	return;
+}
+
+void readString(fstream& fin, string& param)
+{
+	string paramName;
+	fin >> paramName >> param;
+	return;
+}
+
+void readInt(fstream& fin, int& param)
+{
+	string paramName;
+	fin >> paramName >> param;
+	return;
+}
+
+void readIntArr(fstream& fin, vector<int>& paramArr)
+{
+	string paramName;
+	fin >> paramName;
+	
+	float temp;
+	while (fin >> temp)
+		paramArr.push_back(temp);
+	
+	return;
+}
+
+void readFloat(fstream& fin, float& param)
+{
+	string paramName;
+	fin >> paramName >> param;
+	return;
+}
+
+void readFloatArr(fstream& fin, vector<float>& paramArr)
+{
+	string paramName;
+	fin >> paramName;
+	
+	float temp;
+	while (fin >> temp)
+		paramArr.push_back(temp);
+	
+	return;
 }
 
 #endif
