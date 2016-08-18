@@ -14,6 +14,8 @@
 #define LOADPARAMETERS_H
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <algorithm>
 
@@ -45,14 +47,10 @@ class LoadParameters
 	
 	//	Other
 	
-		void readChar(fstream& fin, char& param);
-		void readString(fstream& fin, string& param);
-		void readInt(fstream& fin, int& param);
-		void readFloat(fstream& fin, float& param);
-		void readInt(fstream& fin, char& param);
-		void readCharArr(fstream& fin, vector<char>& paramArr);
-		void readIntArr(fstream& fin, vector<int>& paramArr);
-		void readFloatArr(fstream& fin, vector<float>& paramArr);
+		void readLine(fstream& fin, string& line);
+		void readString(fstream& fin, string& paramStrg);
+		template <typename T> void readVal(fstream& fin, T& paramVal);
+		template <typename T> void readArr(fstream& fin, vector<T>& paramArr, bool invert = false);
 
 //	Data members
 
@@ -101,54 +99,17 @@ LoadParameters::LoadParameters(string file)
         exit(1);
     }
     
-//  Initialize variables
-    
-    string paramName;
-    
-//	Read in output file
-    
-    fin >> paramName;
-    fin.ignore();
-    fin.ignore();
-    getline(fin, outFile);
-    
-//  Read in number of hours
-    
-    fin >> paramName >> numHours;
-    
-//  Read in traffic
-    
-    char traffLevel;
-    fin >> paramName;
-    
-    for (int i = 0; i < numHours; i++)
-    {
-        fin >> traffLevel;
-        
-        switch (traffLevel)
-        {
-            case 'l': traffic.push_back(0.5); break;
-            case 'm': traffic.push_back(1); break;
-            case 'h': traffic.push_back(2); break;
-            default: break;
-        }
-    }
-    
-//	Read in number of replications
-    
-    fin >> paramName >> numReps;
-    
-//  Read in operators
-    
-    int opNum;
-    fin >> paramName;
-    
-    while (fin >> opNum)
-        ops.push_back(opNum);
-    
-//  Read in task parameters
-
-	fin >> paramName >> numTaskTypes;
+//	Read parameter file
+	
+	readString(fin, outFile);
+	readVal(fin, numHours);
+	readArr(fin, traffic);
+	readVal(fin, numReps);
+	readArr(fin, ops);
+	readVal(fin, numTaskTypes);
+	
+//	Resize matrices
+	
 	taskNames.resize(numTaskTypes);
 	taskPrty.resize(numTaskTypes);
 	arrDists.resize(numTaskTypes);
@@ -161,84 +122,143 @@ LoadParameters::LoadParameters(string file)
 	affByTraff.resize(numTaskTypes);
 	opNums.resize(numTaskTypes);
 	
-//	for (int i = 0; i < numTaskTypes; i++)
-//	{
-		readString(fin, taskNames[0]);		// name
-//		readFloatArr(fin, taskPrty[i]);		// priority
-//		readChar(fin, arrDists[i]);			// arrival dist
-//		readFloatArr(fin, arrPms[i]);		// arrival params
-//		readChar(fin, serDists[i]);			// service dist
-//		readFloatArr(fin, serPms[i]);		// service params
-//		readChar(fin, expDists[i]);			// expiration dist
-//		readFloatArr(fin, expPmsLo[i]);		// expiration params
-//		readFloatArr(fin, expPmsHi[i]);		// expiration params
-//		readFloatArr(fin, affByTraff[i]);	// traffic
-//		readFloatArr(fin, opNums[i]);		// operator nums
-//	}
+//	Read in task parameters
+	
+	bool invert = true;
+	
+	for (int i = 0; i < numTaskTypes; i++)
+	{
+		readString(fin, taskNames[i]);		// name
+		readArr(fin, taskPrty[i]);			// priority
+		readVal(fin, arrDists[i]);			// arrival dist
+		readArr(fin, arrPms[i], invert);	// arrival params
+		readVal(fin, serDists[i]);			// service dist
+		readArr(fin, serPms[i], invert);	// service params
+		readVal(fin, expDists[i]);			// expiration dist
+		readArr(fin, expPmsLo[i], invert);	// expiration params
+		readArr(fin, expPmsHi[i], invert);	// expiration params
+		readArr(fin, affByTraff[i]);		// traffic
+		readArr(fin, opNums[i]);			// operator nums
+	}
+	
+//  Read in traffic
+	
+//    for (int i = 0; i < numHours; i++)
+//    {
+//        fin >> traffLevel;
+//        
+//        switch (traffLevel)
+//        {
+//            case 'l': traffic.push_back(0.5); break;
+//            case 'm': traffic.push_back(1); break;
+//            case 'h': traffic.push_back(2); break;
+//            default: break;
+//        }
+//    }
 	
     return;
 }
 
-void readChar(fstream& fin, char& param)
-{
-	string paramName;
-	fin >> paramName >> param;
-	return;
-}
+/****************************************************************************
+*																			*
+*	Function:	readLine													*
+*																			*
+*	Purpose:	To read and save the line as a string from the specified 	*
+*				file stream													*
+*																			*
+****************************************************************************/
 
-void readCharArr(fstream& fin, vector<char>& paramArr)
+void LoadParameters::readLine(fstream& fin, string& line)
 {
+//	Ignore blank or commented lines
+	
+//	while (fin.peek() == '/')
+//		getline(fin, line);
+	
+//	Ignore parameter name
+	
 	string paramName;
 	fin >> paramName;
+//	cout << "'" << paramName << "', ";
 	
-	char temp;
-	while (fin >> temp)
-		paramArr.push_back(temp);
+//	Read line as string
 	
-	return;
-}
-
-void readString(fstream& fin, string& param)
-{
-	string paramName;
-	fin >> paramName >> param;
-	return;
-}
-
-void readInt(fstream& fin, int& param)
-{
-	string paramName;
-	fin >> paramName >> param;
-	return;
-}
-
-void readIntArr(fstream& fin, vector<int>& paramArr)
-{
-	string paramName;
-	fin >> paramName;
-	
-	float temp;
-	while (fin >> temp)
-		paramArr.push_back(temp);
+	ws(fin);
+	getline(fin, line);
 	
 	return;
 }
 
-void readFloat(fstream& fin, float& param)
+/****************************************************************************
+*																			*
+*	Function:	readString													*
+*																			*
+*	Purpose:	To read and save a string from the specified file stream	*
+*																			*
+****************************************************************************/
+
+void LoadParameters::readString(fstream& fin, string& paramStrg)
 {
-	string paramName;
-	fin >> paramName >> param;
+//	Read line
+	
+	readLine(fin, paramStrg);
+//	cout << paramStrg << endl;
+
 	return;
 }
 
-void readFloatArr(fstream& fin, vector<float>& paramArr)
+/****************************************************************************
+*																			*
+*	Function:	readVal														*
+*																			*
+*	Purpose:	To read and save a value from the specified file stream		*
+*																			*
+****************************************************************************/
+
+template <typename T>
+void LoadParameters::readVal(fstream& fin, T& paramVal)
 {
-	string paramName;
-	fin >> paramName;
+//	Read line
 	
-	float temp;
-	while (fin >> temp)
-		paramArr.push_back(temp);
+	string line;
+	readLine(fin, line);
+	istringstream iss(line);
+	iss >> paramVal;
+//	cout << paramVal << endl;
+	
+	return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	readArr														*
+*																			*
+*	Purpose:	To read and save an array from the specified file stream	*
+*																			*
+****************************************************************************/
+
+template <typename T>
+void LoadParameters::readArr(fstream& fin, vector<T>& paramArr, bool invert)
+{
+//	Read line
+	
+	string line;
+	readLine(fin, line);
+	istringstream iss(line);
+	
+//	Parse line for parameter values
+	
+	T val;
+	while (iss >> val)
+	{
+		if (invert && val != 0)
+			val = 1/val;
+		paramArr.push_back(val);
+	}
+	
+//	for (int i = 0; i < paramArr.size(); i++)
+//		cout <<  paramArr[i] << " ";
+//	cout << endl;
 	
 	return;
 }

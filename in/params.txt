@@ -1,17 +1,92 @@
 output_path		/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/out
 num_hours		2
-traffic         m m
+traffic         1 1
 num_reps		100
-ops             0
-num_task_types	1
-t0_name         Communicating
-t0_prty         4 3 4
-t0_arr_dist     E
-t0_arr_pms      1/3 1/5 1/3
-t0_ser_dist     E
-t0_ser_pms      1/0.33 0
-t0_exp_dist     E
-t0_exp_pms_lo   0 0.1071666 0
-t0_exp_pms_hi   0 0.0863333 0
-t0_traff        0 1 0
-t0_op_nums      0
+ops             0 1
+num_task_types	3
+
+name       		Communicating
+prty         	4 3 4
+arr_dist     	E
+arr_pms      	1.05 10 1.33
+ser_dist     	E
+ser_pms      	0.33 0
+exp_dist     	E
+exp_pms_lo   	0 9.33126 0
+exp_pms_hi   	0 11.583 0
+traff        	0 1 0
+op_nums      	0
+
+name      		Exception Handling
+prty         	5 4 5
+arr_dist     	E
+arr_pms      	
+ser_dist     	L
+ser_pms      	
+exp_dist     	E
+exp_pms_lo   	0 22.3881 22.3881
+exp_pms_hi   	0 18.1269 18.1269
+
+name       		Paperwork
+prty         	3 0 2
+arr_dist     	E
+arr_pms      	
+ser_dist     	U
+ser_pms      	
+exp_dist     	E
+exp_pms_lo   	0 0 0
+exp_pms_hi   	0 0 0
+
+name       		Maintenance of Way Interactions
+prty         	0 5 0
+arr_dist     	E
+arr_pms      	
+ser_dist     	U
+ser_pms      	
+exp_dist     	E
+exp_pms_lo   	0 5.43478 0
+
+name       		Temporary Speed Restrictions
+prty         	0 5 0
+arr_dist     	E
+arr_pms      	
+ser_dist     	U
+ser_pms      	
+exp_dist     	E
+exp_pms_lo   	0 5.43478 0 
+
+name       		Signal Response Management
+prty         	0 5 0
+arr_dist     	E
+arr_pms      	
+ser_dist     	U
+ser_pms      	
+exp_dist     	E
+exp_pms_lo   	0 5.43478 5.43478 
+
+name			Monitoring Inside
+prty         	2 2 1
+arr_dist     	E
+arr_pms      	
+ser_dist     	E
+ser_pms      	
+exp_dist     	E
+exp_pms_lo   	0 0 0
+
+name      		Monitoring Outside
+prty         	1 1 3
+arr_dist     	E
+arr_pms      	
+ser_dist     	E
+ser_pms      	
+exp_dist     	E
+exp_pms_lo   	0 0 0
+
+name 			Planning Ahead
+prty         	0 5 0
+arr_dist     	E
+arr_pms      	
+ser_dist     	E
+ser_pms      	
+exp_dist     	E
+exp_pms_lo   	0 6.0241 0
