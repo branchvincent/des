@@ -22,8 +22,10 @@ using namespace std;
 
 //  Type definitions
 
-typedef vector<vector<float> > Matrix2D;
-typedef vector<Matrix2D> Matrix3D;
+template <typename T>
+using Matrix2D = vector<vector<T> >;
+template <typename T>
+using Matrix3D = vector<Matrix2D<T> >;
 
 /****************************************************************************
 *																			*
@@ -44,7 +46,7 @@ class Statistic
 	
         Statistic(string nm, int xDim, int yDim, int zDim) :
             name(nm),
-            data(xDim + 1, Matrix2D(yDim + 1, vector<float>(zDim, 0))),
+            data(xDim + 1, Matrix2D<float>(yDim + 1, vector<float>(zDim, 0))),
             avgs(xDim + 1, vector<float>(yDim + 1, 0)),
             devs(xDim + 1, vector<float>(yDim + 1, 0)) {}
 
@@ -66,10 +68,10 @@ class Statistic
 //	Data members
 
 	private:
-        string name;    // stat name
-		Matrix3D data;	// stat data
-        Matrix2D avgs;  // sim averages
-        Matrix2D devs;  // sim std devs
+        string name;			// stat name
+		Matrix3D<float> data;	// stat data
+        Matrix2D<float> avgs;	// sim averages
+        Matrix2D<float> devs;	// sim std devs
 };
 
 //	Operators

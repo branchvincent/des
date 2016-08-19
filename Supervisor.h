@@ -95,7 +95,7 @@ class Supervisor
 //	Data members
 
 	private:
-//        NewParams& params;
+//      Params& params;
         Statistics stats;
         vector<Operator> ops;
 };

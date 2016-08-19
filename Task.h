@@ -150,7 +150,7 @@ float Task::genArrTime(float prevArrTime, int phase)
 {
 //	Generate random interarrival time
 
-	float interArrTime = genRandNum(ARR_DIST, rand(), ARR_DIST_PARAMS[type][phase]);
+	float interArrTime = genRandNum(ARR_DISTS[type], rand(), ARR_DIST_PARAMS[type][phase]);
     
 //  Adjust for arrival time for traffic, if applicable
     
@@ -257,7 +257,7 @@ float Task::genExpTime(int phase)
 
     expiration = 2*serTime;
 //	while (expiration <= serTime)
-//		expiration = genRandNum('E', rand(), param);
+//		expiration = genRandNum(EXP_DISTS[type], rand(), param);
 
 	return arrTime + expiration;
 }

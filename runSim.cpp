@@ -15,10 +15,8 @@
 #include <iostream>
 #include <string>
 #include "Simulation.h"
-#include "Parameters/LoadParameters.h"
 
 using namespace std;
-using namespace params;
 
 /****************************************************************************
 *																			*
@@ -37,23 +35,17 @@ int main(int argc, char* argv[])
 
 //  Readin parameter file
     
-    string paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params.txt";
-    if (argc > 1) paramFile = argv[1];
+    string paramFile;
+	if (argc > 1)
+		paramFile = argv[1];
+	else
+		paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params.txt";
     cout << "inFile = " << paramFile << endl;
-
-//  Initialize parameters
-    
-    LoadParameters pms(paramFile);
-    setOutputPath(pms.getOutFile());
-    setNumHours(pms.getNumHours());
-    setNumReps(pms.getNumReps());
-    setTraffic(pms.getTraffic());
-    setOps(pms.getOps());
 
 //  Intialize and run simulation
     
-//    Simulation sim(paramFile);
-//	sim.run();
+    Simulation sim(paramFile);
+	sim.run();
 	
 //  End timer
     

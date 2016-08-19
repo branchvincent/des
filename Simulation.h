@@ -23,8 +23,6 @@
 #include "Supervisor.h"
 #include "Task.h"
 #include "Parameters/Parameters.h"
-#include "Parameters/NewParams.h"
-#include "Statistics.h"
 
 using namespace std;
 using namespace params;
@@ -80,7 +78,7 @@ class Simulation
 //	Data members
 
 	private:
-//        NewParams params;       // run parameters
+//      Params pms;				// run parameters
         Supervisor spv;         // operator supervisor
 		vector<int> endTimes;   // phase end times
 		list<Task*> taskList;	// task list
@@ -102,9 +100,20 @@ Simulation::Simulation(string paramFile) :
 //    params(paramFile),
 //    spv(params),
     spv(),
-    endTimes{30, END_TIME - 30, END_TIME},
+    endTimes(3), //{30, END_TIME - 30, END_TIME},
     taskList()
 {
+//	Get run parameters
+	
+	LoadParameters pms(paramFile);
+	INIT_GLOBALS(pms);
+	
+//	Set end times
+	
+	endTimes[0] = 30;
+	endTimes[1] = END_TIME - 30;
+	endTimes[2] = END_TIME;
+	
 //	Check duration of simulation
 
 	if (END_TIME < 90 || END_TIME % 10 != 0)

@@ -104,7 +104,7 @@ class Operator
 
 	private:
         string name;
-//        NewParams params;           // parameters
+//		Params pms;					// parameters
 		Task* currTask;             // current task
 		Queue taskQueue;            // task queue
 //        Queue taskQueues[NUM_OPS];  // task queues

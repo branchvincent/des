@@ -18,8 +18,16 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
+
+//	Type definitions
+
+template <typename T>
+using Matrix2D = vector<vector<T> >;
+template <typename T>
+using Matrix3D = vector<vector<vector<T> > >;
 
 /****************************************************************************
 *																			*
@@ -39,25 +47,28 @@ class LoadParameters
 
 	//	Inspectors
     
-        string getOutFile() {return outFile;}
-        vector<float> getTraffic() {return traffic;}
-        vector<int> getOps() {return ops;}
-        float getNumHours() {return numHours;}
-        float getNumReps() {return numReps;}
+//        string getOutPath() {return outputPath;}
+//		float getNumHours() {return numHours;}
+//        vector<float> getTraffic() {return traffic;}
+//        float getNumReps() {return numReps;}
+//		vector<int> getOps() {return ops;}
+
+//	Private member functions
 	
-	//	Other
-	
+	private:
+		void readTraff(fstream& fin, vector<float>& traff);
 		void readLine(fstream& fin, string& line);
 		void readString(fstream& fin, string& paramStrg);
 		template <typename T> void readVal(fstream& fin, T& paramVal);
 		template <typename T> void readArr(fstream& fin, vector<T>& paramArr, bool invert = false);
-
-//	Data members
+		bool isInverted(char c) {return c == 'E';}
+	
+//	Public data members
 
 	public:
 	//	General settings
 	
-        string outFile;
+        string outputPath;
         float numHours;
         vector<float> traffic;
         float numReps;
@@ -67,16 +78,16 @@ class LoadParameters
 	
 		int numTaskTypes;
         vector<string> taskNames;
-        Matrix2D taskPrty;
+        Matrix2D<int> taskPrty;
         vector<char> arrDists;
-        Matrix2D arrPms;
+        Matrix2D<float> arrPms;
         vector<char> serDists;
-        Matrix2D serPms;
+        Matrix2D<float> serPms;
         vector<char> expDists;
-        Matrix2D expPmsLo;
-        Matrix2D expPmsHi;
-		Matrix2D affByTraff;
-		Matrix2D opNums;
+        Matrix2D<float> expPmsLo;
+        Matrix2D<float> expPmsHi;
+		Matrix2D<int> affByTraff;
+		Matrix2D<int> opNums;
 };
 
 /****************************************************************************
@@ -101,9 +112,9 @@ LoadParameters::LoadParameters(string file)
     
 //	Read parameter file
 	
-	readString(fin, outFile);
+	readString(fin, outputPath);
 	readVal(fin, numHours);
-	readArr(fin, traffic);
+	readTraff(fin, traffic);
 	readVal(fin, numReps);
 	readArr(fin, ops);
 	readVal(fin, numTaskTypes);
@@ -124,21 +135,19 @@ LoadParameters::LoadParameters(string file)
 	
 //	Read in task parameters
 	
-	bool invert = true;
-	
 	for (int i = 0; i < numTaskTypes; i++)
 	{
-		readString(fin, taskNames[i]);		// name
-		readArr(fin, taskPrty[i]);			// priority
-		readVal(fin, arrDists[i]);			// arrival dist
-		readArr(fin, arrPms[i], invert);	// arrival params
-		readVal(fin, serDists[i]);			// service dist
-		readArr(fin, serPms[i], invert);	// service params
-		readVal(fin, expDists[i]);			// expiration dist
-		readArr(fin, expPmsLo[i], invert);	// expiration params
-		readArr(fin, expPmsHi[i], invert);	// expiration params
-		readArr(fin, affByTraff[i]);		// traffic
-		readArr(fin, opNums[i]);			// operator nums
+		readString(fin, taskNames[i]);						// name
+		readArr(fin, taskPrty[i]);							// priority
+		readVal(fin, arrDists[i]);							// arrival dist
+		readArr(fin, arrPms[i], isInverted(arrDists[i]));	// arrival params
+		readVal(fin, serDists[i]);							// service dist
+		readArr(fin, serPms[i], isInverted(serDists[i]));	// service params
+		readVal(fin, expDists[i]);							// expiration dist
+		readArr(fin, expPmsLo[i], isInverted(expDists[i]));	// expiration params
+		readArr(fin, expPmsHi[i], isInverted(expDists[i]));	// expiration params
+		readArr(fin, affByTraff[i]);						// traffic
+		readArr(fin, opNums[i]);							// operator nums
 	}
 	
 //  Read in traffic
@@ -170,11 +179,11 @@ LoadParameters::LoadParameters(string file)
 
 void LoadParameters::readLine(fstream& fin, string& line)
 {
-//	Ignore blank or commented lines
+//	Ignore commented lines
 	
 //	while (fin.peek() == '/')
 //		getline(fin, line);
-	
+
 //	Ignore parameter name
 	
 	string paramName;
@@ -262,5 +271,38 @@ void LoadParameters::readArr(fstream& fin, vector<T>& paramArr, bool invert)
 	
 	return;
 }
+
+/****************************************************************************
+*																			*
+*	Function:	readTraff													*
+*																			*
+*	Purpose:	To read and save the traffic array from the specified file	*
+*				stream														*
+*																			*
+****************************************************************************/
+
+void LoadParameters::readTraff(fstream& fin, vector<float>& traff)
+{
+//	Read in character array
+	
+	vector<char> temp;
+	readArr(fin, temp);
+	
+//	Replace characters with floats
+	
+	for (int i = 0; i < temp.size(); i++)
+	{
+		switch (temp[i])
+		{
+			case 'l': traff.push_back(0.5); break;
+			case 'm': traff.push_back(1); break;
+			case 'h': traff.push_back(2); break;
+			default: break;
+		}
+	}
+	
+	return;
+}
+
 
 #endif
