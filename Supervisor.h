@@ -64,7 +64,13 @@ class Supervisor
         Supervisor() : stats(), ops() {ops.push_back(Operator("Engineer", stats));
                             if (find(OPS.begin(), OPS.end(), 1) != OPS.end()) ops.push_back(Operator("Conductor", stats));
                             if (find(OPS.begin(), OPS.end(), 2) != OPS.end()) ops.push_back(Operator("PTC", stats));
-                            if (find(OPS.begin(), OPS.end(), 3) != OPS.end()) ops.push_back(Operator("Cruise", stats));}
+                            if (find(OPS.begin(), OPS.end(), 3) != OPS.end()) ops.push_back(Operator("Cruise", stats));
+			
+//							cout << "OPS.size() = " << OPS.size() << endl;
+//							cout << "NUM_OPS = " << NUM_OPS << endl;
+//							for (int i = 0; i < OPS.size(); i++)
+//								cout << "OPS[" << i << "] = " << OPS[i] << endl;
+							}
     
         //ops{Operator("Engineer", stats), Operator("Conductor", stats)} {}
 //            ops(NUM_OPS) {ops[0] = Operator("Engineer", stats);
@@ -82,7 +88,7 @@ class Supervisor
     // 	Mutators
 		
         void procArr(Task* task);
-		void procDep(Task* task);
+		void procDep(Task* task, bool stop);
         void clear() {for (int i = 0; i < NUM_OPS; i++) ops[i].clear();};
         void endRep();
         void plot();
@@ -316,7 +322,7 @@ void Supervisor::procArr(Task* task)
 *																			*
 ****************************************************************************/
 
-void Supervisor::procDep(Task* task)
+void Supervisor::procDep(Task* task, bool stop)
 {
 //  Process depature from appropriate operator
     
@@ -326,7 +332,7 @@ void Supervisor::procDep(Task* task)
         if (task == ops[i].getCurrTask())
         {
             taskFound = true;
-            ops[i].procDep(task);
+            ops[i].procDep(task, stop);
         }
     
 //  If task was not found, output error

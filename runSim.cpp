@@ -15,6 +15,7 @@
 #include <iostream>
 #include <string>
 #include "Simulation.h"
+#include "Parameters/LoadParameters.h"
 
 using namespace std;
 
@@ -33,7 +34,7 @@ int main(int argc, char* argv[])
     
     clock_t start = clock();
 
-//  Readin parameter file
+//  Read in parameter file
     
     string paramFile;
 	if (argc > 1)
@@ -41,6 +42,11 @@ int main(int argc, char* argv[])
 	else
 		paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params.txt";
     cout << "inFile = " << paramFile << endl;
+	
+//	Get run parameters
+	
+	LoadParameters pms(paramFile);
+	INIT_GLOBALS(pms);
 
 //  Intialize and run simulation
     

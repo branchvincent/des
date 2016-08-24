@@ -140,30 +140,15 @@ LoadParameters::LoadParameters(string file)
 		readString(fin, taskNames[i]);						// name
 		readArr(fin, taskPrty[i]);							// priority
 		readVal(fin, arrDists[i]);							// arrival dist
-		readArr(fin, arrPms[i], isInverted(arrDists[i]));	// arrival params
+		readArr(fin, arrPms[i]); //, isInverted(arrDists[i]));	// arrival params
 		readVal(fin, serDists[i]);							// service dist
-		readArr(fin, serPms[i], isInverted(serDists[i]));	// service params
+		readArr(fin, serPms[i]); //, isInverted(serDists[i]));	// service params
 		readVal(fin, expDists[i]);							// expiration dist
-		readArr(fin, expPmsLo[i], isInverted(expDists[i]));	// expiration params
-		readArr(fin, expPmsHi[i], isInverted(expDists[i]));	// expiration params
+		readArr(fin, expPmsLo[i]); //, isInverted(expDists[i]));	// expiration params
+		readArr(fin, expPmsHi[i]); //, isInverted(expDists[i]));	// expiration params
 		readArr(fin, affByTraff[i]);						// traffic
 		readArr(fin, opNums[i]);							// operator nums
 	}
-	
-//  Read in traffic
-	
-//    for (int i = 0; i < numHours; i++)
-//    {
-//        fin >> traffLevel;
-//        
-//        switch (traffLevel)
-//        {
-//            case 'l': traffic.push_back(0.5); break;
-//            case 'm': traffic.push_back(1); break;
-//            case 'h': traffic.push_back(2); break;
-//            default: break;
-//        }
-//    }
 	
     return;
 }

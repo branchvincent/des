@@ -50,6 +50,10 @@ class Statistic
             avgs(xDim + 1, vector<float>(yDim + 1, 0)),
             devs(xDim + 1, vector<float>(yDim + 1, 0)) {}
 
+		float getData(int j, int k) {
+			int lastRow = (int)data.size() - 1;
+			return data[lastRow][j][k];}
+	
 	//	Mutators
 
         void incData(int i, int j, int k, float val);
@@ -97,8 +101,8 @@ void Statistic::incData(int i, int j, int k, float val)
 //  Increment replication sums
     
     data[i][j][k] += val;
-    data[rowSum][j][k] += val;			// row sum
-    data[i][colSum][k] += val;			// col sum
+    data[rowSum][j][k] += val;			// col sum
+    data[i][colSum][k] += val;			// row sum
     data[rowSum][colSum][k] += val;     // row + col sum
     
 //  Increment simulation sums

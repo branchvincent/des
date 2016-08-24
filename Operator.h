@@ -81,7 +81,7 @@ class Operator
     
 		void procArr(Task* task);
 		void procIntrp(float currTime);
-		void procDep(Task* task);
+		void procDep(Task* task, bool stop);
         void servNextTask(float currTime);
         void clear();
         void endRep() {stats.endRep(); clear();}
@@ -235,7 +235,7 @@ void Operator::procIntrp(float currTime)
 *																			*
 ****************************************************************************/
 
-void Operator::procDep(Task* task)
+void Operator::procDep(Task* task, bool stop)
 {
 //	Get task attributes
     
@@ -246,7 +246,7 @@ void Operator::procDep(Task* task)
 
 //	Update stats
     
-    if (DEBUG_ON) cout << "\t " << name << ": Task departing at " << depTime << endl;
+    if (DEBUG_ON) cout << "\t " << name << ": Task departing at " << depTime << " and busy for " << depTime - begTime << endl;
     updateUtil(task, depTime);
     stats.incNumTasksOut(type, timeInt, 1);
 
@@ -254,7 +254,9 @@ void Operator::procDep(Task* task)
     
 //    delete currTask;
     currTask = NULL;
-    servNextTask(depTime);
+	
+	if (!stop)
+		servNextTask(depTime);
 
     return;
 }
@@ -336,7 +338,7 @@ void Operator::servNextTask(float currTime)
 	//	Get next task
         
         if (DEBUG_ON) cout << "\t " << name << ": Task starting at " << currTime;
-        
+		
         currTask = taskQueue.top();
         taskQueue.pop();
         currTask->setBegTime(currTime);
@@ -462,7 +464,7 @@ void Operator::updateUtil(Task* task, float currTime)
  
 //	Record utilization
 
-	while (currTime >= endInt)
+	while (currTime > endInt)
 	{
 		timeBusy = endInt - max(begTime, beginInt);
 		percBusy = timeBusy/INT_SIZE;

@@ -72,7 +72,7 @@ class Simulation
         void procAllArrs();
         void procAllDepts();
         void procArr(Task* task) {spv.procArr(task);}
-        void procDep(Task* task) {spv.procDep(task);}
+        void procDep(Task* task, bool stop) {spv.procDep(task, stop);}
         void outputTaskList();
 
 //	Data members
@@ -82,6 +82,7 @@ class Simulation
         Supervisor spv;         // operator supervisor
 		vector<int> endTimes;   // phase end times
 		list<Task*> taskList;	// task list
+		int currTime;
 };
 
 //	Operators
@@ -100,19 +101,24 @@ Simulation::Simulation(string paramFile) :
 //    params(paramFile),
 //    spv(params),
     spv(),
-    endTimes(3), //{30, END_TIME - 30, END_TIME},
-    taskList()
+    endTimes{30, END_TIME - 30, END_TIME},
+    taskList(),
+	currTime(0)
 {
 //	Get run parameters
 	
-	LoadParameters pms(paramFile);
-	INIT_GLOBALS(pms);
+//	LoadParameters pms(paramFile);
+//	INIT_GLOBALS(pms);
+	
+//	Set supervisor
+	
+//	spv = Supervisor();
 	
 //	Set end times
 	
-	endTimes[0] = 30;
-	endTimes[1] = END_TIME - 30;
-	endTimes[2] = END_TIME;
+//	endTimes[0] = 30;
+//	endTimes[1] = END_TIME - 30;
+//	endTimes[2] = END_TIME;
 	
 //	Check duration of simulation
 
@@ -197,6 +203,7 @@ void Simulation::runRep()
 
 //	Run all phases 
 	
+	currTime = 0;
 	for (int i = 0; i < NUM_PHASES; i++)
 		runPhase(i);
 		
@@ -230,7 +237,7 @@ void Simulation::runPhase(int phase)
 //	Process all events
 	
     if (DEBUG_ON) outputTaskList();
-    
+	
     procAllArrs();
     procAllDepts();
     
@@ -260,10 +267,15 @@ void Simulation::genTasks(int type, int phase)
 {
 //  Calculate current time
     
-    float currTime = 0;
-    if (phase != 0)
-        currTime = endTimes[phase - 1];
-    
+//    float currTime = 0;
+//    if (phase == 0)
+//        currTime = endTimes[phase - 1];
+	
+	if (phase == 0)
+		currTime = 0;
+	else
+		currTime = max(currTime, endTimes[phase - 1]);
+	
 //	Create temporary list and first task
     
     list<Task*> tmpList;
@@ -328,7 +340,7 @@ void Simulation::procAllArrs()
             it++;
         }
         else
-            procDep(depTask);
+            procDep(depTask, false);
     }
 
     return;
@@ -356,7 +368,7 @@ void Simulation::procAllDepts()
     {
     //  Process depature
         
-        procDep(depTask);
+        procDep(depTask, false);
         
     //  Get next depature
         
@@ -364,20 +376,30 @@ void Simulation::procAllDepts()
         depTime = spv.getNextDeptTime();
     }
     
-//    if (!spv.isBusy())
-//        cout << "Operators are idle. Finishing Phase..." << endl;
-//    else
-//        cout << "Depature Time exceeded end time." << endl;
-    
+    if (!spv.isBusy())
+        cout << "Operators are idle. Finishing Phase..." << endl;
+    else
+        cout << "Depature Time exceeded end time." << endl;
+	
 //  Depart any current tasks
-    
-//	if (spv.isBusy())
-//	{
-//        depTask->setDepTime(endTimes[2]);
-//		procDep(depTask);
-//        spv.clear();
-//	}
+	
+	if (spv.isBusy())
+	{
+		while (spv.isBusy())
+		{
+		//	Process Depature
+			
+			currTime = endTimes[2];
+			depTask->setDepTime(currTime);
+			procDep(depTask, true);
 
+		//  Get next depature
+			
+			depTask = spv.getNextDepature();
+		}
+		spv.clear();
+	}
+	
     return;
 }
 
