@@ -50,7 +50,7 @@ namespace params
 	
 	const bool TRAFFIC_ON = 1;
 	const bool FATIGUE_ON = 1;
-	const bool DEBUG_ON = 1;
+	const bool DEBUG_ON = 0;
 	const bool OUTPUT_ON = 1;
 	const bool RAND_RUN_ON = 0;
 	

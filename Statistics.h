@@ -52,14 +52,14 @@ class Statistics
 	//	Mutators
 
         void incUtil(int i, int j, float val) {
-			cout << "\t\t\tutil(" << j << ", " << currRep << "): " << util.getData(j, currRep);
-			cout << " + " << val << " = ";
+//			cout << "\t\t\tutil(" << j << ", " << currRep << "): " << util.getData(j, currRep);
+//			cout << " + " << val << " = ";
 			util.incData(i, j, currRep, val);
-			cout << util.getData(j, currRep) << endl;
-			if (util.getData(j, currRep) > 1)
-			{
-				cout << "UTILIZATION OVERFLOW" << endl;
-			}
+//			cout << util.getData(j, currRep) << endl;
+//			if (util.getData(j, currRep) > 1)
+//			{
+//				cout << "UTILIZATION OVERFLOW" << endl;
+//			}
 		}
         void incSerTime(int i, int j, float val) {serTime.incData(i, j, currRep, val);}
 		void incWaitTime(int i, int j, float val) {waitTime.incData(i, j, currRep, val);}

@@ -376,10 +376,10 @@ void Simulation::procAllDepts()
         depTime = spv.getNextDeptTime();
     }
     
-    if (!spv.isBusy())
-        cout << "Operators are idle. Finishing Phase..." << endl;
-    else
-        cout << "Depature Time exceeded end time." << endl;
+//    if (!spv.isBusy())
+//        cout << "Operators are idle. Finishing Phase..." << endl;
+//    else
+//        cout << "Depature Time exceeded end time." << endl;
 	
 //  Depart any current tasks
 	
