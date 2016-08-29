@@ -61,6 +61,9 @@ class Statistics
 //				cout << "UTILIZATION OVERFLOW" << endl;
 //			}
 		}
+	
+		void calcPenalty(int rep);
+
         void incSerTime(int i, int j, float val) {serTime.incData(i, j, currRep, val);}
 		void incWaitTime(int i, int j, float val) {waitTime.incData(i, j, currRep, val);}
 		void incNumTasksIn(int i, int j, float val) {numTasksIn.incData(i, j, currRep, val);}
@@ -78,6 +81,8 @@ class Statistics
 
 //        void plot(string opName);
         void output(ostream& out) const {outputSim(out); return;}
+		void outputIdle(ostream& out) const;
+		void outputBusy(ostream& out) const;
 
 //	Private member functions
 
@@ -97,6 +102,8 @@ class Statistics
 		Statistic numTasksIn;	// number of tasks in
 		Statistic numTasksOut;	// number of tasks out
 		Statistic numTasksExp;	// number of tasks expired
+		vector<float> busyPenalty;
+		vector<float> idlePenalty;
 };
 
 //	Operators
@@ -119,7 +126,9 @@ Statistics::Statistics(int xDim, int yDim, int zDim) :
 	waitTime("Wait Time", xDim, yDim, zDim),
 	numTasksIn("Number In", xDim, yDim, zDim),
 	numTasksOut("Number Out", xDim, yDim, zDim),
-	numTasksExp("Number Expired", xDim, yDim, zDim)
+	numTasksExp("Number Expired", xDim, yDim, zDim),
+	busyPenalty(zDim, 0),
+	idlePenalty(zDim, 0)
 {
 //  Set time intervals
     
@@ -151,6 +160,10 @@ void Statistics::endRep()
         }
         outputRep(fout, currRep);
     }
+	
+//	Calculate penalty
+	
+	calcPenalty(currRep);
 
 //	Move to next replication and end simulation, if applicable
     
@@ -214,7 +227,7 @@ void Statistics::outputSim(ostream& out) const
     numTasksIn.outputSim(out);
     numTasksOut.outputSim(out);
     numTasksExp.outputSim(out);
-    
+	
     return;
 }
 
@@ -283,5 +296,70 @@ void Statistics::endSim()
 //
 //    return;
 //}
+
+/****************************************************************************
+*																			*
+*	Function:	calcPenalty                                                 *
+*																			*
+*	Purpose:	To calculate the penalty									*
+*																			*
+****************************************************************************/
+
+void Statistics::calcPenalty(int rep)
+{
+	for (int i = 0; i < interval.size(); i++)
+	{
+		float currUtil = util.getData(NUM_TASK_TYPES, i, currRep);
+		
+		if (currUtil < 0.3)
+			idlePenalty[rep] += 1 - (10/3) * currUtil;
+		else if (currUtil > 0.7)
+			busyPenalty[rep] += (10/3) * currUtil - (7/3);
+	}
+	
+	return;
+}
+
+void Statistics::outputIdle(ostream& out) const
+{
+//	Output most idle trip
+	
+	float max = idlePenalty[0];
+	float maxIndex = 0;
+	
+	for (int i = 1; i < idlePenalty.size(); i++)
+	{
+	//		cout << idlePenalty[i] << " ";
+		
+		if (idlePenalty[i] > max)
+		{
+			max = idlePenalty[i];
+			maxIndex = i;
+		}
+	}
+
+	outputRep(out, maxIndex);
+}
+
+void Statistics::outputBusy(ostream& out) const
+{
+	//	Output most idle trip
+	
+	float max = busyPenalty[0];
+	float maxIndex = 0;
+	
+	for (int i = 1; i < busyPenalty.size(); i++)
+	{
+		//		cout << busyPenalty[i] << " ";
+		
+		if (busyPenalty[i] > max)
+		{
+			max = busyPenalty[i];
+			maxIndex = i;
+		}
+	}
+	
+	outputRep(out, maxIndex);
+}
 
 #endif

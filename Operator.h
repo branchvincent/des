@@ -513,13 +513,34 @@ void Operator::output()
     ofstream fout(file);
     if (!fout)
     {
-        cout << "Error: Cannot open " << file << ". Exiting..." << endl;
         cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
         exit(1);
     }
     
     fout << stats;
-    
+	
+//	Output idle trip
+	
+	file = OUTPUT_PATH + "/" + name + "_idle_trip.csv";
+	ofstream fout2(file);
+	if (!fout2)
+	{
+		cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
+		exit(1);
+	}
+	stats.outputIdle(fout2);
+	
+//	Output busy trip
+	
+	file = OUTPUT_PATH + "/" + name + "_busy_trip.csv";
+	ofstream fout3(file);
+	if (!fout3)
+	{
+		cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
+		exit(1);
+	}
+	stats.outputBusy(fout3);
+	
     return;
 }
 

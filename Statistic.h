@@ -50,6 +50,10 @@ class Statistic
             avgs(xDim + 1, vector<float>(yDim + 1, 0)),
             devs(xDim + 1, vector<float>(yDim + 1, 0)) {}
 
+	//	Inspectors
+	
+		float getData(int i, int j, int k) {return data[i][j][k];}
+	
 		float getData(int j, int k) {
 			int lastRow = (int)data.size() - 1;
 			return data[lastRow][j][k];}
