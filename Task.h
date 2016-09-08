@@ -121,16 +121,16 @@ Task::Task(int tp, float prevArrTime, int phase) :
     opNums(OP_NUM[type])
 {
 //	Check type
-
-	if (tp < 0 || tp > 8)
+	
+	if (tp < 0 || tp >= NUM_TASK_TYPES)
 	{
-		cerr << "Error:  Incompatible task type. Exiting..." << endl;
+		cerr << "Error:  Incompatible task type . Exiting..." << endl;
 		exit(1);
 	}
 	
 //	Check phase
 
-	else if (phase < 0 || phase > 2)
+	else if (phase < 0 || phase >= NUM_PHASES)
 	{
 		cerr << "Error:  Incompatible phase. Exiting..." << endl;
 		exit(1);

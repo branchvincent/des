@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
 		paramFile = argv[1];
 	else
 		paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params.txt";
+	
     cout << "inFile = " << paramFile << endl;
 	
 //	Get run parameters
