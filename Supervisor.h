@@ -61,17 +61,8 @@ class Supervisor
 	
 	//	Constructor
     
-        Supervisor() : stats(), ops() {ops.push_back(Operator("Engineer", stats));
-                            if (find(OPS.begin(), OPS.end(), 1) != OPS.end()) ops.push_back(Operator("Conductor", stats));
-                            if (find(OPS.begin(), OPS.end(), 2) != OPS.end()) ops.push_back(Operator("PTC", stats));
-                            if (find(OPS.begin(), OPS.end(), 3) != OPS.end()) ops.push_back(Operator("Cruise", stats));
-			
-//							cout << "OPS.size() = " << OPS.size() << endl;
-//							cout << "NUM_OPS = " << NUM_OPS << endl;
-//							for (int i = 0; i < OPS.size(); i++)
-//								cout << "OPS[" << i << "] = " << OPS[i] << endl;
-							}
-    
+		Supervisor();
+	
         //ops{Operator("Engineer", stats), Operator("Conductor", stats)} {}
 //            ops(NUM_OPS) {ops[0] = Operator("Engineer", stats);
 //                            ops[1] = Operator("Conductor", stats);}
@@ -107,6 +98,27 @@ class Supervisor
 };
 
 ostream& operator<<(ostream& out, const Supervisor& s) {s.output(out); return out;}
+
+/****************************************************************************
+*																			*
+*	Function:	Supervisor													*
+*																			*
+*	Purpose:	To construct a new Supervisor								*
+*																			*
+****************************************************************************/
+
+Supervisor::Supervisor() : stats(), ops()
+{
+	for (int i = 0; i < NUM_OPS; i++)
+		ops.push_back(Operator(OP_NAMES[i], OP_TASKS[i], stats));
+
+//	ops.push_back(Operator("Engineer", stats));
+//
+//	if (find(OPS.begin(), OPS.end(), 1) != OPS.end()) ops.push_back(Operator("Conductor", stats));
+//	if (find(OPS.begin(), OPS.end(), 2) != OPS.end()) ops.push_back(Operator("PTC", stats));
+//	if (find(OPS.begin(), OPS.end(), 3) != OPS.end()) ops.push_back(Operator("Cruise", stats));
+}
+
 
 /****************************************************************************
 *																			*
@@ -247,6 +259,7 @@ void Supervisor::procArr(Task* task)
     
 	float currTime = task->getArrTime();
     vector<int> opNums = task->getOpNums();
+//	int type = task->getType();
     if (DEBUG_ON) cout << "\t Task arriving at " << currTime << endl;
     
 //	Add task to the appropriate queue
@@ -256,6 +269,15 @@ void Supervisor::procArr(Task* task)
 //        cerr << "Error: Incompatible operator ID. Exiting..." << opNum << endl;
 //        exit(1);
 //    }
+	
+//	vector<int> opNums;
+//	for (int i = 0; i < NUM_OPS; i++)
+//	{
+//		vector<int> op_tasks = ops[i].getTaskNums();
+//		if (find(op_tasks.begin(), op_tasks.end(), type) != op_tasks.end())
+//			opNums.push_back(i);
+//	}
+	
     if (opNums.size() == 1)
         ops[opNums[0]].procArr(task);
     else

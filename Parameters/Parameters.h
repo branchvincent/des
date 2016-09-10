@@ -38,7 +38,6 @@ namespace params
 	int NUM_REPS;
 	int END_TIME;
 	int NUM_INTS;
-	int NUM_OPS;
 	int NUM_TASK_TYPES;
 	vector<float> TRAFFIC;
 	vector<int> OPS;
@@ -53,6 +52,12 @@ namespace params
 	const bool DEBUG_ON = 0;
 	const bool OUTPUT_ON = 1;
 	const bool RAND_RUN_ON = 0;
+	
+//	Operator parameters
+	
+	int NUM_OPS;
+	vector<string> OP_NAMES;
+	Matrix2D<int> OP_TASKS;
 	
 //  Task parameters
 	
@@ -72,6 +77,8 @@ namespace params
 	
 	void INIT_GLOBALS(LoadParameters& pms)
 	{
+	//	General
+		
 		OUTPUT_PATH = pms.outputPath;
 		NUM_HOURS = pms.numHours;
 		NUM_REPS = pms.numReps;
@@ -81,6 +88,15 @@ namespace params
 		NUM_TASK_TYPES = pms.numTaskTypes;
 		TRAFFIC = pms.traffic;
 		OPS = pms.ops;
+		
+	//	Operators
+		
+		NUM_OPS = pms.numOps;
+		OP_NAMES = pms.opNames;
+		OP_TASKS = pms.opTasks;
+		
+	//	Tasks
+		
 		TASK_NAMES = pms.taskNames;
 		PRTY = pms.taskPrty;
 		ARR_DISTS = pms.arrDists;

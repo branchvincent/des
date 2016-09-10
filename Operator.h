@@ -16,6 +16,7 @@
 #include <iostream>
 #include <string>
 #include <queue>
+#include <algorithm>
 #include "Task.h"
 #include "Operator.h"
 #include "Statistics.h"
@@ -56,8 +57,9 @@ class Operator
 //            taskQueue(&cmpPrty),
 //            sharedStats(NULL),
 //            stats() {}
-        Operator(string nm, Statistics& sts) :
+        Operator(string nm, vector<int> tasks, Statistics& sts) :
             name(nm),
+			taskNums(tasks),
 //            params(pms),
             currTask(NULL),
             taskQueue(&cmpPrty),
@@ -76,7 +78,8 @@ class Operator
 		Task* getCurrTask() {return currTask;}
         float getDepTime();
         bool needToIntrp(Queue& queue);
-		
+		vector<int> getTaskNums() {return taskNums;}
+	
 	//	Mutators
     
 		void procArr(Task* task);
@@ -104,6 +107,7 @@ class Operator
 
 	private:
         string name;
+		vector<int> taskNums;		// tasks to handle
 //		Params pms;					// parameters
 		Task* currTask;             // current task
 		Queue taskQueue;            // task queue
@@ -508,8 +512,11 @@ void Operator::updateUtil(Task* task, float currTime)
 void Operator::output()
 {
 //  Output stats
-    
-    string file = OUTPUT_PATH + "/" + name + "_stats.csv";
+	
+	string file_name = name;
+	transform(file_name.begin(), file_name.end(), file_name.begin(), ::tolower);
+	replace(file_name.begin(), file_name.end(), ' ', '_');
+    string file = OUTPUT_PATH + "/stats_" + file_name + ".csv";
     ofstream fout(file);
     if (!fout)
     {

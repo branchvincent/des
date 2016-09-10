@@ -74,6 +74,12 @@ class LoadParameters
         float numReps;
         vector<int> ops;
 	
+	//	Operator settings
+	
+		int numOps;
+		vector<string> opNames;
+		Matrix2D<int> opTasks;
+	
 	//	Task settings
 	
 		int numTaskTypes;
@@ -116,11 +122,14 @@ LoadParameters::LoadParameters(string file)
 	readVal(fin, numHours);
 	readTraff(fin, traffic);
 	readVal(fin, numReps);
-	readArr(fin, ops);
+//	readArr(fin, ops);
+	readVal(fin, numOps);
 	readVal(fin, numTaskTypes);
 	
 //	Resize matrices
 	
+	opNames.resize(numOps);
+	opTasks.resize(numOps);
 	taskNames.resize(numTaskTypes);
 	taskPrty.resize(numTaskTypes);
 	arrDists.resize(numTaskTypes);
@@ -135,6 +144,12 @@ LoadParameters::LoadParameters(string file)
 	
 //	Read in task parameters
 	
+	for (int i = 0; i < numOps; i++)
+	{
+		readString(fin, opNames[i]);
+		readArr(fin, opTasks[i]);
+	}
+	
 	for (int i = 0; i < numTaskTypes; i++)
 	{
 		readString(fin, taskNames[i]);						// name
@@ -147,7 +162,21 @@ LoadParameters::LoadParameters(string file)
 		readArr(fin, expPmsLo[i]); //, isInverted(expDists[i]));	// expiration params
 		readArr(fin, expPmsHi[i]); //, isInverted(expDists[i]));	// expiration params
 		readArr(fin, affByTraff[i]);						// traffic
-		readArr(fin, opNums[i]);							// operator nums
+//		readArr(fin, opNums[i]);							// operator nums
+	}
+	
+//	Set operators
+	
+	for (int i = 0; i < numOps; i++)
+		ops.push_back(i);
+	
+	for (int i = 0; i < numTaskTypes; i++)
+	{
+		for (int j = 0; j < numOps; j++)
+		{
+			if (find(opTasks[j].begin(), opTasks[j].end(), i) != opTasks[j].end())
+				opNums[i].push_back(j);
+		}
 	}
 	
     return;

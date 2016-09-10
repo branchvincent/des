@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 	if (argc > 1)
 		paramFile = argv[1];
 	else
-		paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params.txt";
+		paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params_new.txt";
 	
     cout << "inFile = " << paramFile << endl;
 	
