@@ -75,6 +75,7 @@ class Supervisor
         bool isBusy() const;
 //        bool opIsIdle() const;
         Operator& getIdleOp();
+		float getUtil(int i, int j) {return ops[i].getUtil(j);}
 	
     // 	Mutators
 		
@@ -457,7 +458,7 @@ void Supervisor::output()
 {
 //  Output global stats
     
-    string file = OUTPUT_PATH + "/Total_stats.csv";
+    string file = OUTPUT_PATH + "/stats_total.csv";
     ofstream fout(file);
     if (!fout)
     {

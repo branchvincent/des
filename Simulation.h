@@ -23,6 +23,7 @@
 #include "Supervisor.h"
 #include "Task.h"
 #include "Parameters/Parameters.h"
+#include <stdio.h>
 
 using namespace std;
 using namespace params;
@@ -82,7 +83,7 @@ class Simulation
         Supervisor spv;         // operator supervisor
 		vector<int> endTimes;   // phase end times
 		list<Task*> taskList;	// task list
-		int currTime;
+		float currTime;
 };
 
 //	Operators
@@ -152,10 +153,21 @@ Simulation::Simulation(string paramFile) :
     cout << "Traffic levels = ";
     for (int i = 0; i < TRAFFIC.size(); i++)
         cout << TRAFFIC[i] << ", ";
-    cout << endl << "Operators = ";
-    for (int i = 0; i < OPS.size(); i++)
-        cout << OPS[i] << ", ";
-    cout << endl << endl;
+    cout << endl;
+//    for (int i = 0; i < OP_TASKS.size(); i++)
+//	{
+//		cout << OP_NAMES[i] << " = ";
+//		for (int j = 0; j < OP_TASKS[i].size(); j++)
+//			cout << OP_TASKS[i][j] << ", ";
+//		cout << endl;
+//	}
+//	for (int i = 0; i < OP_NUMS.size(); i++)
+//	{
+//		for (int j = 0; j < OP_NUMS[i].size(); j++)
+//			cout << OP_NUMS[i][j] << ", ";
+//		cout << endl;
+//	}
+//    cout << endl << endl;
 }
 
 /****************************************************************************
@@ -170,14 +182,31 @@ Simulation::Simulation(string paramFile) :
 void Simulation::run()
 {
 //  Run simulation the specified number of times
-    
+	
+//	char mybuffer[80];
+//	FILE * pFile = fopen(OUTPUT_PATH + "/des_status", "r+");
+//	if (pFile == NULL) perror ("Error opening file");
+
+	string file = OUTPUT_PATH + "/des_status";
+	ofstream fout(file);
+	if (!fout)
+	{
+		cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
+		exit(1);
+	}
+	
 	for (int i = 0; i < NUM_REPS; i++)
 	{
 		if (DEBUG_ON) cout << "Rep " << i << endl;
 		runRep();
-        cout << (float)(i + 1)/NUM_REPS * 100 << "% Completed" << endl;
+//        cout << (float)(i + 1)/NUM_REPS * 100 << "% Completed" << endl;
+		cout << (float)(i + 1)/NUM_REPS << endl;
+		fout << (float)(i + 1)/NUM_REPS << endl;
+		fout.flush();
 	}
-    
+	
+	
+	
 //  Output data, if applicable
     
     if (OUTPUT_ON)
@@ -274,7 +303,9 @@ void Simulation::genTasks(int type, int phase)
 	if (phase == 0)
 		currTime = 0;
 	else
-		currTime = max(currTime, endTimes[phase - 1]);
+		currTime = max(currTime, (float)endTimes[phase - 1]);
+	
+//	cout << "currTime = " << currTime << endl;
 	
 //	Create temporary list and first task
     
@@ -339,9 +370,16 @@ void Simulation::procAllArrs()
             procArr(arrTask);
             it++;
         }
-        else
+		else {
             procDep(depTask, false);
+			delete depTask;
+		}
+		
+//		int time = min(arrTime, depTime)/INT_SIZE;
+//		cout << "Util(" << time << ") = " << spv.getUtil(0, time) << endl;
     }
+	
+
 
     return;
 }
@@ -367,9 +405,14 @@ void Simulation::procAllDepts()
     while (spv.isBusy() && depTime <= endTimes[2])
     {
     //  Process depature
-        
+		
+		currTime = depTime;
         procDep(depTask, false);
-        
+		delete depTask;
+		
+//		int time = depTime/INT_SIZE;
+//		cout << "Util(" << time << ") = " << spv.getUtil(0, time) << endl;
+
     //  Get next depature
         
         depTask = spv.getNextDepature();
@@ -392,14 +435,18 @@ void Simulation::procAllDepts()
 			currTime = endTimes[2];
 			depTask->setDepTime(currTime);
 			procDep(depTask, true);
+			delete depTask;
 
 		//  Get next depature
 			
 			depTask = spv.getNextDepature();
+			
+//			int time = currTime/INT_SIZE;
+//			cout << "Util(" << time << ") = " << spv.getUtil(0, time) << endl;
 		}
 		spv.clear();
 	}
-	
+		
     return;
 }
 

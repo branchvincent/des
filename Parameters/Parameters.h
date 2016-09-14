@@ -51,7 +51,7 @@ namespace params
 	const bool FATIGUE_ON = 1;
 	const bool DEBUG_ON = 0;
 	const bool OUTPUT_ON = 1;
-	const bool RAND_RUN_ON = 0;
+	const bool RAND_RUN_ON = 1;
 	
 //	Operator parameters
 	
@@ -71,7 +71,7 @@ namespace params
 	Matrix2D<float> EXP_DIST_PARAMS_LOW;
 	Matrix2D<float> EXP_DIST_PARAMS_HIGH;
 	Matrix2D<int> AFF_BY_TRAFF;
-	Matrix2D<int> OP_NUM;
+	Matrix2D<int> OP_NUMS;
 	
 //  Initialize global parameters
 	
@@ -107,7 +107,7 @@ namespace params
 		EXP_DIST_PARAMS_LOW = pms.expPmsLo;
 		EXP_DIST_PARAMS_HIGH = pms.expPmsHi;
 		AFF_BY_TRAFF = pms.affByTraff;
-		OP_NUM = pms.opNums;
+		OP_NUMS = pms.opNums;
 	}
 }
 
@@ -146,7 +146,7 @@ namespace params
 //    const float EXP_DIST_PARAMS_LOW[][3];
 //    const float EXP_DIST_PARAMS_HIGH[][3];
 //    const int AFF_BY_TRAFF[][3];
-//    const Matrix OP_NUM;
+//    const Matrix OP_NUMS;
 //
 ////  Set parameters
 //    

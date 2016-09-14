@@ -118,7 +118,7 @@ Task::Task(int tp, float prevArrTime, int phase) :
     begTime(0),
     queTime(arrTime),
     serLeft(serTime),
-    opNums(OP_NUM[type])
+    opNums(OP_NUMS[type])
 {
 //	Check type
 	

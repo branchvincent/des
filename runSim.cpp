@@ -35,12 +35,18 @@ int main(int argc, char* argv[])
     clock_t start = clock();
 
 //  Read in parameter file
-    
-    string paramFile;
-	if (argc > 1)
-		paramFile = argv[1];
-	else
-		paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params_new.txt";
+	
+//	if (argc < 1) {
+//		cerr << "Please specify paramter input file. Exiting..." << endl;
+//		exit(1);
+//	}
+    string paramFile = "/Users/Branch/Desktop/params";
+//	argv[1];
+	
+//	if (argc > 1)
+//		paramFile = argv[1];
+//	else
+//		paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params_new.txt";
 	
     cout << "inFile = " << paramFile << endl;
 	
@@ -56,8 +62,8 @@ int main(int argc, char* argv[])
 	
 //  End timer
     
-    float time = (clock() - start) / (float)CLOCKS_PER_SEC;
-    cout << "Elapsed time = " << time << " s" <<endl;
+//    float time = (clock() - start) / (float)CLOCKS_PER_SEC;
+//    cout << "Elapsed time = " << time << " s" <<endl;
 
 	return 0;
 }

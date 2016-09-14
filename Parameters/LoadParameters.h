@@ -162,7 +162,6 @@ LoadParameters::LoadParameters(string file)
 		readArr(fin, expPmsLo[i]); //, isInverted(expDists[i]));	// expiration params
 		readArr(fin, expPmsHi[i]); //, isInverted(expDists[i]));	// expiration params
 		readArr(fin, affByTraff[i]);						// traffic
-//		readArr(fin, opNums[i]);							// operator nums
 	}
 	
 //	Set operators

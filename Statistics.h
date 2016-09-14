@@ -43,8 +43,8 @@ class Statistics
 	//	Inspectors
 
 //		int getInterval(int i) {return interval[i];}
-//		float& getUtil(int i, int j) {return util[i][j];}
-//		float& getserTime(int i, int j) {return serTime[currRep][i][j];} 
+		float getUtil(int i) {return util.getData(i, currRep);}
+//		float& getserTime(int i, int j) {return serTime[currRep][i][j];}
 //		float& getwaitTime(int i, int j) {return waitTime[i][j];}
 //		float& getNumTasksIn(int i, int j) {return numTasksIn[currRep][i][j];} 
 //		float& getNumTasksOut(int i, int j) {return numTasksOut[i][j];}
@@ -56,10 +56,14 @@ class Statistics
 //			cout << " + " << val << " = ";
 			util.incData(i, j, currRep, val);
 //			cout << util.getData(j, currRep) << endl;
-//			if (util.getData(j, currRep) > 1)
-//			{
-//				cout << "UTILIZATION OVERFLOW" << endl;
-//			}
+//			float utl = util.getData(j, currRep);
+//			cout << "Util(" << j << ") = " << utl << endl;
+			if (util.getData(j, currRep) > 1.01)
+			{
+				cout << "UTILIZATION OVERFLOW" << endl;
+				cout << util.getData(j, currRep) << endl;
+				cout << "Exiting" << endl;
+			}
 		}
 	
 		void calcPenalty(int rep);

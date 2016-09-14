@@ -79,6 +79,7 @@ class Operator
         float getDepTime();
         bool needToIntrp(Queue& queue);
 		vector<int> getTaskNums() {return taskNums;}
+		float getUtil(int i) {return stats.getUtil(i);}
 	
 	//	Mutators
     
@@ -478,7 +479,7 @@ void Operator::updateUtil(Task* task, float currTime)
         
         if (timeBusy < 0)
         {
-            cout << "NEG VALUE: timeBusy = " << timeBusy << endl;
+            cout << "WARNING: timeBusy = " << timeBusy << endl;
             cout << "\t task = " << *task << endl;
         }
 		
@@ -494,7 +495,7 @@ void Operator::updateUtil(Task* task, float currTime)
 
     if (timeBusy < 0)
     {
-        cout << "NEG VALUE: timeBusy = " << timeBusy << endl;
+        cout << "WARNING: timeBusy = " << timeBusy << endl;
         cout << "\t task = " << *task << endl;
     }
     
@@ -526,27 +527,27 @@ void Operator::output()
     
     fout << stats;
 	
-//	Output idle trip
-	
-	file = OUTPUT_PATH + "/" + name + "_idle_trip.csv";
-	ofstream fout2(file);
-	if (!fout2)
-	{
-		cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
-		exit(1);
-	}
-	stats.outputIdle(fout2);
-	
-//	Output busy trip
-	
-	file = OUTPUT_PATH + "/" + name + "_busy_trip.csv";
-	ofstream fout3(file);
-	if (!fout3)
-	{
-		cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
-		exit(1);
-	}
-	stats.outputBusy(fout3);
+////	Output idle trip
+//	
+//	file = OUTPUT_PATH + "/" + name + "_idle_trip.csv";
+//	ofstream fout2(file);
+//	if (!fout2)
+//	{
+//		cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
+//		exit(1);
+//	}
+//	stats.outputIdle(fout2);
+//	
+////	Output busy trip
+//	
+//	file = OUTPUT_PATH + "/" + name + "_busy_trip.csv";
+//	ofstream fout3(file);
+//	if (!fout3)
+//	{
+//		cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
+//		exit(1);
+//	}
+//	stats.outputBusy(fout3);
 	
     return;
 }
