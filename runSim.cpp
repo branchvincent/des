@@ -40,13 +40,14 @@ int main(int argc, char* argv[])
 //		cerr << "Please specify paramter input file. Exiting..." << endl;
 //		exit(1);
 //	}
-    string paramFile = "/Users/Branch/Desktop/params";
+//    string paramFile = "/Users/Branch/Desktop/params";
 //	argv[1];
 	
-//	if (argc > 1)
-//		paramFile = argv[1];
-//	else
-//		paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params_new.txt";
+	string paramFile;
+	if (argc > 1)
+		paramFile = argv[1];
+	else
+		paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params_new.txt";
 	
     cout << "inFile = " << paramFile << endl;
 	
