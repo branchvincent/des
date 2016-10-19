@@ -94,6 +94,9 @@ class Statistics
         void outputRep(ostream& out, int rep) const;
         void outputSim(ostream& out) const;
         void endSim();
+		void outputByRep(ostream& out, Statistic stat) const;
+		void outputByRep2(ostream& out, Statistic stat) const;
+
 
 //	Data members
 
@@ -215,7 +218,7 @@ void Statistics::outputRep(ostream& out, int rep) const
 void Statistics::outputSim(ostream& out) const
 {
 //	Output header
-    
+	
     out << "Statistic, Task";
     
     for (int i = 0; i < interval.size(); i++)
@@ -224,7 +227,7 @@ void Statistics::outputSim(ostream& out) const
 //    out << ", Sum" << endl;
     
 //  Output arrays
-    
+	
     util.outputSim(out);
     serTime.outputSim(out);
     waitTime.outputSim(out);
@@ -232,7 +235,98 @@ void Statistics::outputSim(ostream& out) const
     numTasksOut.outputSim(out);
     numTasksExp.outputSim(out);
 	
+//	Utilization
+	
+	out << "Data by Rep";
+	outputByRep(out, util);
+	outputByRep2(out, waitTime);
+	outputByRep2(out, numTasksExp);
+	
+	return;
+}
+
+void Statistics::outputByRep(ostream& out, Statistic stat) const
+{
+	out << ", Time (min)";
+	for (int i = 0; i < NUM_REPS; i++)
+		out << ", Rep " << i;
+	out << endl << stat.getName();
+	
+	for (int i = 0; i < NUM_INTS; i++)
+	{
+		out << ", " << i * INT_SIZE;
+		for (int j = 0; j < NUM_REPS; j++)
+			out << ", " << stat.getData(i, j);
+		out << "," << endl;
+	}
+	
     return;
+}
+
+void Statistics::outputByRep2(ostream& out, Statistic stat) const
+{
+
+//	Initialize variables
+	
+	Matrix2D<float> avg(NUM_TASK_TYPES + 1, vector<float>(NUM_REPS, 0));
+	Matrix2D<float> dev(NUM_TASK_TYPES + 1, vector<float>(NUM_REPS, 0));
+	
+	int N = 0;
+	float mean = 0;
+	float devSum = 0;
+	float delta;
+	
+//  Calculate mean and std dev across all replications
+	
+	for (int i = 0; i < NUM_TASK_TYPES + 1; i++)
+	{
+		for (int j = 0; j < NUM_REPS; j++)
+		{
+		//  Reset variables
+			
+			N = 0;
+			mean = 0;
+			devSum = 0;
+			
+		//  Calculate values using Welford's algorithm
+			
+			for (int k = 0; k < NUM_INTS; k++)
+			{
+				N++;
+				delta = stat.getData(i, k, j) - mean;
+				mean += delta/N;
+				devSum += delta * (stat.getData(i, k, j) - mean);
+			}
+			
+		//  Store values
+			
+			avg[i][j] = mean;
+			dev[i][j] = sqrt(devSum / (N - 1));
+		}
+	}
+	
+	out << ", Task";
+	for (int i = 0; i < NUM_REPS; i++)
+		out << ", Rep " << i;
+	out << endl << stat.getName();
+	
+	for (int i = 0; i < NUM_TASK_TYPES + 1; i++)
+	{
+		if (i != NUM_TASK_TYPES)
+			out << ", " << i;
+		else
+			out << ",Sum";
+		
+		for (int j = 0; j < NUM_REPS; j++)
+			out << ", " << avg[i][j];
+		out << endl << ",";
+		
+		for (int j = 0; j < NUM_REPS; j++)
+			out << ", " << dev[i][j];
+		out << endl;
+	}
+	
+	return;
 }
 
 /****************************************************************************

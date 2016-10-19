@@ -256,6 +256,7 @@ float Task::genExpTime(int phase)
 //	Get random number
 
     expiration = 2*serTime;
+	expiration = 1000000;
 //	while (expiration <= serTime)
 //		expiration = genRandNum(EXP_DISTS[type], rand(), param);
 

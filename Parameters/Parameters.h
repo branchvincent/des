@@ -42,7 +42,7 @@ namespace params
 	vector<float> TRAFFIC;
 	vector<int> OPS;
 
-	const int INT_SIZE = 10;
+	const int INT_SIZE = 30;
 	const int NUM_PHASES = 3;
 
 //	Debugging

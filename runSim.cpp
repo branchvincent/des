@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 	if (argc > 1)
 		paramFile = argv[1];
 	else
-		paramFile = "/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/DES/in/params_new.txt";
+		paramFile = "/Users/Branch/Documents/Research/DES/DES-App/in/params.txt";
 	
     cout << "inFile = " << paramFile << endl;
 	
