@@ -42,8 +42,10 @@ namespace params
 	vector<float> TRAFFIC;
 	vector<int> OPS;
 
-	const int INT_SIZE = 30;
+	const int INT_SIZE = 10;
 	const int NUM_PHASES = 3;
+	int CURR_TRAIN = 0;
+	vector<int> DP_TASKS;
 
 //	Debugging
 	
@@ -108,6 +110,9 @@ namespace params
 		EXP_DIST_PARAMS_HIGH = pms.expPmsHi;
 		AFF_BY_TRAFF = pms.affByTraff;
 		OP_NUMS = pms.opNums;
+		
+		for (int i = 0; i < NUM_TASK_TYPES; i++)
+			DP_TASKS.push_back(i);
 	}
 }
 

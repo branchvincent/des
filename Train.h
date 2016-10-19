@@ -1,17 +1,17 @@
 /****************************************************************************
 *																			*
-*	File:		Supervisor.h												*
+*	File:		Train.h												*
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
 *	Date:		Jul 11, 2016												*
 *																			*
-*	Purpose:	This file defines the Supervisor class. 					*
+*	Purpose:	This file defines the Train class. 					*
 *																			*
 ****************************************************************************/
 
-#ifndef SUPERVISOR_H
-#define SUPERVISOR_H
+#ifndef Train_H
+#define Train_H
 
 #include <iostream>
 #include <list>
@@ -39,7 +39,7 @@ using namespace params;
 
 /****************************************************************************
 *																			*
-*	Definition of Supervisor class                                          *
+*	Definition of Train class                                          *
 *																			*
 ****************************************************************************/
 
@@ -49,7 +49,7 @@ using namespace params;
 //  - Add shared task ID as a subset
 //  - Pass all queues to each operator for interruptions
 
-class Supervisor
+class Train
 {
 //  Friend class
     
@@ -61,7 +61,8 @@ class Supervisor
 	
 	//	Constructor
     
-		Supervisor();
+		Train(int tNum = CURR_TRAIN++);
+		Train(string name, int tNum = 0) : stats(), ops() {ops.push_back(Operator(name, OP_TASKS[0], stats, tNum));}
 	
         //ops{Operator("Engineer", stats), Operator("Conductor", stats)} {}
 //            ops(NUM_OPS) {ops[0] = Operator("Engineer", stats);
@@ -96,23 +97,28 @@ class Supervisor
 //      Params& params;
         Statistics stats;
         vector<Operator> ops;
+		int trainNum;
 };
 
-ostream& operator<<(ostream& out, const Supervisor& s) {s.output(out); return out;}
+ostream& operator<<(ostream& out, const Train& s) {s.output(out); return out;}
 
 /****************************************************************************
 *																			*
-*	Function:	Supervisor													*
+*	Function:	Train													*
 *																			*
-*	Purpose:	To construct a new Supervisor								*
+*	Purpose:	To construct a new Train								*
 *																			*
 ****************************************************************************/
 
-Supervisor::Supervisor() : stats(), ops()
+Train::Train(int tNum) : stats(), ops()
 {
-	for (int i = 0; i < NUM_OPS; i++)
-		ops.push_back(Operator(OP_NAMES[i], OP_TASKS[i], stats));
-
+	if (tNum == 0)
+		ops.push_back(Operator("Dispatch", DP_TASKS, stats, tNum));
+	else {
+		for (int i = 0; i < NUM_OPS; i++)
+			ops.push_back(Operator(OP_NAMES[i], OP_TASKS[i], stats, tNum));
+	}
+	
 //	ops.push_back(Operator("Engineer", stats));
 //
 //	if (find(OPS.begin(), OPS.end(), 1) != OPS.end()) ops.push_back(Operator("Conductor", stats));
@@ -129,7 +135,7 @@ Supervisor::Supervisor() : stats(), ops()
 *																			*
 ****************************************************************************/
 
-Task* Supervisor::getNextDepature()
+Task* Train::getNextDepature()
 {
 //	Initialize variables
     
@@ -167,7 +173,7 @@ Task* Supervisor::getNextDepature()
 *																			*
 ****************************************************************************/
 
-float Supervisor::getNextDeptTime()
+float Train::getNextDeptTime()
 {
 //  Get next departing task
     
@@ -189,7 +195,7 @@ float Supervisor::getNextDeptTime()
 *																			*
 ****************************************************************************/
 
-bool Supervisor::isBusy() const
+bool Train::isBusy() const
 {
 //  Check for a busy operator
     
@@ -210,7 +216,7 @@ bool Supervisor::isBusy() const
 *																			*
 ****************************************************************************/
 
-//bool Supervisor::opIsIdle() const
+//bool Train::opIsIdle() const
 //{
 ////  Check for an idle operator
 //    
@@ -231,7 +237,7 @@ bool Supervisor::isBusy() const
 *																			*
 ****************************************************************************/
 
-Operator& Supervisor::getIdleOp()
+Operator& Train::getIdleOp()
 {
 //  Check for an idle operator
     
@@ -254,7 +260,7 @@ Operator& Supervisor::getIdleOp()
 *																			*
 ****************************************************************************/
 
-void Supervisor::procArr(Task* task)
+void Train::procArr(Task* task)
 {	
 //	Get task attributes
     
@@ -278,7 +284,11 @@ void Supervisor::procArr(Task* task)
 //		if (find(op_tasks.begin(), op_tasks.end(), type) != op_tasks.end())
 //			opNums.push_back(i);
 //	}
-	
+	if (opNums.size() == 0)
+	{
+		cerr << "Error: Task has no associated assistants. Exiting..." << endl;
+//		exit(1);
+	}
     if (opNums.size() == 1)
         ops[opNums[0]].procArr(task);
     else
@@ -345,7 +355,7 @@ void Supervisor::procArr(Task* task)
 *																			*
 ****************************************************************************/
 
-void Supervisor::procDep(Task* task, bool stop)
+void Train::procDep(Task* task, bool stop)
 {
 //  Process depature from appropriate operator
     
@@ -382,7 +392,7 @@ void Supervisor::procDep(Task* task, bool stop)
 *																			*
 ****************************************************************************/
 
-void Supervisor::endRep()
+void Train::endRep()
 {
 //  Update stats
     
@@ -404,23 +414,23 @@ void Supervisor::endRep()
 *																			*
 ****************************************************************************/
 
-void Supervisor::plot()
-{
-//  Initialize Python
-    
+//void Train::plot()
+//{
+////  Initialize Python
+//    
 //    Py_Initialize();
-    
-//  Plot each utilization
-    
+//	
+////  Plot each utilization
+//    
 //    for (int i = 0; i < NUM_OPS; i++)
 //        ops[i].plot();
-    
-//  Finalize Python
-    
+//	
+////  Finalize Python
+//    
 //    Py_Finalize();
-    
-    return;
-}
+//	
+//    return;
+//}
 
 /****************************************************************************
 *																			*
@@ -430,7 +440,7 @@ void Supervisor::plot()
 *																			*
 ****************************************************************************/
 
-void Supervisor::output(ostream& out) const
+void Train::output(ostream& out) const
 {
 //  Output global stats
     
@@ -454,7 +464,7 @@ void Supervisor::output(ostream& out) const
 *																			*
 ****************************************************************************/
 
-void Supervisor::output()
+void Train::output()
 {
 //  Output global stats
     

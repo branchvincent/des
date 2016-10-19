@@ -52,22 +52,9 @@ class Statistic
 
 	//	Inspectors
 	
-		string getName() {return name;}
 		float getData(int i, int j, int k) {return data[i][j][k];}
 	
 		float getData(int j, int k)
-		{
-			int lastRow = (int)data.size() - 1;
-			return data[lastRow][j][k];
-		}
-	
-		float getTaskAvg(int j, int k)
-		{
-			int lastRow = (int)data.size() - 1;
-			return data[lastRow][j][k];
-		}
-	
-		float getTaskStdDev(int j, int k)
 		{
 			int lastRow = (int)data.size() - 1;
 			return data[lastRow][j][k];
@@ -209,17 +196,16 @@ void Statistic::outputSim(ostream& out) const
 	
 //
 	
-//	if (name == "Wait Time")
-//	{
-//		int i = 8;
-//		int k = 2;
-////		cout << "Col size = " << data[i].size() << endl;
-////		cout << "Rep size = " << data[i][0].size() << endl;
-//		for (int j = 0; j < data[i].size(); j++)
-////			for (int k = 0; k < data[i][j].size(); k++)
-//			cout << data[i][j][k] << ",";
+//	if (name == "Utilization") {
+//		int i = data.size() - 1;
+//		int j = 0;
+//		cout << "Col size = " << data[i].size() << endl;
+//		cout << "Rep size = " << data[i][0].size() << endl;
+////		for (int j = 0; j < data[i].size(); j++)
+//			for (int k = 0; k < data[i][j].size(); k++)
+//				cout << data[i][j][k] << ",";
 //		cout << endl << endl;
-//	}
+//}
 	
     return;
 }
@@ -271,7 +257,7 @@ void Statistic::avgData()
         }
     }
     
-    return;
+    return;           
 }
 
 #endif

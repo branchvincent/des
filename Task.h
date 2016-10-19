@@ -37,7 +37,7 @@ class Task
 
 	//	Constructor
 		
-		Task(int tp, float prevArrTime, int phase);
+		Task(int tp, float prevArrTime, int phase, int tNum);
 
 	//	Inspectors
 
@@ -53,6 +53,7 @@ class Task
         const float& getSerLeft() {return serLeft;}
 //        const float getPercLeft() {return serLeft/serTime;}
         const vector<int> getOpNums() {return opNums;}
+		const int& getTrainNum() {return trainNum;}
 
 	//	Mutators
 	
@@ -93,6 +94,7 @@ class Task
         float queTime;      // enter queue time (min)
         float serLeft;      // service time left
         vector<int> opNums;  // operator id number
+		int trainNum;
 };
 
 //	Operators
@@ -108,7 +110,7 @@ ostream& operator<<(ostream& out, const Task& t) {t.output(out); return out;}
 *																			*
 ****************************************************************************/
 
-Task::Task(int tp, float prevArrTime, int phase) :
+Task::Task(int tp, float prevArrTime, int phase, int tNum) :
     type(tp),
     priority(PRTY[type][phase]),
     arrTime(genArrTime(prevArrTime, phase)),
@@ -118,7 +120,8 @@ Task::Task(int tp, float prevArrTime, int phase) :
     begTime(0),
     queTime(arrTime),
     serLeft(serTime),
-    opNums(OP_NUMS[type])
+    opNums(OP_NUMS[type]),
+	trainNum(tNum)
 {
 //	Check type
 	

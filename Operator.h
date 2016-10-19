@@ -57,14 +57,14 @@ class Operator
 //            taskQueue(&cmpPrty),
 //            sharedStats(NULL),
 //            stats() {}
-        Operator(string nm, vector<int> tasks, Statistics& sts) :
+        Operator(string nm, vector<int> tasks, Statistics& sts, int tNum) :
             name(nm),
 			taskNums(tasks),
-//            params(pms),
             currTask(NULL),
             taskQueue(&cmpPrty),
             sharedStats(sts),
-            stats() {}
+            stats(),
+			trainNum(tNum) {}
 		
 	//	Inspectors
 
@@ -94,6 +94,11 @@ class Operator
 
         void output();
         void output(ostream& out) const {out << stats << endl;}
+//		Operator& operator=(Operator& op) {
+//			cout << "Here" << endl;
+//			return op;
+//		}
+
 //        void plot() {stats.plot(name);}
 
 //  Private member functions
@@ -115,6 +120,7 @@ class Operator
 //        Queue taskQueues[NUM_OPS];  // task queues
 		Statistics& sharedStats;	// shared stats
         Statistics stats;           // local stats
+		int trainNum;
 };
 
 //	Operators
@@ -517,7 +523,7 @@ void Operator::output()
 	string file_name = name;
 	transform(file_name.begin(), file_name.end(), file_name.begin(), ::tolower);
 	replace(file_name.begin(), file_name.end(), ' ', '_');
-    string file = OUTPUT_PATH + "/stats_" + file_name + ".csv";
+    string file = OUTPUT_PATH + "/stats_" + file_name + to_string(trainNum) + ".csv";
     ofstream fout(file);
     if (!fout)
     {

@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 	if (argc > 1)
 		paramFile = argv[1];
 	else
-		paramFile = "/Users/Branch/Documents/Research/DES/DES-App/in/params.txt";
+		paramFile = "/Users/Branch/Desktop/SHOW/SHOW/in/params.txt";
 	
     cout << "inFile = " << paramFile << endl;
 	
@@ -63,8 +63,8 @@ int main(int argc, char* argv[])
 	
 //  End timer
     
-//    float time = (clock() - start) / (float)CLOCKS_PER_SEC;
-//    cout << "Elapsed time = " << time << " s" <<endl;
+    float time = (clock() - start) / (float)CLOCKS_PER_SEC;
+    cout << "Elapsed time = " << time << " s" <<endl;
 
 	return 0;
 }

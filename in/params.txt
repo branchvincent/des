@@ -1,26 +1,50 @@
-output_path		/Users/Branch/Documents/Research/DES/DES-App/out
-num_hours		2
-traff_levels   	m m
-num_reps		10
+output_path		/Users/Branch/Desktop/SHOW/SHOW/out
+num_hours		8
+traff_levels   	m m m m m m m m
+num_reps		100
 num_ops			1
-num_task_types	9
+num_task_types	12
 
 op_name			Engineer
-tasks			0 1 2 3 4 5 6 7 8
+tasks			0 1 2 3 4 5 6 7 8 9 10 11
 
-op_name			Conductor
-tasks			5 6 8
-
-op_name			Positive Train Control
-tasks			1 5 6
-
-op_name			Cruise Control
-tasks			8
-
-name       		Communicating
+name       		Communicating To
 prty         	4 3 4
 arr_dist     	E
-arr_pms      	0.952381 0.1 0.75188
+arr_pms      	0.45 0.1 0.35
+ser_dist     	E
+ser_pms      	7.5188 0
+exp_dist     	E
+exp_pms_lo   	0 0.107167 0
+exp_pms_hi   	0 0.0863333 0
+aff_by_traff  	0 1 0
+
+name       		Communicating From
+prty         	4 3 4
+arr_dist     	E
+arr_pms      	0.45 0.05 0.35
+ser_dist     	E
+ser_pms      	7.5188 0
+exp_dist     	E
+exp_pms_lo   	0 0.107167 0
+exp_pms_hi   	0 0.0863333 0
+aff_by_traff  	0 1 0
+
+name       		Communicating Emergency
+prty         	4 3 4
+arr_dist     	E
+arr_pms      	0.45 0.05 0.35
+ser_dist     	E
+ser_pms      	7.5188 0
+exp_dist     	E
+exp_pms_lo   	0 0.107167 0
+exp_pms_hi   	0 0.0863333 0
+aff_by_traff  	0 1 0
+
+name       		Communicating MOW
+prty         	4 3 4
+arr_dist     	E
+arr_pms      	0.45 0.05 0.35
 ser_dist     	E
 ser_pms      	7.5188 0
 exp_dist     	E
