@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 	if (argc > 1)
 		paramFile = argv[1];
 	else
-		paramFile = "/Users/Branch/Desktop/SHOW/SHOW/in/params.txt";
+		paramFile = "/Users/Branch/Documents/Research/FRA/SHOW/in/params.txt";
 	
     cout << "inFile = " << paramFile << endl;
 	

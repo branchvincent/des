@@ -61,7 +61,7 @@ class Simulation
 	//	Other member functions
     
         void run();
-	void output(ostream& out) const {for (int i = 0; i < trains.size(); i++) out << trains[i] << endl;}
+		void output(ostream& out) const {for (int i = 0; i < trains.size(); i++) out << trains[i] << endl;}
 
 //  Private member functions
     

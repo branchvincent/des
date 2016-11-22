@@ -1,17 +1,17 @@
 /****************************************************************************
 *																			*
-*	File:		Train.h												*
+*	File:		Train.h														*
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
 *	Date:		Jul 11, 2016												*
 *																			*
-*	Purpose:	This file defines the Train class. 					*
+*	Purpose:	This file defines the Train class.							*
 *																			*
 ****************************************************************************/
 
-#ifndef Train_H
-#define Train_H
+#ifndef TRAIN_H
+#define TRAIN_H
 
 #include <iostream>
 #include <list>
@@ -39,7 +39,7 @@ using namespace params;
 
 /****************************************************************************
 *																			*
-*	Definition of Train class                                          *
+*	Definition of Train class												*
 *																			*
 ****************************************************************************/
 
