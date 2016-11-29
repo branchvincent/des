@@ -103,8 +103,6 @@ ostream& operator<<(ostream& out, const Simulation& sim) {sim.output(out); retur
 ****************************************************************************/
 
 Simulation::Simulation(string paramFile) :
-//    params(paramFile),
-//    trains(params),
     trains(NUM_TRAINS),
     endTimes{30, END_TIME - 30, END_TIME},
     taskList(),
@@ -124,14 +122,6 @@ Simulation::Simulation(string paramFile) :
 //	trains.push_back(Train("Dispatch", 0));
 //	for (int i = 1; i < NUM_TRAINS; i++)
 //		trains.push_back(Train(i));
-	
-//	trains = Supervisor();
-	
-//	Set end times
-	
-//	endTimes[0] = 30;
-//	endTimes[1] = END_TIME - 30;
-//	endTimes[2] = END_TIME;
 	
 //	Check duration of simulation
 
@@ -166,13 +156,19 @@ Simulation::Simulation(string paramFile) :
     for (int i = 0; i < TRAFFIC.size(); i++)
         cout << TRAFFIC[i] << ", ";
     cout << endl;
-//    for (int i = 0; i < OP_TASKS.size(); i++)
-//	{
-//		cout << OP_NAMES[i] << " = ";
-//		for (int j = 0; j < OP_TASKS[i].size(); j++)
-//			cout << OP_TASKS[i][j] << ", ";
-//		cout << endl;
-//	}
+	
+//	Output each operator
+	
+    for (int i = 0; i < OP_TASKS.size(); i++)
+	{
+		cout << OP_NAMES[i] << " = ";
+		for (int j = 0; j < OP_TASKS[i].size(); j++)
+			cout << OP_TASKS[i][j] << ", ";
+		cout << endl;
+	}
+
+//	Output tasks for each operator
+	
 //	for (int i = 0; i < OP_NUMS.size(); i++)
 //	{
 //		for (int j = 0; j < OP_NUMS[i].size(); j++)
@@ -199,13 +195,13 @@ void Simulation::run()
 //	FILE * pFile = fopen(OUTPUT_PATH + "/des_status", "r+");
 //	if (pFile == NULL) perror ("Error opening file");
 
-	string file = OUTPUT_PATH + "/des_status";
-	ofstream fout(file);
-	if (!fout)
-	{
-		cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
-		exit(1);
-	}
+//	string file = OUTPUT_PATH + "/des_status";
+//	ofstream fout(file);
+//	if (!fout)
+//	{
+//		cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
+//		exit(1);
+//	}
 	
 	for (int i = 0; i < NUM_REPS; i++)
 	{
@@ -213,8 +209,8 @@ void Simulation::run()
 		runRep();
 //        cout << (float)(i + 1)/NUM_REPS * 100 << "% Completed" << endl;
 		cout << (float)(i + 1)/NUM_REPS << endl;
-		fout << (float)(i + 1)/NUM_REPS << endl;
-		fout.flush();
+//		fout << (float)(i + 1)/NUM_REPS << endl;
+//		fout.flush();
 	}
 	
 //  Output data, if applicable
@@ -222,8 +218,10 @@ void Simulation::run()
     if (OUTPUT_ON)
     {
 		for (int i = 0; i < trains.size(); i++)
+		{
 			trains[i].output();
-//        trains.plot();
+//			trains[i].plot();
+		}
     }
     
     return;
@@ -268,7 +266,6 @@ void Simulation::runRep()
 void Simulation::runPhase(int phase)
 {
     if (DEBUG_ON) cout << "Beginning Phase " << phase << "." << endl;
-//    cout << "Queue size = " << trains.getQueueSize() << endl;
 
 //	Generate all task types
 	
@@ -284,12 +281,7 @@ void Simulation::runPhase(int phase)
     procAllDepts();
     
 //  Clear task list
-    
-//    for (list<Task*>::iterator it = taskList.begin(); it != taskList.end(); it++)
-//    {
-//        cout << "Deleting " << **it << endl;
-//        delete *it;
-//    }
+	
     taskList.clear();
     
 	if (DEBUG_ON) cout << "Phase " << phase << " completed." << endl << endl;
@@ -308,10 +300,7 @@ void Simulation::runPhase(int phase)
 void Simulation::genTasks(int type, int phase, int trainNum)
 {
 //  Calculate current time
-    
-//    float currTime = 0;
-//    if (phase == 0)
-//        currTime = endTimes[phase - 1];
+	
 	if (type == 1) return;
 	if (phase == 0)
 		currTime = 0;

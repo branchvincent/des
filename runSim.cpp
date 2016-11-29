@@ -36,26 +36,21 @@ int main(int argc, char* argv[])
 
 //  Read in parameter file
 	
-//	if (argc < 1) {
-//		cerr << "Please specify paramter input file. Exiting..." << endl;
+//	if (argc < 1)
+//	{
+//		cerr << "Please specify parameter input file. Exiting..." << endl;
 //		exit(1);
 //	}
-//    string paramFile = "/Users/Branch/Desktop/params";
-//	argv[1];
 	
-	string paramFile;
-	if (argc > 1)
-		paramFile = argv[1];
-	else
-		paramFile = "/Users/Branch/Documents/Research/FRA/SHOW/in/params.txt";
-	
+	string paramFile = "/Users/Branch/Documents/Research/FRA/SHOW/in/params.txt";
+//	string paramFile = argv[1];
     cout << "inFile = " << paramFile << endl;
 	
 //	Get run parameters
 	
 	LoadParameters pms(paramFile);
 	INIT_GLOBALS(pms);
-
+	
 //  Intialize and run simulation
     
     Simulation sim(paramFile);
