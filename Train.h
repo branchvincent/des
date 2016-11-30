@@ -20,7 +20,7 @@
 #include "Task.h"
 #include "Operator.h"
 #include "Statistics.h"
-//#include <Python/Python.h>
+#include <Python.h> //Python.h>
 
 using namespace std;
 using namespace params;
@@ -112,7 +112,7 @@ ostream& operator<<(ostream& out, const Train& s) {s.output(out); return out;}
 Train::Train(int tNum) : stats(), ops()
 {
 	if (tNum == 0)
-		ops.push_back(Operator("Dispatch", DP_TASKS, stats, tNum));
+		ops.push_back(Operator("Dispatcher", DP_TASKS[0], stats, tNum));
 	else
 	{
 		for (int i = 0; i < NUM_OPS; i++)
@@ -278,60 +278,63 @@ void Train::procArr(Task* task)
 //		if (find(op_tasks.begin(), op_tasks.end(), type) != op_tasks.end())
 //			opNums.push_back(i);
 //	}
-	if (opNums.size() == 0)
-	{
-		cerr << "Error: Task has no associated assistants. Exiting..." << endl;
+	
+	ops[0].procArr(task);
+	
+//	if (opNums.size() == 0)
+//	{
+//		cerr << "Error: Task has no associated assistants. Exiting..." << endl;
 //		exit(1);
-	}
-    if (opNums.size() == 1)
-        ops[opNums[0]].procArr(task);
-    else
-    {
-    //  Find shortest queue (include current task)
-        
-//        cout << "SHARED TASK ARRIVING" << endl;
+//	}
+//    else if (opNums.size() == 1)
+//        ops[opNums[0]].procArr(task);
+//    else
+//    {
+//    //  Find shortest queue (include current task)
 //        
-//        for (int i = 0; i < ops.size(); i++)
+////        cout << "SHARED TASK ARRIVING" << endl;
+////        
+////        for (int i = 0; i < ops.size(); i++)
+////        {
+////            if (ops[i].isBusy())
+////                cout << ops[i].getName() << " is busy with " << 1+ops[i].getQueueSize() << " tasks including " << *(ops[i].getCurrTask()) << endl;
+////            else
+////                cout << ops[i].getName() << " is idle." << endl;
+////        }
+//        
+//        int queueSize;
+//        int minSize = ops[0].getQueueSize() + ops[0].isBusy();
+//        int minIndex = 0;
+//        
+//        int end = (int)opNums.size() - 1;
+//        int j = 0;
+//        
+//        for (int i = opNums[0]; i <= opNums[end]; i++)
 //        {
-//            if (ops[i].isBusy())
-//                cout << ops[i].getName() << " is busy with " << 1+ops[i].getQueueSize() << " tasks including " << *(ops[i].getCurrTask()) << endl;
-//            else
-//                cout << ops[i].getName() << " is idle." << endl;
+//        //  Get queue size
+//            
+//            if (find(OPS.begin(), OPS.end(), i) != OPS.end())
+//            {
+//                queueSize = ops[j].getQueueSize() + ops[j].isBusy();
+//                
+//            //  Check for new minimum
+//                
+//                if (queueSize < minSize)
+//                {
+//                    minSize = queueSize;
+//                    minIndex = j;
+//                }
+//                j++;
+//            }
 //        }
-        
-        int queueSize;
-        int minSize = ops[0].getQueueSize() + ops[0].isBusy();
-        int minIndex = 0;
-        
-        int end = (int)opNums.size() - 1;
-        int j = 0;
-        
-        for (int i = opNums[0]; i <= opNums[end]; i++)
-        {
-        //  Get queue size
-            
-            if (find(OPS.begin(), OPS.end(), i) != OPS.end())
-            {
-                queueSize = ops[j].getQueueSize() + ops[j].isBusy();
-                
-            //  Check for new minimum
-                
-                if (queueSize < minSize)
-                {
-                    minSize = queueSize;
-                    minIndex = j;
-                }
-                j++;
-            }
-        }
-        
-//        cout << "Operator size = " << ops.size() << endl;
-//        cout << "Index = " << minIndex << endl;
-//        cout << "Going to " << ops[minIndex].getName() << endl;
-        
-        ops[minIndex].procArr(task);
-    }
-    
+//        
+////        cout << "Operator size = " << ops.size() << endl;
+////        cout << "Index = " << minIndex << endl;
+////        cout << "Going to " << ops[minIndex].getName() << endl;
+//		
+//        ops[minIndex].procArr(task);
+//    }
+	
 //  Update stat
 
     int type = task->getType();
@@ -408,23 +411,23 @@ void Train::endRep()
 *																			*
 ****************************************************************************/
 
-//void Train::plot()
-//{
-////  Initialize Python
-//    
-//    Py_Initialize();
-//	
-////  Plot each utilization
-//    
-//    for (int i = 0; i < ops.size(); i++)
-//        ops[i].plot();
-//	
-////  Finalize Python
-//    
-//    Py_Finalize();
-//	
-//    return;
-//}
+void Train::plot()
+{
+//  Initialize Python
+    
+    Py_Initialize();
+	
+//  Plot each utilization
+    
+    for (int i = 0; i < ops.size(); i++)
+        ops[i].plot();
+	
+//  Finalize Python
+    
+    Py_Finalize();
+	
+    return;
+}
 
 /****************************************************************************
 *																			*

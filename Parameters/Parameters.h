@@ -45,7 +45,6 @@ namespace params
 	const int INT_SIZE = 10;
 	const int NUM_PHASES = 3;
 	int CURR_TRAIN = 0;
-	vector<int> DP_TASKS;
 
 //	Debugging
 	
@@ -60,6 +59,10 @@ namespace params
 	int NUM_OPS;
 	vector<string> OP_NAMES;
 	Matrix2D<int> OP_TASKS;
+	Matrix2D<int> OP_NUMS;
+	
+	Matrix2D<int> DP_TASKS;
+	Matrix2D<int> DP_NUMS;
 	
 //  Task parameters
 	
@@ -73,7 +76,6 @@ namespace params
 	Matrix2D<float> EXP_DIST_PARAMS_LOW;
 	Matrix2D<float> EXP_DIST_PARAMS_HIGH;
 	Matrix2D<int> AFF_BY_TRAFF;
-	Matrix2D<int> OP_NUMS;
 	
 //  Initialize global parameters
 	
@@ -96,6 +98,10 @@ namespace params
 		NUM_OPS = pms.numOps;
 		OP_NAMES = pms.opNames;
 		OP_TASKS = pms.opTasks;
+		OP_NUMS = pms.opNums;
+		
+		DP_TASKS = pms.dpTasks;
+		DP_NUMS = pms.dpNums;
 		
 	//	Tasks
 		
@@ -109,10 +115,9 @@ namespace params
 		EXP_DIST_PARAMS_LOW = pms.expPmsLo;
 		EXP_DIST_PARAMS_HIGH = pms.expPmsHi;
 		AFF_BY_TRAFF = pms.affByTraff;
-		OP_NUMS = pms.opNums;
 		
-		for (int i = 0; i < NUM_TASK_TYPES; i++)
-			DP_TASKS.push_back(i);
+//		for (int i = 0; i < NUM_TASK_TYPES; i++)
+//			DP_TASKS.push_back(i);
 	}
 }
 

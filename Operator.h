@@ -99,9 +99,9 @@ class Operator
 //			return op;
 //		}
 
-//        void plot() {stats.plot(name);}
+        void plot() {stats.plot(name);}
 
-//  Private member functions
+//  Private member functions
     
     private:
         float getFatigueFactor(float time) {return 1 + (time/60 * 0.01);}

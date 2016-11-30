@@ -37,7 +37,7 @@ class Task
 
 	//	Constructor
 		
-		Task(int tp, float prevArrTime, int phase, int tNum);
+		Task(int tp, float prevArrTime, int phase, int tNum, float aTime = -1);
 
 	//	Inspectors
 
@@ -110,7 +110,7 @@ ostream& operator<<(ostream& out, const Task& t) {t.output(out); return out;}
 *																			*
 ****************************************************************************/
 
-Task::Task(int tp, float prevArrTime, int phase, int tNum) :
+Task::Task(int tp, float prevArrTime, int phase, int tNum, float aTime) :
     type(tp),
     priority(PRTY[type][phase]),
     arrTime(genArrTime(prevArrTime, phase)),
@@ -120,9 +120,29 @@ Task::Task(int tp, float prevArrTime, int phase, int tNum) :
     begTime(0),
     queTime(arrTime),
     serLeft(serTime),
-    opNums(OP_NUMS[type]),
+//    opNums(OP_NUMS[type]),
 	trainNum(tNum)
 {
+	if (aTime != -1)
+	{
+		arrTime = aTime;
+	}
+	if (trainNum == 0)
+	{
+		opNums = DP_NUMS[type];
+//		for (int i = 0; i < opNums.size(); i++)
+//			cout << opNums[i] << " ";
+//		cout << endl;
+	}
+	else
+	{
+//		cout << "Correct" << endl;
+		opNums = OP_NUMS[type];
+//		for (int i = 0; i < opNums.size(); i++)
+//			cout << opNums[i] << " ";
+//		cout << endl;
+	}
+	
 //	Check type
 	
 	if (tp < 0 || tp >= NUM_TASK_TYPES)

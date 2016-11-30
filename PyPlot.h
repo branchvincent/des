@@ -15,7 +15,7 @@
 
 #include <iostream>
 #include <string>
-#include <Python/Python.h>
+#include <Python.h> //Python/Python.h>
 
 using namespace std;
 using namespace params;

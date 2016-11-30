@@ -33,7 +33,7 @@ using namespace params;
 bool cmpTaskArrs(Task* t1, Task* t2)
 	{return t1->getArrTime() < t2->getArrTime();}
 
-const int NUM_TRAINS = 2;
+const int NUM_TRAINS = 3;
 
 /****************************************************************************
 *																			*
@@ -267,8 +267,15 @@ void Simulation::runPhase(int phase)
 //	Generate all task types
 	
 	for (int i = 0; i < NUM_TASK_TYPES; i++)
-		for (int j = 0; j < NUM_TRAINS; j++)
-			genTasks(i, phase, j);
+	{
+		if (find(DP_TASKS[0].begin(), DP_TASKS[0].end(), i) != DP_TASKS[0].end())
+			genTasks(i, phase, 0);
+		else
+		{
+			for (int j = 1; j < NUM_TRAINS; j++)
+				genTasks(i, phase, j);
+		}
+	}
     
 //	Process all events
 	
@@ -296,7 +303,22 @@ void Simulation::runPhase(int phase)
 
 void Simulation::genTasks(int type, int phase, int trainNum)
 {
+	if (TASK_NAMES[type].find("Relay") != string::npos)
+	{
+		return;
+	}
+	if (TASK_NAMES[type].find("Dependent") != string::npos)
+	{
+		return;
+	}
+	
 //  Calculate current time
+	
+	if (find(DP_TASKS[0].begin(), DP_TASKS[0].end(), type) != DP_TASKS[0].end())
+		if (trainNum != 0)
+			cout << "ERROR: Dispatcher task sent to train" << endl;
+	
+//	cout << "Generating task " << type << " for train " << trainNum << endl;
 	
 	if (phase == 0)
 		currTime = 0;
@@ -320,17 +342,93 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 		
 	//	Add additional task, if necessary
 		
-		if (type == 0)
+		if (TASK_NAMES[type].find("Trigger") != string::npos)
 		{
-//			int tmp_type = rand() % NUM_TASK_TYPES;
-			int tmp_type = 1;
-			int tmp_train = rand() % (NUM_TRAINS);
-			if (tmp_train == trainNum) tmp_train = (tmp_train + 1) % (NUM_TRAINS);
-			if (trainNum != 0) tmp_train = 0;
-			task = new Task(tmp_type, arrTime, phase, tmp_train);
-			task->setArrTime(arrTime);
-			tmpList.push_back(task);
+			if (trainNum == 0)
+			{
+			//	Relay
+				
+				int t = 0;
+				for (int i = 0; i < NUM_TASK_TYPES; i++)
+				{
+					if (TASK_NAMES[i].find("Relay") != string::npos)
+					{
+//						cout << TASK_NAMES[i] << " found at " << i << endl;
+						t = i;
+					}
+				}
+				task = new Task(t, currTime, phase, trainNum, arrTime);
+				tmpList.push_back(task);
+				
+				int tmp_train = rand() % (NUM_TRAINS);
+				if (tmp_train == 0) tmp_train++;
+				task = new Task(t, currTime, phase, tmp_train, arrTime);
+				tmpList.push_back(task);
+				
+			//	Dependent
+				
+				string name = TASK_NAMES[type];
+				name.replace(name.end()-7,name.end(),"Dependent");
+//				cout << "Searching for " << name << endl;
+				for (int i = type + 2; i < NUM_TASK_TYPES; i++)
+				{
+//					cout << TASK_NAMES[i] << endl;
+					if (TASK_NAMES[i].find(name) != string::npos)
+					{
+//						cout << TASK_NAMES[i] << " found at " << i << endl;
+						t = i;
+					}
+				}
+				task = new Task(t, currTime, phase, tmp_train, arrTime);
+				tmpList.push_back(task);
+			}
+			else
+			{
+			//	Relay
+				
+				int t = 0;
+				for (int i = 0; i < NUM_TASK_TYPES; i++)
+				{
+					if (TASK_NAMES[i].find("Relay") != string::npos)
+					{
+//						cout << TASK_NAMES[i] << " found at " << i << endl;
+						t = i;
+					}
+				}
+				task = new Task(t, currTime, phase, trainNum, arrTime);
+				tmpList.push_back(task);
+				
+				int dispatch = 0;
+				task = new Task(t, currTime, phase, dispatch, arrTime);
+				tmpList.push_back(task);
+				
+			//	Dependent
+				
+				string name = TASK_NAMES[type];
+				name.replace(name.end()-7,name.end(),"Dependent");
+				for (int i = 0; i < NUM_TASK_TYPES; i++)
+				{
+					if (TASK_NAMES[i].find(name) != string::npos)
+					{
+//						cout << TASK_NAMES[i] << " found at " << i << endl;
+						t = i;
+					}
+				}
+				task = new Task(t, currTime, phase, dispatch, arrTime);
+				tmpList.push_back(task);
+			}
 		}
+			//	create new task
+		
+////			int tmp_type = rand() % NUM_TASK_TYPES;
+//			int tmp_type = 1;
+//			int tmp_train = rand() % (NUM_TRAINS);
+//			if (tmp_train == trainNum) tmp_train = (tmp_train + 1) % (NUM_TRAINS);
+//			if (trainNum != 0) tmp_train = 0;
+//			task = new Task(tmp_type, arrTime, phase, tmp_train);
+//			task->setArrTime(arrTime);
+//			tmpList.push_back(task);
+//		}
 		
     //	Get next task
         
@@ -340,9 +438,15 @@ void Simulation::genTasks(int type, int phase, int trainNum)
     }
     
 //	Merge temporary list with task list
-    
+	
+//	for (list<Task*>::iterator it = tmpList.begin(); it != tmpList.end(); it++)
+//		cout << "Task:  " << **it << endl;
+	
+	tmpList.sort(cmpTaskArrs);
     taskList.merge(tmpList, cmpTaskArrs);
-    
+	
+//	outputTaskList();
+	
     return;
 }
 
@@ -382,6 +486,7 @@ void Simulation::procAllArrs()
         
         if (arrTime <= depTime)
         {
+//			cout << "Task " << arrTask->getType() << " going to " << arrNum << endl;
             procArr(arrTask, trains[arrNum]);
             it++;
         }
@@ -394,7 +499,6 @@ void Simulation::procAllArrs()
 	
     return;
 }
-
 
 int Simulation::getNextDepature(float& time) {
 	

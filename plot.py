@@ -21,16 +21,16 @@ import sys
 
 # Set arguments
 
-inFile = sys.argv[1]
-outFile1 = '/Users/Branch/Desktop/engGraph.pdf'
-outFile2 = '/Users/Branch/Desktop/conGraph.pdf'
-numInts = 24
+#inFile = sys.argv[1]
+#outFile1 = '/Users/Branch/Desktop/engGraph.pdf'
+#outFile2 = '/Users/Branch/Desktop/conGraph.pdf'
+#numInts = 24
 
 # Global variables
 
 filePath = '/Users/Branch/Documents/Academic/Year 1/Summer/DES Code/Data/'
 numTypes = 9
-numRuns = 1
+numRuns = 1000
 oneRun = 0
 
 #****************************************************************************
@@ -43,8 +43,8 @@ def main():
 	
 #	Set input and output files
 	
-	inFile = '/Users/Branch/Desktop/DES/DES/Output/Results/eng.csv'
-	outFile = '/Users/Branch/Desktop/DES/DES/Output/Results/engGraph.jpg'
+	inFile = '/Users/Branch/Documents/Research/FRA/SHOW/out/stats_dispatcher0.csv'
+	outFile = '/Users/Branch/Documents/Research/FRA/SHOW/out/stats_dispatcher0.jpg'
 	
 #	if oneRun:
 #		inFile = filePath + 'singleRun.csv'

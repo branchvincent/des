@@ -79,6 +79,10 @@ class LoadParameters
 		int numOps;
 		vector<string> opNames;
 		Matrix2D<int> opTasks;
+		Matrix2D<int> opNums;
+
+		Matrix2D<int> dpTasks;
+		Matrix2D<int> dpNums;
 	
 	//	Task settings
 	
@@ -93,7 +97,6 @@ class LoadParameters
         Matrix2D<float> expPmsLo;
         Matrix2D<float> expPmsHi;
 		Matrix2D<int> affByTraff;
-		Matrix2D<int> opNums;
 };
 
 /****************************************************************************
@@ -125,11 +128,16 @@ LoadParameters::LoadParameters(string file)
 //	readArr(fin, ops);
 	readVal(fin, numOps);
 	readVal(fin, numTaskTypes);
+	numOps--;
 	
 //	Resize matrices
 	
 	opNames.resize(numOps);
 	opTasks.resize(numOps);
+	opNums.resize(numTaskTypes);
+	dpTasks.resize(1);
+	dpNums.resize(numTaskTypes);
+	
 	taskNames.resize(numTaskTypes);
 	taskPrty.resize(numTaskTypes);
 	arrDists.resize(numTaskTypes);
@@ -140,9 +148,13 @@ LoadParameters::LoadParameters(string file)
 	expPmsLo.resize(numTaskTypes);
 	expPmsHi.resize(numTaskTypes);
 	affByTraff.resize(numTaskTypes);
-	opNums.resize(numTaskTypes);
 	
 //	Read in task parameters
+	
+	string dispatcher;
+	readString(fin, dispatcher);
+	readArr(fin, dpTasks[0]);
+	dpNums.resize(numTaskTypes);
 	
 	for (int i = 0; i < numOps; i++)
 	{
@@ -152,16 +164,16 @@ LoadParameters::LoadParameters(string file)
 	
 	for (int i = 0; i < numTaskTypes; i++)
 	{
-		readString(fin, taskNames[i]);						// name
-		readArr(fin, taskPrty[i]);							// priority
-		readVal(fin, arrDists[i]);							// arrival dist
-		readArr(fin, arrPms[i]); //, isInverted(arrDists[i]));	// arrival params
-		readVal(fin, serDists[i]);							// service dist
-		readArr(fin, serPms[i]); //, isInverted(serDists[i]));	// service params
-		readVal(fin, expDists[i]);							// expiration dist
-		readArr(fin, expPmsLo[i]); //, isInverted(expDists[i]));	// expiration params
-		readArr(fin, expPmsHi[i]); //, isInverted(expDists[i]));	// expiration params
-		readArr(fin, affByTraff[i]);						// traffic
+		readString(fin, taskNames[i]);	// name
+		readArr(fin, taskPrty[i]);		// priority
+		readVal(fin, arrDists[i]);		// arrival dist
+		readArr(fin, arrPms[i]);		// arrival params
+		readVal(fin, serDists[i]);		// service dist
+		readArr(fin, serPms[i]);		// service params
+		readVal(fin, expDists[i]);		// expiration dist
+		readArr(fin, expPmsLo[i]);		// expiration params
+		readArr(fin, expPmsHi[i]);		// expiration params
+		readArr(fin, affByTraff[i]);	// traffic
 	}
 	
 //	Set operators
@@ -176,6 +188,9 @@ LoadParameters::LoadParameters(string file)
 			if (find(opTasks[j].begin(), opTasks[j].end(), i) != opTasks[j].end())
 				opNums[i].push_back(j);
 		}
+		
+		if (find(dpTasks[0].begin(), dpTasks[0].end(), i) != dpTasks[0].end())
+			dpNums[i].push_back(0);
 	}
 	
     return;

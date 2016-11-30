@@ -59,6 +59,10 @@ class Statistic
 			int lastRow = (int)data.size() - 1;
 			return data[lastRow][j][k];
 		}
+		Matrix2D<float> getAverage() {return avgs;}
+		Matrix2D<float> getDevs() {return devs;}
+		float getAverage(int i, int j) {return avgs[i][j];}
+		float getDevs(int i, int j) {return devs[i][j];}
 	
 	//	Mutators
 
