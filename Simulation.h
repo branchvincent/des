@@ -33,7 +33,7 @@ using namespace params;
 bool cmpTaskArrs(Task* t1, Task* t2)
 	{return t1->getArrTime() < t2->getArrTime();}
 
-const int NUM_TRAINS = 3;
+const int NUM_TRAINS = 6;
 
 /****************************************************************************
 *																			*
@@ -359,17 +359,20 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 				}
 				task = new Task(t, currTime, phase, trainNum, arrTime);
 				tmpList.push_back(task);
+//				cout << "Adding " << *task << endl;
 				
 				int tmp_train = rand() % (NUM_TRAINS);
 				if (tmp_train == 0) tmp_train++;
 				task = new Task(t, currTime, phase, tmp_train, arrTime);
 				tmpList.push_back(task);
+//				cout << "Adding " << *task << endl;
+//				cout << "Adding relay: " << t << endl;
 				
 			//	Dependent
 				
 				string name = TASK_NAMES[type];
 				name.replace(name.end()-7,name.end(),"Dependent");
-//				cout << "Searching for " << name << endl;
+//					cout << "Searching for " << name << endl;
 				for (int i = type + 2; i < NUM_TASK_TYPES; i++)
 				{
 //					cout << TASK_NAMES[i] << endl;
@@ -381,6 +384,7 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 				}
 				task = new Task(t, currTime, phase, tmp_train, arrTime);
 				tmpList.push_back(task);
+//				cout << "Adding " << *task << " to train " << tmp_train << endl;
 			}
 			else
 			{
@@ -406,7 +410,8 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 				
 				string name = TASK_NAMES[type];
 				name.replace(name.end()-7,name.end(),"Dependent");
-				for (int i = 0; i < NUM_TASK_TYPES; i++)
+//					cout << "Searching for " << name << endl;
+				for (int i = 0; i < NUM_TASK_TYPES/2; i++)
 				{
 					if (TASK_NAMES[i].find(name) != string::npos)
 					{
@@ -416,6 +421,7 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 				}
 				task = new Task(t, currTime, phase, dispatch, arrTime);
 				tmpList.push_back(task);
+//				cout << "Adding " << *task << " to train " << dispatch << endl;
 			}
 		}
 			//	create new task

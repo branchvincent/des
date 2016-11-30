@@ -16,7 +16,7 @@ prty         	4 3 4
 arr_dist     	E
 arr_pms      	0 0 0
 ser_dist     	E
-ser_pms      	2.5188 0
+ser_pms      	12 0
 exp_dist     	E
 exp_pms_lo   	0 0.107167 0
 exp_pms_hi   	0 0.0863333 0
@@ -36,7 +36,7 @@ aff_by_traff  	0 1 0
 name 			Planning Independent
 prty         	0 5 0
 arr_dist     	E
-arr_pms      	0.0666667 0.2 0.4
+arr_pms      	0.044 0.044 0.044
 ser_dist     	E
 ser_pms      	3.0303 0
 exp_dist     	E
@@ -47,7 +47,7 @@ aff_by_traff  	0 1 0
 name 			Planning Trigger
 prty         	0 5 0
 arr_dist     	E
-arr_pms      	0.0333333 0.1 0.2
+arr_pms      	0.022 0.022 0.022
 ser_dist     	E
 ser_pms      	3.0303 0
 exp_dist     	E
@@ -69,7 +69,7 @@ aff_by_traff  	0 1 0
 name			Monitoring Independent
 prty         	2 2 1
 arr_dist     	E
-arr_pms      	0.285714 0.374532 0.374532
+arr_pms      	0.19 0.19 0.19
 ser_dist     	E
 ser_pms      	7.5188 0
 exp_dist     	E
@@ -80,7 +80,7 @@ aff_by_traff   	0 0 0
 name			Monitoring Trigger
 prty         	2 2 1
 arr_dist     	E
-arr_pms      	0.14 0.18 0.18
+arr_pms      	0.09 0.09 0.09
 ser_dist     	E
 ser_pms      	7.5188 0
 exp_dist     	E
@@ -102,7 +102,7 @@ aff_by_traff   	0 0 0
 name      		Exception Handling Independent
 prty         	5 4 5
 arr_dist     	E
-arr_pms      	0 0.000333333 0.000333333
+arr_pms      	0.00033 0.00033 0.00033
 ser_dist     	L
 ser_pms      	0.98 1.39
 exp_dist     	E
@@ -113,7 +113,7 @@ aff_by_traff  	0 1 0
 name      		Exception Handling Trigger
 prty         	5 4 5
 arr_dist     	E
-arr_pms      	0 0.000333333 0.000333333
+arr_pms      	0.00033 0.00033 0.00033
 ser_dist     	L
 ser_pms      	0.98 1.39
 exp_dist     	E
@@ -135,9 +135,9 @@ aff_by_traff  	0 1 0
 name       		Paperwork
 prty         	3 0 2
 arr_dist     	E
-arr_pms      	0.149925 0.05 0.3003
+arr_pms      	0.05 0.05 0.05
 ser_dist     	U
-ser_pms      	0.05 1.5
+ser_pms      	0.05 1
 exp_dist     	E
 exp_pms_lo   	0 0 0
 exp_pms_hi   	0 0 0
@@ -146,7 +146,7 @@ aff_by_traff   	0 1 1
 name 			Planning Independent
 prty         	0 5 0
 arr_dist     	E
-arr_pms      	0.0666667 0.2 0.4
+arr_pms      	0.066 0.2 0.4
 ser_dist     	E
 ser_pms      	3.0303 0
 exp_dist     	E
@@ -157,7 +157,7 @@ aff_by_traff  	0 1 0
 name 			Planning Trigger
 prty         	0 5 0
 arr_dist     	E
-arr_pms      	0.0333333 0.1 0.2
+arr_pms      	0.006 0.006 0.006
 ser_dist     	E
 ser_pms      	3.0303 0
 exp_dist     	E
@@ -190,7 +190,7 @@ aff_by_traff   	0 0 0
 name			Monitoring Trigger
 prty         	2 2 1
 arr_dist     	E
-arr_pms      	0.14 0.18 0.18
+arr_pms      	0.025 0.025 0.025
 ser_dist     	E
 ser_pms      	7.5188 0
 exp_dist     	E
