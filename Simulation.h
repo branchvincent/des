@@ -33,7 +33,7 @@ using namespace params;
 bool cmpTaskArrs(Task* t1, Task* t2)
 	{return t1->getArrTime() < t2->getArrTime();}
 
-const int NUM_TRAINS = 3;
+const int NUM_TRAINS = 2;
 
 /****************************************************************************
 *																			*
@@ -83,8 +83,8 @@ class Simulation
 
 	private:
 //      Params pms;				// run parameters
-//		Dispatch dis;
-        vector<Train> trains;         // operator supervisor
+//		Operator dispatch;		// dispactcher
+        vector<Train> trains;	// trains
 		vector<int> endTimes;   // phase end times
 		list<Task*> taskList;	// task list
 		float currTime;
@@ -103,6 +103,7 @@ ostream& operator<<(ostream& out, const Simulation& sim) {sim.output(out); retur
 ****************************************************************************/
 
 Simulation::Simulation(string paramFile) :
+//	dispatch("Dispatch", DP_TASKS, Statistics(), 0),
     trains(NUM_TRAINS),
     endTimes{30, END_TIME - 30, END_TIME},
     taskList(),
@@ -190,10 +191,6 @@ Simulation::Simulation(string paramFile) :
 void Simulation::run()
 {
 //  Run simulation the specified number of times
-	
-//	char mybuffer[80];
-//	FILE * pFile = fopen(OUTPUT_PATH + "/des_status", "r+");
-//	if (pFile == NULL) perror ("Error opening file");
 
 //	string file = OUTPUT_PATH + "/des_status";
 //	ofstream fout(file);
@@ -301,13 +298,10 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 {
 //  Calculate current time
 	
-	if (type == 1) return;
 	if (phase == 0)
 		currTime = 0;
 	else
 		currTime = max(currTime, (float)endTimes[phase - 1]);
-	
-//	cout << "currTime = " << currTime << endl;
 	
 //	Create temporary list and first task
     
@@ -337,16 +331,6 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 			task->setArrTime(arrTime);
 			tmpList.push_back(task);
 		}
-//		else if (type == 1)
-//		{
-//			int tmp_type = 0;
-//			int tmp_train = rand() % (NUM_TRAINS);
-//			if (tmp_train == trainNum) tmp_train = (tmp_train + 1) % (NUM_TRAINS);
-//			if (trainNum != 0) tmp_train = 0;
-//			task = new Task(tmp_type, arrTime, phase, tmp_train);
-//			task->setArrTime(arrTime);
-//			tmpList.push_back(task);
-//		}
 		
     //	Get next task
         
@@ -406,10 +390,7 @@ void Simulation::procAllArrs()
             procDep(depTask, false, trains[depNum]);
 			delete depTask;
 		}
-		
-//		int time = min(arrTime, depTime)/INT_SIZE;
-//		cout << "Util(" << time << ") = " << trains.getUtil(0, time) << endl;
-    }
+	}
 	
     return;
 }

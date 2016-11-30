@@ -62,12 +62,11 @@ class Train
 	//	Constructor
     
 		Train(int tNum = CURR_TRAIN++);
-		Train(string name, int tNum = 0) : stats(), ops() {ops.push_back(Operator(name, OP_TASKS[0], stats, tNum));}
+//		Train(string name, int tNum = 0) : stats(), ops()
+//		{
+//			ops.push_back(Operator(name, OP_TASKS[0], stats, tNum));
+//		}
 	
-        //ops{Operator("Engineer", stats), Operator("Conductor", stats)} {}
-//            ops(NUM_OPS) {ops[0] = Operator("Engineer", stats);
-//                            ops[1] = Operator("Conductor", stats);}
-    
 	// 	Inspector
 		
         int getQueueSize() {return ops[0].getQueueSize();}
@@ -82,7 +81,7 @@ class Train
 		
         void procArr(Task* task);
 		void procDep(Task* task, bool stop);
-        void clear() {for (int i = 0; i < NUM_OPS; i++) ops[i].clear();};
+        void clear() {for (int i = 0; i < ops.size(); i++) ops[i].clear();};
         void endRep();
         void plot();
     
@@ -104,9 +103,9 @@ ostream& operator<<(ostream& out, const Train& s) {s.output(out); return out;}
 
 /****************************************************************************
 *																			*
-*	Function:	Train													*
+*	Function:	Train														*
 *																			*
-*	Purpose:	To construct a new Train								*
+*	Purpose:	To construct a new Train									*
 *																			*
 ****************************************************************************/
 
@@ -114,16 +113,11 @@ Train::Train(int tNum) : stats(), ops()
 {
 	if (tNum == 0)
 		ops.push_back(Operator("Dispatch", DP_TASKS, stats, tNum));
-	else {
+	else
+	{
 		for (int i = 0; i < NUM_OPS; i++)
 			ops.push_back(Operator(OP_NAMES[i], OP_TASKS[i], stats, tNum));
 	}
-	
-//	ops.push_back(Operator("Engineer", stats));
-//
-//	if (find(OPS.begin(), OPS.end(), 1) != OPS.end()) ops.push_back(Operator("Conductor", stats));
-//	if (find(OPS.begin(), OPS.end(), 2) != OPS.end()) ops.push_back(Operator("PTC", stats));
-//	if (find(OPS.begin(), OPS.end(), 3) != OPS.end()) ops.push_back(Operator("Cruise", stats));
 }
 
 
@@ -145,7 +139,7 @@ Task* Train::getNextDepature()
     
 //  Get depature time and index of soonest depature
     
-    for (int i = 0; i < NUM_OPS; i++)
+    for (int i = 0; i < ops.size(); i++)
     {
     //  Get depature time
         
@@ -199,7 +193,7 @@ bool Train::isBusy() const
 {
 //  Check for a busy operator
     
-    for (int i = 0; i < NUM_OPS; i++)
+    for (int i = 0; i < ops.size(); i++)
         if (ops[i].isBusy())
             return true;
 
@@ -220,7 +214,7 @@ bool Train::isBusy() const
 //{
 ////  Check for an idle operator
 //    
-//    for (int i = 0; i < NUM_OPS; i++)
+//    for (int i = 0; i < ops.size(); i++)
 //        if (ops[i].isIdle())
 //            return true;
 //    
@@ -241,7 +235,7 @@ Operator& Train::getIdleOp()
 {
 //  Check for an idle operator
     
-    for (int i = 0; i < NUM_OPS; i++)
+    for (int i = 0; i < ops.size(); i++)
         if (ops[i].isIdle())
             return ops[i];
     
@@ -271,14 +265,14 @@ void Train::procArr(Task* task)
     
 //	Add task to the appropriate queue
     
-//    if (opNum > NUM_OPS)
+//    if (opNum > ops.size())
 //    {
 //        cerr << "Error: Incompatible operator ID. Exiting..." << opNum << endl;
 //        exit(1);
 //    }
 	
 //	vector<int> opNums;
-//	for (int i = 0; i < NUM_OPS; i++)
+//	for (int i = 0; i < ops.size(); i++)
 //	{
 //		vector<int> op_tasks = ops[i].getTaskNums();
 //		if (find(op_tasks.begin(), op_tasks.end(), type) != op_tasks.end())
@@ -297,7 +291,7 @@ void Train::procArr(Task* task)
         
 //        cout << "SHARED TASK ARRIVING" << endl;
 //        
-//        for (int i = 0; i < NUM_OPS; i++)
+//        for (int i = 0; i < ops.size(); i++)
 //        {
 //            if (ops[i].isBusy())
 //                cout << ops[i].getName() << " is busy with " << 1+ops[i].getQueueSize() << " tasks including " << *(ops[i].getCurrTask()) << endl;
@@ -361,7 +355,7 @@ void Train::procDep(Task* task, bool stop)
     
     bool taskFound = false;
     
-    for (int i = 0; i < NUM_OPS; i++)
+    for (int i = 0; i < ops.size(); i++)
         if (task == ops[i].getCurrTask())
         {
             taskFound = true;
@@ -400,7 +394,7 @@ void Train::endRep()
     
 //  Clear operators
     
-    for (int i = 0; i < NUM_OPS; i++)
+    for (int i = 0; i < ops.size(); i++)
         ops[i].endRep();
     
     return;
@@ -422,7 +416,7 @@ void Train::endRep()
 //	
 ////  Plot each utilization
 //    
-//    for (int i = 0; i < NUM_OPS; i++)
+//    for (int i = 0; i < ops.size(); i++)
 //        ops[i].plot();
 //	
 ////  Finalize Python
@@ -450,7 +444,7 @@ void Train::output(ostream& out) const
 
     out << ops[0] << endl;
     
-//    for (int i = 0; i < NUM_OPS; i++)
+//    for (int i = 0; i < ops.size(); i++)
 //        out << ops[i] << endl;
 //    
     return;
@@ -481,7 +475,7 @@ void Train::output()
     
 //  Output operators
     
-    for (int i = 0; i < NUM_OPS; i++)
+    for (int i = 0; i < ops.size(); i++)
         ops[i].output();
 
     return;
