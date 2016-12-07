@@ -33,7 +33,7 @@ using namespace params;
 bool cmpTaskArrs(Task* t1, Task* t2)
 	{return t1->getArrTime() < t2->getArrTime();}
 
-const int NUM_TRAINS = 6;
+const int NUM_TRAINS = 50;
 
 /****************************************************************************
 *																			*
