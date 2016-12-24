@@ -34,6 +34,8 @@ bool cmpTaskArrs(Task* t1, Task* t2)
 	{return t1->getArrTime() < t2->getArrTime();}
 
 const int NUM_TRAINS = 50;
+const int NUM_BATCH[] = {25,25};
+const int ARRIVALS[] = {0,480};
 
 /****************************************************************************
 *																			*
@@ -78,6 +80,7 @@ class Simulation
         void procDep(Task* task, bool stop, Train& train) {train.procDep(task, stop);}
         void outputTaskList();
 		int getNextDepature(float& time);
+		
 
 //	Data members
 
