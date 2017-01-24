@@ -22,7 +22,7 @@
 #include <algorithm>
 #include "Train.h"
 #include "Task.h"
-#include "Parameters/Parameters.h"
+#include "params/Parameters.h"
 #include <stdio.h>
 
 using namespace std;

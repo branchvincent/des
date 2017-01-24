@@ -15,12 +15,10 @@
 #include <iostream>
 #include <string>
 #include "Simulation.h"
-#include "Parameters/LoadParameters.h"
+#include "params/LoadParameters.h"
 #include "libs/ArgParser.h"
 
 using namespace std;
-
-//void readInputArgs(int argc, char* argv[], string& paramFile);
 
 /****************************************************************************
 *																			*
@@ -59,30 +57,3 @@ int main(int argc, const char* argv[])
 
 	return 0;
 }
-
-/****************************************************************************
-*																			*
-*	Function:	readInputArgs												*
-*																			*
-*	Purpose:	To read the input arguments									*
-*																			*
-****************************************************************************/
-
-//void readInputArgs(int argc, char* argv[], string& paramFile)
-//{
-////	Check for required parameter file
-//	
-//	if (argc < 2)
-//	{
-//		cerr << "Please specify parameter input file. Exiting..." << endl;
-//		exit(1);
-//	}
-//	
-////	for (char** c : argv)
-////	{
-////		printf(&c);
-////	}
-//	
-//	paramFile = argv[1];
-//	cout << "Reading parameters from " << paramFile << "..." << endl;
-//}

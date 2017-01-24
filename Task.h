@@ -18,7 +18,7 @@
 #include <random>
 #include <cmath>
 #include <algorithm>
-#include "Parameters/Parameters.h"
+#include "params/Parameters.h"
 
 using namespace std;
 using namespace params;
