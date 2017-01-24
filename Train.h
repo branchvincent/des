@@ -83,8 +83,8 @@ class Train
 		void procDep(Task* task, bool stop);
         void clear() {for (int i = 0; i < ops.size(); i++) ops[i].clear();};
         void endRep();
-        void plot();
-    
+//        void plot();
+	
     //  Other member functions
     
         void output();
@@ -411,23 +411,23 @@ void Train::endRep()
 *																			*
 ****************************************************************************/
 
-void Train::plot()
-{
-//  Initialize Python
-    
-    Py_Initialize();
-	
-//  Plot each utilization
-    
-    for (int i = 0; i < ops.size(); i++)
-        ops[i].plot();
-	
-//  Finalize Python
-    
-    Py_Finalize();
-	
-    return;
-}
+//void Train::plot()
+//{
+////  Initialize Python
+//    
+//    Py_Initialize();
+//	
+////  Plot each utilization
+//    
+//    for (int i = 0; i < ops.size(); i++)
+//        ops[i].plot();
+//	
+////  Finalize Python
+//    
+//    Py_Finalize();
+//	
+//    return;
+//}
 
 /****************************************************************************
 *																			*

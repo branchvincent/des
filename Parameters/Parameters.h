@@ -53,6 +53,7 @@ namespace params
 	const bool DEBUG_ON = 0;
 	const bool OUTPUT_ON = 1;
 	const bool RAND_RUN_ON = 1;
+	const bool VERBOSE = 1;
 	
 //	Operator parameters
 	

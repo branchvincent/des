@@ -17,7 +17,7 @@
 #include <fstream>
 #include <string>
 #include "Statistic.h"
-#include "PyPlot.h"
+//#include "PyPlot.h"
 
 using namespace std;
 using namespace params;
@@ -83,7 +83,7 @@ class Statistics
 				
 	//	Other member functions
 
-        void plot(string opName);
+//        void plot(string opName);
         void output(ostream& out) const {outputSim(out); return;}
 		void outputIdle(ostream& out) const;
 		void outputBusy(ostream& out) const;
@@ -291,41 +291,41 @@ void Statistics::endSim()
 *																			*
 ****************************************************************************/
 
-void Statistics::plot(string opName)
-{
-//    int lastRow = util[0].size() - 1;
-//    int lastCol = util[0][0].size() - 1;
-
-    vector<float> time;
-    vector<float> utl;
-    vector<float> err;
-
-    for (int i = 0; i < interval.size(); i++)
-    {
-        time.push_back(interval[i] + INT_SIZE/2);
-        utl.push_back(util.getAverage(NUM_TASK_TYPES,i));
-        err.push_back(util.getDevs(0,i));
-    }
-
-//  Plot using matplotlib
-
-    PyPlot plt;
-    plt.set_title(opName + " Utilization for " + to_string(NUM_REPS) + " Reps");
-    plt.set_xlabel("Time (min)");
-    plt.set_ylabel("Utilization");
-    plt.set_xlim(0, END_TIME);
-    plt.set_ylim(0, 1.1);
-    plt.set_axis();
-    plt.plot_bar(time, utl, err);
-    for (int i = 0; i < NUM_HOURS; i++)
-    {
-        string hr = to_string(60 * (i + 1));
-        plt.run_cmd("plt.plot((" + hr + ", " + hr + "), (0, 1.10), 'm--')");
-    }
-    plt.save_fig(OUTPUT_PATH + "/" + opName + "_Util.pdf");
-
-    return;
-}
+//void Statistics::plot(string opName)
+//{
+////    int lastRow = util[0].size() - 1;
+////    int lastCol = util[0][0].size() - 1;
+//
+//    vector<float> time;
+//    vector<float> utl;
+//    vector<float> err;
+//
+//    for (int i = 0; i < interval.size(); i++)
+//    {
+//        time.push_back(interval[i] + INT_SIZE/2);
+//        utl.push_back(util.getAverage(NUM_TASK_TYPES,i));
+//        err.push_back(util.getDevs(0,i));
+//    }
+//
+////  Plot using matplotlib
+//
+//    PyPlot plt;
+//    plt.set_title(opName + " Utilization for " + to_string(NUM_REPS) + " Reps");
+//    plt.set_xlabel("Time (min)");
+//    plt.set_ylabel("Utilization");
+//    plt.set_xlim(0, END_TIME);
+//    plt.set_ylim(0, 1.1);
+//    plt.set_axis();
+//    plt.plot_bar(time, utl, err);
+//    for (int i = 0; i < NUM_HOURS; i++)
+//    {
+//        string hr = to_string(60 * (i + 1));
+//        plt.run_cmd("plt.plot((" + hr + ", " + hr + "), (0, 1.10), 'm--')");
+//    }
+//    plt.save_fig(OUTPUT_PATH + "/" + opName + "_Util.pdf");
+//
+//    return;
+//}
 
 /****************************************************************************
 *																			*

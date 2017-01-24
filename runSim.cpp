@@ -16,8 +16,11 @@
 #include <string>
 #include "Simulation.h"
 #include "Parameters/LoadParameters.h"
+#include "libs/ArgParser.h"
 
 using namespace std;
+
+//void readInputArgs(int argc, char* argv[], string& paramFile);
 
 /****************************************************************************
 *																			*
@@ -25,10 +28,7 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-//  Notes:
-//  - change rand() to default_random_engine (minstd_rand0 rand; rand();)
-
-int main(int argc, char* argv[])
+int main(int argc, const char* argv[])
 {
 //  Start timer
     
@@ -36,25 +36,21 @@ int main(int argc, char* argv[])
 
 //  Read in parameter file
 	
-//	if (argc < 1)
-//	{
-//		cerr << "Please specify parameter input file. Exiting..." << endl;
-//		exit(1);
-//	}
+	ArgParser parser;
+	parser.parse(argc, argv);
 	
-	string paramFile = "/Users/Branch/Documents/Research/FRA/SHOW/in/params.txt";
-//	string paramFile = argv[1];
-    cout << "inFile = " << paramFile << endl;
+//	string paramFile;
+//	readInputArgs(argc, argv, paramFile);
 	
 //	Get run parameters
 	
-	LoadParameters pms(paramFile);
-	INIT_GLOBALS(pms);
+//	LoadParameters pms(paramFile);
+//	INIT_GLOBALS(pms);
 	
 //  Intialize and run simulation
     
-    Simulation sim(paramFile);
-	sim.run();
+//    Simulation sim(paramFile);
+//	sim.run();
 	
 //  End timer
     
@@ -63,3 +59,30 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+
+/****************************************************************************
+*																			*
+*	Function:	readInputArgs												*
+*																			*
+*	Purpose:	To read the input arguments									*
+*																			*
+****************************************************************************/
+
+//void readInputArgs(int argc, char* argv[], string& paramFile)
+//{
+////	Check for required parameter file
+//	
+//	if (argc < 2)
+//	{
+//		cerr << "Please specify parameter input file. Exiting..." << endl;
+//		exit(1);
+//	}
+//	
+////	for (char** c : argv)
+////	{
+////		printf(&c);
+////	}
+//	
+//	paramFile = argv[1];
+//	cout << "Reading parameters from " << paramFile << "..." << endl;
+//}

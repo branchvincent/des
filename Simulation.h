@@ -46,7 +46,6 @@ const int ARRIVALS[] = {0,480};
 //  Notes
 //  - Add utilization count for tasks cut off at end of phase (processAllDepts)
 //  - Add destructor
-//  - Add feature to plot timeline of events
 //  - Think about keeping a single taskList for all phases
 
 class Simulation

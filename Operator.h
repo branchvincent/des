@@ -99,7 +99,7 @@ class Operator
 //			return op;
 //		}
 
-        void plot() {stats.plot(name);}
+	//	void plot() {stats.plot(name);}	
 
 //  Private member functions
     
