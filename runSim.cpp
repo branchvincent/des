@@ -29,29 +29,29 @@ using namespace std;
 int main(int argc, const char* argv[])
 {
 //  Start timer
-    
+
     clock_t start = clock();
 
 //  Read in parameter file
-	
-	ArgParser parser;
-	parser.parse(argc, argv);
-	
+
+	// ArgParser parser;
+	// parser.parse(argc, argv);
+
 //	string paramFile;
 //	readInputArgs(argc, argv, paramFile);
-	
+
 //	Get run parameters
-	
+
 //	LoadParameters pms(paramFile);
 //	INIT_GLOBALS(pms);
-	
+
 //  Intialize and run simulation
-    
+
 //    Simulation sim(paramFile);
 //	sim.run();
-	
+
 //  End timer
-    
+
     float time = (clock() - start) / (float)CLOCKS_PER_SEC;
     cout << "Elapsed time = " << time << " s" <<endl;
 
