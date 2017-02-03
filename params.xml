@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sked>
+<interarrival type="exponential">
+    <phase1>0</phase1>
+    <phase2>0</phase2>
+    <phase3>0</phase3>
+</interarrival>
+
+<!-- <sked>
     <version>2</version>
     <flight>
         <carrier>BA</carrier>
@@ -11,10 +17,10 @@
         <number>4002</number>
         <date>2011-07-21</date>
     </flight>
-</sked>
+</sked> -->
 
 <!-- Run Parameters -->
-<parameters>
+<!-- <parameters>
     <output_path>/Users/Branch/Documents/Research/fra/show/out</output_path>
     <start>8:00</start>
     <stop>17:00</stop>
@@ -33,7 +39,7 @@
         <isAffectedByTraffic>false,true,false</isAffectedByTraffic>
         <description>My description.</description>
     </task>
-</task_types>
+</task_types> -->
 
 <!-- Agent Teams -->
 <!-- <level1>
@@ -68,11 +74,11 @@
 </teams> -->
 
 <!-- Batch Teams -->
-<batches>
+<!-- <batches>
     <batch>
 
     </batch>
-</batches>
+</batches> -->
 <!-- <catalog>
     <task>
         <name>My name</name>

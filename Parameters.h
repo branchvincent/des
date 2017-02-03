@@ -41,21 +41,21 @@ class Parameters
 	public:
     //	General settings
 
-    //     string outputPath;
-    //     float numHours;
-    //     vector<float> traffic;
-    //     float numReps;
-    //     vector<int> ops;
-    //
-	// //	Operator settings
-    //
-	// 	int numOps;
-	// 	vector<string> opNames;
-	// 	Matrix2D<int> opTasks;
-	// 	Matrix2D<int> opNums;
-    //
-	// 	Matrix2D<int> dpTasks;
-	// 	Matrix2D<int> dpNums;
+        string outputPath;
+        float numHours;
+        vector<float> traffic;
+        float numReps;
+        vector<int> ops;
+
+	//	Operator settings
+
+		int numOps;
+		vector<string> opNames;
+		Matrix2D<int> opTasks;
+		Matrix2D<int> opNums;
+
+		Matrix2D<int> dpTasks;
+		Matrix2D<int> dpNums;
 };
 
 #endif

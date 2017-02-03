@@ -15,8 +15,10 @@
 #include <string>
 #include "Distribution.h"
 #include "../Util.h"
+#include <boost/property_tree/ptree.hpp>
 
 using namespace std;
+using boost::property_tree::ptree;
 
 /****************************************************************************
 *																			*
@@ -32,6 +34,7 @@ class ExponentialDistribution : public Distribution
 
     //  Constructor
 
+		ExponentialDistribution(ptree data);
 		ExponentialDistribution(float lambda) :
 			Distribution(lambda), distribution(lambda) {}
 
@@ -48,5 +51,10 @@ class ExponentialDistribution : public Distribution
 	private:
 		exponential_distribution<float> distribution;
 };
+
+ExponentialDistribution::ExponentialDistribution(ptree data)
+{
+	
+}
 
 #endif

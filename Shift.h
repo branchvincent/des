@@ -1,0 +1,107 @@
+/****************************************************************************
+*																			*
+*	File:		Shift.h												        *
+*																			*
+*	Author:		Branch Vincent												*
+*																			*
+*	Purpose:	This file defines the Shift class.	   					    *
+*																			*
+****************************************************************************/
+
+#ifndef SHIFT_H
+#define SHIFT_H
+
+#define BOOST_DATE_TIME_NO_LIB
+
+#include <iostream>
+#include <string>
+// #include <time.h>
+#include <sstream>
+#include <iomanip>
+// #include <locale>
+#include "Util.h"
+
+using namespace std;
+
+/****************************************************************************
+*																			*
+*	Definition of Shift class		     						            *
+*																			*
+****************************************************************************/
+
+class Shift
+{
+//	Public member functions
+
+	public:
+
+    //  Constructor
+
+		Shift(string start, string stop);
+
+	//	Inspectors
+
+        string getStart() const {return asctime(&start);}
+        string getStop() const {return asctime(&stop);}
+        // string getStart() {return string(put_time(&start, "%c"));}
+        float getHours() const
+            {ASSERT(duration > 0, "Shift duration cannot be negative");
+            return duration/3600.;}
+
+    //  Other member functions
+
+//  Private member members
+
+    private:
+        void readTimeString(string time, tm& date);
+
+//	Data members
+
+	private:
+        tm start;
+        tm stop;
+        time_t duration;
+};
+
+/****************************************************************************
+*																			*
+*	Function:	Shift       												*
+*																			*
+*	Purpose:	To construct a shift                                        *
+*																			*
+****************************************************************************/
+
+Shift::Shift(string start, string stop)
+{
+//  Read times
+
+    readTimeString(start, this->start);
+    readTimeString(stop, this->stop);
+
+//  Calculate duration
+
+    duration = difftime(mktime(&(this->stop)), mktime(&(this->start)));
+    if (duration < 0)
+    {
+        (this->stop).tm_mday += 1;
+        duration = difftime(mktime(&(this->stop)), mktime(&(this->start)));
+    }
+}
+
+/****************************************************************************
+*																			*
+*	Function:	readTimeString												*
+*																			*
+*	Purpose:	To create a date from a time string                         *
+*																			*
+****************************************************************************/
+
+void Shift::readTimeString(string time, tm& date)
+{
+    istringstream stream("2017-01-01 " + time);
+    stream >> get_time(&date, "%Y-%m-%d %H:%M");
+    ASSERT(!stream.fail(), "Failed to read time " << time);
+    return;
+}
+
+#endif

@@ -7,6 +7,12 @@
 #include <vector>
 #include "Util.h"
 #include "TaskType.h"
+#include "distribution/Distribution.h"
+#include "distribution/ExponentialDistribution.h"
+#include "distribution/LognormalDistribution.h"
+#include "distribution/UniformDistribution.h"
+#include <random>
+
 // #include "Parameters.h"
 
 using namespace std;
@@ -36,52 +42,87 @@ int main()
 {
     ptree pt;
     read_xml("params.xml", pt);
-
+    //
+    // for (auto& a : pt)
+    // {
+    //     cout << '[' << a.first << "]\n";
+    //     for (auto& b : a.second)
+    //     {
+    //         cout << b.first << "=" << b.second.data() << "\n";
+    //     }
+    // }
+    //
+    vector<Distribution*> tasks;
     for (auto& a : pt)
     {
-        cout << '[' << a.first << "]\n";
-        for (auto& b : a.second)
+        if (a.first == "interarrival")
         {
-            cout << b.first << "=" << b.second.data() << "\n";
+            string description = a.second.get<string>("<xmlattr>.type");
+            Distribution* dist = new ExponentialDistribution(a);
+
+            for (auto& p : a.second)
+            {
+                float x = p.second.data();
+                cout << p.second.data() << endl;
+            }
+            cout << description << endl;
         }
     }
+
+
+    // for (auto& v: pt.get_child("interarrival"))
+    // {
+    //     cout << v.first << endl;
+    //
+    //
+    //     if (v.first == "task")
+    //     {
+    //         string name = v.second.get<string>("name");
+    //         vector<int> priority = {1,1,1};
+    //         string description = v.second.get<string>("description");
+    //         cout << description << endl;
+    //         // tasks.push_back(TaskType());
+    //         // MyClass c = v.second.get<MyClass>("x");
+    //         // cout << c.x << endl;
+    //     }
+    // }
 
     // traverse pt
-
-    vector<Task> tasks;
-    // for (ptree:value_type v: pt.get_child("task_types"))
-    for (auto& v: pt.get_child("task_types"))
-    {
-        if (v.first == "task")
-        {
-            string name = v.second.get<string>("name");
-            vector<int> priority = {1,1,1};
-            string description = v.second.get<string>("description");
-            cout << description << endl;
-            // tasks.push_back(TaskType());
-            MyClass c = v.second.get<MyClass>("x");
-            cout << c.x << endl;
-        }
-    }
-
-
-    Sked ans;
-    for (ptree::value_type v : pt.get_child("sked"))
-    {
-        if(v.first == "flight")
-        {
-            Flight f;
-            f.carrier = v.second.get<string>("carrier");
-            f.number = v.second.get<unsigned>("number");
-            // f.date = v.second.get<Date>("date");
-            f.cancelled = v.second.get("<xmlattr>.cancelled", false);
-            ans.push_back(f);
-        }
-    }
-
-    cout << ans[0].carrier << endl;
-    cout << ans[0].number << endl;
-    cout << ans[1].cancelled << endl;
+    //
+    // vector<Task> tasks;
+    // // for (ptree:value_type v: pt.get_child("task_types"))
+    // for (auto& v: pt.get_child("task_types"))
+    // {
+    //     if (v.first == "task")
+    //     {
+    //         string name = v.second.get<string>("name");
+    //         vector<int> priority = {1,1,1};
+    //         string description = v.second.get<string>("description");
+    //         cout << description << endl;
+    //         // tasks.push_back(TaskType());
+    //         MyClass c = v.second.get<MyClass>("x");
+    //         cout << c.x << endl;
+    //     }
+    // }
+    //
+    //
+    // Sked ans;
+    // for (ptree::value_type v : pt.get_child("sked"))
+    // {
+    //     if(v.first == "flight")
+    //     {
+    //         Flight f;
+    //         f.carrier = v.second.get<string>("carrier");
+    //         f.number = v.second.get<unsigned>("number");
+    //         // f.date = v.second.get<Date>("date");
+    //         f.cancelled = v.second.get("<xmlattr>.cancelled", false);
+    //         ans.push_back(f);
+    //     }
+    // }
+    //
+    // cout << ans[0].carrier << endl;
+    // cout << ans[0].number << endl;
+    // cout << ans[1].cancelled << endl;
 
     return 0;
 }
