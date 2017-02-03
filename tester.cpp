@@ -10,6 +10,7 @@
 #include "TaskType.h"
 
 #include <list>
+#include <boost/thread.hpp>
 
 using namespace std;
 

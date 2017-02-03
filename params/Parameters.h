@@ -32,7 +32,7 @@ using Matrix3D = vector<Matrix2D<T> >;
 namespace params
 {
 //  Declare parameters
-	
+
 	string OUTPUT_PATH;
 	int NUM_HOURS;
 	int NUM_REPS;
@@ -47,26 +47,26 @@ namespace params
 	int CURR_TRAIN = 0;
 
 //	Debugging
-	
+
 	const bool TRAFFIC_ON = 1;
 	const bool FATIGUE_ON = 1;
 	const bool DEBUG_ON = 0;
 	const bool OUTPUT_ON = 1;
 	const bool RAND_RUN_ON = 1;
 	const bool VERBOSE = 1;
-	
+
 //	Operator parameters
-	
+
 	int NUM_OPS;
 	vector<string> OP_NAMES;
 	Matrix2D<int> OP_TASKS;
 	Matrix2D<int> OP_NUMS;
-	
+
 	Matrix2D<int> DP_TASKS;
 	Matrix2D<int> DP_NUMS;
-	
+
 //  Task parameters
-	
+
 	vector<string> TASK_NAMES;
 	Matrix2D<int> PRTY;
 	vector<char> ARR_DISTS;
@@ -77,13 +77,13 @@ namespace params
 	Matrix2D<float> EXP_DIST_PARAMS_LOW;
 	Matrix2D<float> EXP_DIST_PARAMS_HIGH;
 	Matrix2D<int> AFF_BY_TRAFF;
-	
+
 //  Initialize global parameters
-	
+
 	void INIT_GLOBALS(LoadParameters& pms)
 	{
 	//	General
-		
+
 		OUTPUT_PATH = pms.outputPath;
 		NUM_HOURS = pms.numHours;
 		NUM_REPS = pms.numReps;
@@ -93,19 +93,19 @@ namespace params
 		NUM_TASK_TYPES = pms.numTaskTypes;
 		TRAFFIC = pms.traffic;
 		OPS = pms.ops;
-		
+
 	//	Operators
-		
+
 		NUM_OPS = pms.numOps;
 		OP_NAMES = pms.opNames;
 		OP_TASKS = pms.opTasks;
 		OP_NUMS = pms.opNums;
-		
+
 		DP_TASKS = pms.dpTasks;
 		DP_NUMS = pms.dpNums;
-		
+
 	//	Tasks
-		
+
 		TASK_NAMES = pms.taskNames;
 		PRTY = pms.taskPrty;
 		ARR_DISTS = pms.arrDists;
@@ -116,7 +116,7 @@ namespace params
 		EXP_DIST_PARAMS_LOW = pms.expPmsLo;
 		EXP_DIST_PARAMS_HIGH = pms.expPmsHi;
 		AFF_BY_TRAFF = pms.affByTraff;
-		
+
 //		for (int i = 0; i < NUM_TASK_TYPES; i++)
 //			DP_TASKS.push_back(i);
 	}
