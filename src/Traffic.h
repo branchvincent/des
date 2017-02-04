@@ -20,7 +20,7 @@
 using namespace std;
 
 vector<char> valid_levels = {'l', 'm', 'h'};
-map<char,float> multiplier_map = {make_pair('l',2), make_pair('m',1), make_pair('h',0.5)};
+map<char,float> multiplier_map = {{'l',2}, {'m',1}, {'h',0.5}};
 
 /****************************************************************************
 *																			*

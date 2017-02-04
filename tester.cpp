@@ -11,6 +11,7 @@
 #include "src/Parameters.h"
 #include <queue>
 #include "src/Traffic.h"
+#include "src/Flags.h"
 
 using namespace std;
 
@@ -21,8 +22,19 @@ int main()
     // ptree pt;
     // read_xml("../params.xml", pt);
 
-    Parameters p("params.xml");
-    cout << p << endl;
+    // Parameters p("params.xml");
+    // cout << p << endl;
+
+    map<string,bool> m = {{"verbose", true}, {"traffic", false}};
+    // cout << m["verbose"] << endl;
+
+    // for (const auto &pair : m)
+    // {
+    //     cout << pair.first << " => " << pair.second << endl;
+    // }
+
+    Flags f;
+    cout << f.isOn("Verboses") << endl;
 
     // TaskType t(pt.get_child("task"));
     //

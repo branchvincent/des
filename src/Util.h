@@ -13,6 +13,8 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <map>
 #include <random>
 #include <sstream>
 #include <algorithm>
@@ -76,12 +78,12 @@ namespace util
     {
         return find(vec.begin(), vec.end(), data) != vec.end();
     }
-    //
-    // template <class T>
-    // vector<T> contains(map<T>& vec, const T& data)
-    // {
-    //     return ind(vec.begin(), vec.end(), data) != vec.end();
-    // }
+
+    template <class T, class P>
+    bool contains(map<T,P>& m, const T& key)
+    {
+        return m.find(key) != m.end();
+    }
 
     template <typename T>
     void checkIndex(const vector<T>& vec, int index)
