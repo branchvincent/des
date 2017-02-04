@@ -43,6 +43,7 @@ class Task
 		    begTime(0),
 		    queTime(arrTime),
 		    serLeft(serTime)
+			{}
 		Task(string type, float priority, float arrTime, float serTime, float expTime);
 
 	//	Inspectors
@@ -70,6 +71,8 @@ class Task
 
 		void output(ostream& out) const;
 		bool higherPriority(const Task& task) const;
+		bool arrivesSooner(const Task& task) const
+			{return this->getArrTime() < task.getArrTime();}
 
 //	Data members
 

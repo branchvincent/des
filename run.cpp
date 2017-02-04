@@ -14,9 +14,8 @@
 
 #include <iostream>
 #include <string>
-#include "Simulation.h"
-// #include "params/LoadParameters.h"
-#include "libs/ArgParser.h"
+#include "src/Simulation.h"
+#include "src/libs/ArgParser.h"
 
 using namespace std;
 
@@ -42,8 +41,7 @@ int main(int argc, const char* argv[])
 
 //	Get run parameters
 
-//	LoadParameters pms(paramFile);
-//	INIT_GLOBALS(pms);
+//  Parameters pms(paramFile);
 
 //  Intialize and run simulation
 

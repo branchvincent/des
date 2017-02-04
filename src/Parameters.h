@@ -40,6 +40,8 @@ class Parameters
 
     //  Other member functions
 
+		void output
+
 //	Data members
 
 	public:
@@ -62,6 +64,18 @@ class Parameters
 		bool isRandOn;
 };
 
+//	Operators
+
+ostream& operator<<(ostream& out, const Parameters& p) {p.output(out); return out;}
+
+/****************************************************************************
+*																			*
+*	Function:	Parameters													*
+*																			*
+*	Purpose:	To construct a parameters object							*
+*																			*
+****************************************************************************/
+
 Parameters::Parameters(string file) :
 	numReps(100),
 	numPhases(3),
@@ -78,6 +92,24 @@ Parameters::Parameters(string file) :
 	numReps = params.get<int>("parameters.replications");
 
 	cout << outputPath;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	output														*
+*																			*
+*	Purpose:	To output a parameters object 								*
+*																			*
+****************************************************************************/
+
+void Parameters::output(ostream& out) const
+{
+	out << "Output path = " << outputPath << endl;
+	out << "Shift = " << shift << endl;
+	out << "Number of replications = " << numReps << endl;
+	out << "Traffic levels = ";
+
+	return;
 }
 
 #endif

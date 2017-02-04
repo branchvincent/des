@@ -15,6 +15,7 @@
 #include <string>
 #include <random>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -69,20 +70,19 @@ namespace util
         transform(s.begin(), s.end(), s.begin(), ::tolower);
         return s;
     }
+
+    template <class T>
+    vector<T> contains(vector<T>& vec, const T& data)
+    {
+        return ind(vec.begin(), vec.end(), data) != vec.end();
+    }
+    // 
+    // template <class T>
+    // vector<T> contains(map<T>& vec, const T& data)
+    // {
+    //     return ind(vec.begin(), vec.end(), data) != vec.end();
+    // }
 }
-
-// void Assert(bool condition, string message)
-// {
-// 	if (!condition)
-// 	{
-// 		cout << message << endl;
-// 		assert(condition);
-// 	// 	cerr << "Assertion `" #condition "` failed in " << __FILE__ << " line " << __LINE__ << ": " << message << endl;
-// 	// 	terminate();
-// 	}
-// }
-
-
 
 template <class T>
 ostream& operator <<(ostream& out, vector<T>& v)

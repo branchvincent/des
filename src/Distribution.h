@@ -81,8 +81,7 @@ void Distribution::construct()
 //	Check distribution type
 
 	type = util::toLower(type);
-	bool validDistribution = (find(valid_distributions.begin(), valid_distributions.end(), type) != valid_distributions.end());
-	ASSERT(validDistribution, "'" << type << "' is not a valid distribution");
+	ASSERT(util::contains(valid_distributions, type), "'" << type << "' is not a valid distribution");
 
 //	Set distribution
 

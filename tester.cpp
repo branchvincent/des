@@ -36,18 +36,18 @@ int main()
     // for (int i = 0; i < 4; i++)
     //     cout << t.genTask(0) << endl;
 
-    Task t1("t1", 8, 0, 4, 100);
-    Task t2("t2", 10, 0, 4, 100);
-
-    if (t1 < t2)
-        cout << t1 << " is of lesser priority than " << t2 << endl;
-    else
-        cout << t1 << " is of higher priority than " << t2 << endl;
-
-    Queue q;
-    q.push(t1);
-    q.push(t2);
-    cout << q.top() << endl;
+    // Task t1("t1", 8, 0, 4, 100);
+    // Task t2("t2", 10, 0, 4, 100);
+    //
+    // if (t1 < t2)
+    //     cout << t1 << " is of lesser priority than " << t2 << endl;
+    // else
+    //     cout << t1 << " is of higher priority than " << t2 << endl;
+    //
+    // Queue q;
+    // q.push(t1);
+    // q.push(t2);
+    // cout << q.top() << endl;
 
     // for (auto& a : pt)
     // {

@@ -44,6 +44,10 @@ class Shift
             {ASSERT(duration > 0, "Shift duration cannot be negative");
             return duration/3600.;}
 
+	//	Other member functions
+
+		void output(ostream& out) const;
+
 //  Private member members
 
     private:
@@ -56,6 +60,10 @@ class Shift
         tm stop;
         time_t duration;
 };
+
+//	Operators
+
+ostream& operator<<(ostream& out, const Shift& s) {s.output(out); return out;}
 
 /****************************************************************************
 *																			*
@@ -95,6 +103,20 @@ void Shift::readTimeString(string time, tm& date)
     istringstream stream("2017-01-01 " + time);
     stream >> get_time(&date, "%Y-%m-%d %H:%M");
     ASSERT(!stream.fail(), "Failed to read time " << time);
+    return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	output														*
+*																			*
+*	Purpose:	To output a shift					                        *
+*																			*
+****************************************************************************/
+
+void Shift::output(ostream& out) const;
+{
+    out << "Shift: " << getStart() << " to " << getStop();
     return;
 }
 

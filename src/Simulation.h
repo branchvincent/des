@@ -20,9 +20,9 @@
 #include <list>
 #include <time.h>
 #include <algorithm>
-#include "Train.h"
+// #include "Train.h"
 #include "Task.h"
-#include "params/Parameters.h"
+// #include "params/Parameters.h"
 #include <stdio.h>
 
 using namespace std;
@@ -30,12 +30,7 @@ using namespace params;
 
 // Helper functions and definitions
 
-bool cmpTaskArrs(Task* t1, Task* t2)
-	{return t1->getArrTime() < t2->getArrTime();}
-
-const int NUM_TRAINS = 50;
-const int NUM_BATCH[] = {25,25};
-const int ARRIVALS[] = {0,480};
+bool cmpTaskArrs(Task t1, Task t2) {return t1.arrivesSooner(t2);}
 
 /****************************************************************************
 *																			*
@@ -53,23 +48,23 @@ class Simulation
 //	Public member functions
 
 	public:
-		
+
 	//	Constructors
-	
+
         Simulation(string paramFile);
 //		~Simulation() {del Task*;}
 
 	//	Other member functions
-    
+
         void run();
 		void output(ostream& out) const {for (int i = 0; i < trains.size(); i++) out << trains[i] << endl;}
 
 //  Private member functions
-    
+
     private:
-    
+
     //  Used by run
-    
+
         void runRep();
         void runPhase(int phase);
         void genTasks(int type, int phase, int trainNum);
@@ -79,16 +74,16 @@ class Simulation
         void procDep(Task* task, bool stop, Train& train) {train.procDep(task, stop);}
         void outputTaskList();
 		int getNextDepature(float& time);
-		
+
 
 //	Data members
 
 	private:
 //      Params pms;				// run parameters
 //		Operator dispatch;		// dispactcher
-        vector<Train> trains;	// trains
+        vector<Team> teams;	// trains
 		vector<int> endTimes;   // phase end times
-		list<Task*> taskList;	// task list
+		list<Task> taskList;	// task list
 		float currTime;
 };
 
@@ -106,51 +101,26 @@ ostream& operator<<(ostream& out, const Simulation& sim) {sim.output(out); retur
 
 Simulation::Simulation(string paramFile) :
 //	dispatch("Dispatch", DP_TASKS, Statistics(), 0),
-    trains(NUM_TRAINS),
     endTimes{30, END_TIME - 30, END_TIME},
     taskList(),
 	currTime(0)
 {
 //	Get run parameters
-	
-//	LoadParameters pms(paramFile);
-//	INIT_GLOBALS(pms);
-	
-//	Set trains
-	
-//	trains[0] = Train("Dispatch");
-//	for (int i = 0; i < trains.size(); i++)
-//		cout << trains[i] << endl;
-	
-//	trains.push_back(Train("Dispatch", 0));
-//	for (int i = 1; i < NUM_TRAINS; i++)
-//		trains.push_back(Train(i));
-	
+
 //	Check duration of simulation
 
-	if (END_TIME < 90 || END_TIME % 10 != 0)
-    {
-		cerr << "Error: Invalid simulation time. Exiting..." << endl;
-		exit(1);
-	}
-	
-//	Check traffic array
-	
-	if (TRAFFIC.size() != NUM_HOURS)
-	{
-		cerr << "Error: Invalid traffic array. Exiting..." << endl;
-		exit(1);
-	}
+	ASSERT(END_TIME < 90 || END_TIME % 10 != 0, "Invalid simulation time");
+	ASSERT(TRAFFIC.size() != NUM_HOURS, "Invalid traffic array");
 
 //  Initialize srand
-    
+
     if (RAND_RUN_ON)
         srand((unsigned int) time(0));
     else
         srand(0);
-    
+
 //  Output run parameters
-    
+
     cout << "Simulation Parameters" << endl;
     cout << "Output path = " << OUTPUT_PATH << endl;
     cout << "Number of hours = " << NUM_HOURS << endl;
@@ -159,9 +129,9 @@ Simulation::Simulation(string paramFile) :
     for (int i = 0; i < TRAFFIC.size(); i++)
         cout << TRAFFIC[i] << ", ";
     cout << endl;
-	
+
 //	Output each operator
-	
+
     for (int i = 0; i < OP_TASKS.size(); i++)
 	{
 		cout << OP_NAMES[i] << " = ";
@@ -171,7 +141,7 @@ Simulation::Simulation(string paramFile) :
 	}
 
 //	Output tasks for each operator
-	
+
 //	for (int i = 0; i < OP_NUMS.size(); i++)
 //	{
 //		for (int j = 0; j < OP_NUMS[i].size(); j++)
@@ -201,7 +171,7 @@ void Simulation::run()
 //		cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
 //		exit(1);
 //	}
-	
+
 	for (int i = 0; i < NUM_REPS; i++)
 	{
 		if (DEBUG_ON) cout << "Rep " << i << endl;
@@ -211,9 +181,9 @@ void Simulation::run()
 //		fout << (float)(i + 1)/NUM_REPS << endl;
 //		fout.flush();
 	}
-	
+
 //  Output data, if applicable
-    
+
     if (OUTPUT_ON)
     {
 		for (int i = 0; i < trains.size(); i++)
@@ -222,7 +192,7 @@ void Simulation::run()
 //			trains[i].plot();
 		}
     }
-    
+
     return;
 }
 
@@ -238,19 +208,19 @@ void Simulation::runRep()
 {
 	if (DEBUG_ON) cout << "Beginning simulation..." << endl;
 
-//	Run all phases 
-	
+//	Run all phases
+
 	currTime = 0;
 	for (int i = 0; i < NUM_PHASES; i++)
 		runPhase(i);
-		
+
 //	End replication
 
 	for (int i = 0; i < trains.size(); i++)
 		trains[i].endRep();
-    
+
     if (DEBUG_ON) cout << "Simulation completed." << endl;
-    
+
 	return;
 }
 
@@ -267,7 +237,7 @@ void Simulation::runPhase(int phase)
     if (DEBUG_ON) cout << "Beginning Phase " << phase << "." << endl;
 
 //	Generate all task types
-	
+
 	for (int i = 0; i < NUM_TASK_TYPES; i++)
 	{
 		if (find(DP_TASKS[0].begin(), DP_TASKS[0].end(), i) != DP_TASKS[0].end())
@@ -278,18 +248,18 @@ void Simulation::runPhase(int phase)
 				genTasks(i, phase, j);
 		}
 	}
-    
+
 //	Process all events
-	
+
     if (DEBUG_ON) outputTaskList();
-	
+
     procAllArrs();
     procAllDepts();
-    
+
 //  Clear task list
-	
+
     taskList.clear();
-    
+
 	if (DEBUG_ON) cout << "Phase " << phase << " completed." << endl << endl;
 
 	return;
@@ -313,43 +283,43 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 	{
 		return;
 	}
-	
+
 //  Calculate current time
-	
+
 	if (find(DP_TASKS[0].begin(), DP_TASKS[0].end(), type) != DP_TASKS[0].end())
 		if (trainNum != 0)
 			cout << "ERROR: Dispatcher task sent to train" << endl;
-	
+
 //	cout << "Generating task " << type << " for train " << trainNum << endl;
-	
+
 	if (phase == 0)
 		currTime = 0;
 	else
 		currTime = max(currTime, (float)endTimes[phase - 1]);
-	
+
 //	Create temporary list and first task
-    
+
     list<Task*> tmpList;
     Task* task = new Task(type, currTime, phase, trainNum);
     float arrTime = task->getArrTime();
     float serTime = task->getSerTime();
-    
+
 //	Add tasks to list while time is left
-    
+
     while (arrTime < endTimes[phase])
     {
     //	Add current task
-        
+
         tmpList.push_back(task);
-		
+
 	//	Add additional task, if necessary
-		
+
 		if (TASK_NAMES[type].find("Trigger") != string::npos)
 		{
 			if (trainNum == 0)
 			{
 			//	Relay
-				
+
 				int t = 0;
 				for (int i = 0; i < NUM_TASK_TYPES; i++)
 				{
@@ -362,16 +332,16 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 				task = new Task(t, currTime, phase, trainNum, arrTime);
 				tmpList.push_back(task);
 //				cout << "Adding " << *task << endl;
-				
+
 				int tmp_train = rand() % (NUM_TRAINS);
 				if (tmp_train == 0) tmp_train++;
 				task = new Task(t, currTime, phase, tmp_train, arrTime);
 				tmpList.push_back(task);
 //				cout << "Adding " << *task << endl;
 //				cout << "Adding relay: " << t << endl;
-				
+
 			//	Dependent
-				
+
 				string name = TASK_NAMES[type];
 				name.replace(name.end()-7,name.end(),"Dependent");
 //					cout << "Searching for " << name << endl;
@@ -391,7 +361,7 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 			else
 			{
 			//	Relay
-				
+
 				int t = 0;
 				for (int i = 0; i < NUM_TASK_TYPES; i++)
 				{
@@ -403,13 +373,13 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 				}
 				task = new Task(t, currTime, phase, trainNum, arrTime);
 				tmpList.push_back(task);
-				
+
 				int dispatch = 0;
 				task = new Task(t, currTime, phase, dispatch, arrTime);
 				tmpList.push_back(task);
-				
+
 			//	Dependent
-				
+
 				string name = TASK_NAMES[type];
 				name.replace(name.end()-7,name.end(),"Dependent");
 //					cout << "Searching for " << name << endl;
@@ -427,7 +397,7 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 			}
 		}
 			//	create new task
-		
+
 ////			int tmp_type = rand() % NUM_TASK_TYPES;
 //			int tmp_type = 1;
 //			int tmp_train = rand() % (NUM_TRAINS);
@@ -437,24 +407,24 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 //			task->setArrTime(arrTime);
 //			tmpList.push_back(task);
 //		}
-		
+
     //	Get next task
-        
+
         task = new Task(type, arrTime, phase, trainNum);
         arrTime = task->getArrTime();
         serTime = task->getSerTime();
     }
-    
+
 //	Merge temporary list with task list
-	
+
 //	for (list<Task*>::iterator it = tmpList.begin(); it != tmpList.end(); it++)
 //		cout << "Task:  " << **it << endl;
-	
+
 	tmpList.sort(cmpTaskArrs);
     taskList.merge(tmpList, cmpTaskArrs);
-	
+
 //	outputTaskList();
-	
+
     return;
 }
 
@@ -469,29 +439,29 @@ void Simulation::genTasks(int type, int phase, int trainNum)
 void Simulation::procAllArrs()
 {
 //  Initialize variables
-    
+
     list<Task*>::iterator it = taskList.begin();
     Task *arrTask, *depTask;
     float arrTime, depTime;
 	Train arrTrain, depTrain;
 
 	int arrNum, depNum;
-	
+
 //  Process events in the list
-    
+
     while(it != taskList.end())
     {
     //	Get next arrival and depature
-        
+
         arrTask = *it;
         arrTime = arrTask->getArrTime();
 		arrNum = arrTask->getTrainNum();
 //		arrTrain = trains[arrTask->getTrainNum()];
         depNum = getNextDepature(depTime);
 		depTask = trains[depNum].getNextDepature();
-		
+
     //	Process next event
-        
+
         if (arrTime <= depTime)
         {
 //			cout << "Task " << arrTask->getType() << " going to " << arrNum << endl;
@@ -504,45 +474,45 @@ void Simulation::procAllArrs()
 			delete depTask;
 		}
 	}
-	
+
     return;
 }
 
 int Simulation::getNextDepature(float& time) {
-	
+
 	vector<Task*> depTasks;
 	vector<float> depTimes;
-	
+
 	for (int i = 0; i < trains.size(); i++)
 	{
 		depTasks.push_back(trains[i].getNextDepature());
 		depTimes.push_back(trains[i].getNextDeptTime());
 	}
-	
+
 //	Initialize variables
-	
+
 	float currDepTime;
 	float minTime = depTimes[0];
 	int minIndex = 0;
-	
+
 	for (int i = 0; i < NUM_TRAINS; i++)
 	{
 		//  Get depature time
-		
+
 		currDepTime = depTimes[i];
-		
+
 		//  Check for new minimum
-		
+
 		if (currDepTime < minTime)
 		{
 			minTime = currDepTime;
 			minIndex = i;
 		}
 	}
-	
+
 //	train = trains[minIndex];
 	time = minTime;
-	
+
 	return minIndex; //depTasks[minIndex];
 }
 
@@ -558,22 +528,22 @@ int Simulation::getNextDepature(float& time) {
 void Simulation::procAllDepts()
 {
 //  Get next depature
-	
+
 	float depTime;
 	Train depTrain;
 	int depNum = getNextDepature(depTime);
 	Task* depTask =trains[depNum].getNextDepature();
-    
+
 //  Process depatures while tasks left and time left
-    
+
     while (depTrain.isBusy() && depTime <= endTimes[2])
     {
     //  Process depature
-		
+
 		currTime = depTime;
         procDep(depTask, false, depTrain);
 		delete depTask;
-		
+
 //		int time = depTime/INT_SIZE;
 //		cout << "Util(" << time << ") = " << trains.getUtil(0, time) << endl;
 
@@ -582,37 +552,37 @@ void Simulation::procAllDepts()
 		depNum = getNextDepature(depTime);
 		depTask = trains[depNum].getNextDepature();
     }
-    
+
 //    if (!trains.isBusy())
 //        cout << "Operators are idle. Finishing Phase..." << endl;
 //    else
 //        cout << "Depature Time exceeded end time." << endl;
-	
+
 //  Depart any current tasks
-	
+
 	if (depTrain.isBusy())
 	{
 		while (depTrain.isBusy())
 		{
 		//	Process Depature
-			
+
 			currTime = endTimes[2];
 			depTask->setDepTime(currTime);
 			procDep(depTask, true, depTrain);
 			delete depTask;
 
 		//  Get next depature
-			
+
 			depNum = getNextDepature(depTime);
 			depTask = trains[depNum].getNextDepature();
-			
+
 //			int time = currTime/INT_SIZE;
 //			cout << "Util(" << time << ") = " << trains.getUtil(0, time) << endl;
 		}
 		for (int i = 0; i < trains.size(); i++)
 			trains[i].clear();
 	}
-		
+
     return;
 }
 
@@ -627,12 +597,12 @@ void Simulation::procAllDepts()
 void Simulation::outputTaskList()
 {
     cout << "Task List" << endl;
-    
+
     int i = 0;
     for (list<Task*>::iterator it = taskList.begin(); it != taskList.end(); it++)
         cout << "Task " << i++ << ":  " << **it << endl;
     cout << endl;
-    
+
     return;
 }
 
