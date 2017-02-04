@@ -4,7 +4,7 @@
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
-*	Purpose:	This file defines the Util class.							*
+*	Purpose:	This file defines the Util(ity) namespace.					*
 *																			*
 ****************************************************************************/
 
@@ -72,16 +72,22 @@ namespace util
     }
 
     template <class T>
-    vector<T> contains(vector<T>& vec, const T& data)
+    bool contains(vector<T>& vec, const T& data)
     {
-        return ind(vec.begin(), vec.end(), data) != vec.end();
+        return find(vec.begin(), vec.end(), data) != vec.end();
     }
-    // 
+    //
     // template <class T>
     // vector<T> contains(map<T>& vec, const T& data)
     // {
     //     return ind(vec.begin(), vec.end(), data) != vec.end();
     // }
+
+    template <typename T>
+    void checkIndex(const vector<T>& vec, int index)
+    {
+        ASSERT(index >= 0 && index < vec.size(), "Invalid array index");
+    }
 }
 
 template <class T>

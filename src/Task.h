@@ -34,16 +34,16 @@ class Task
 
 	//	Constructor
 
-		Task()  :   type(type),
-		    priority(priority),
-		    arrTime(arrTime),
-		    serTime(serTime),
-			depTime(INFINITY),
-			expTime(expTime),
-		    begTime(0),
-		    queTime(arrTime),
-		    serLeft(serTime)
-			{}
+		// Task()  :   type(type),
+		//     priority(priority),
+		//     arrTime(arrTime),
+		//     serTime(serTime),
+		// 	depTime(INFINITY),
+		// 	expTime(expTime),
+		//     begTime(0),
+		//     queTime(arrTime),
+		//     serLeft(serTime)
+		// 	{}
 		Task(string type, float priority, float arrTime, float serTime, float expTime);
 
 	//	Inspectors

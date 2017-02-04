@@ -16,6 +16,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include "Shift.h"
+#include "Traffic.h"
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -40,7 +41,7 @@ class Parameters
 
     //  Other member functions
 
-		void output
+		void output(ostream& out) const;
 
 //	Data members
 
@@ -52,7 +53,7 @@ class Parameters
 		int numPhases;
 		int intSize;
 		Shift shift;
-		vector<float> trafficLevels;
+		Traffic traffic;
 		// vector<Team> teams;
 		// vector<Batches> batches;
 
@@ -85,13 +86,16 @@ Parameters::Parameters(string file) :
 	isVerboseOn(false),
 	isRandOn(true)
 {
+//	Read parameter file
+
 	ptree params;
 	read_xml(file, params);
 
+//	Set parameters
+
 	outputPath = params.get<string>("parameters.output_path");
 	numReps = params.get<int>("parameters.replications");
-
-	cout << outputPath;
+	traffic = util::stringToVector<char>(params.get<string>("parameters.traffic"));
 }
 
 /****************************************************************************
@@ -106,9 +110,8 @@ void Parameters::output(ostream& out) const
 {
 	out << "Output path = " << outputPath << endl;
 	out << "Shift = " << shift << endl;
-	out << "Number of replications = " << numReps << endl;
-	out << "Traffic levels = ";
-
+	out << "Replications = " << numReps << endl;
+	out << "Traffic = " << traffic;
 	return;
 }
 

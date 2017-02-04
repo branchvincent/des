@@ -33,7 +33,7 @@ class Shift
 
     //  Constructor
 
-		Shift(string start = "09:00", string stop = "17:00");
+		Shift(string start = "19:00", string stop = "17:00");
 
 	//	Inspectors
 
@@ -82,7 +82,7 @@ Shift::Shift(string start, string stop)
 
 //  Calculate duration
 
-    duration = difftime(mktime(&(this->stop)), mktime(&(this->start)));
+	duration = difftime(timegm(&(this->stop)), timegm(&(this->start)));
     if (duration < 0)
     {
         (this->stop).tm_mday += 1;
@@ -114,9 +114,9 @@ void Shift::readTimeString(string time, tm& date)
 *																			*
 ****************************************************************************/
 
-void Shift::output(ostream& out) const;
+void Shift::output(ostream& out) const
 {
-    out << "Shift: " << getStart() << " to " << getStop();
+    out << put_time(&start, "%H:%M") << " to " << put_time(&stop, "%H:%M");
     return;
 }
 
