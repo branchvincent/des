@@ -13,8 +13,12 @@
 
 #include <iostream>
 #include <string>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include "Shift.h"
 
 using namespace std;
+using boost::property_tree::ptree;
 
 /****************************************************************************
 *																			*
@@ -42,20 +46,38 @@ class Parameters
     //	General settings
 
         string outputPath;
-        float numHours;
-        vector<float> traffic;
-        float numReps;
-        vector<int> ops;
+		int numReps;
+		int numPhases;
+		int intSize;
+		Shift shift;
+		vector<float> trafficLevels;
+		// vector<Team> teams;
+		// vector<Batches> batches;
 
-	//	Operator settings
+	//	Flags
 
-		int numOps;
-		vector<string> opNames;
-		Matrix2D<int> opTasks;
-		Matrix2D<int> opNums;
-
-		Matrix2D<int> dpTasks;
-		Matrix2D<int> dpNums;
+		bool isTrafficOn;
+		bool isFatigueOn;
+		bool isVerboseOn;
+		bool isRandOn;
 };
+
+Parameters::Parameters(string file) :
+	numReps(100),
+	numPhases(3),
+	intSize(10),
+	isTrafficOn(true),
+	isFatigueOn(true),
+	isVerboseOn(false),
+	isRandOn(true)
+{
+	ptree params;
+	read_xml(file, params);
+
+	outputPath = params.get<string>("parameters.output_path");
+	numReps = params.get<int>("parameters.replications");
+
+	cout << outputPath;
+}
 
 #endif

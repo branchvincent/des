@@ -1,9 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<parameters>
+    <output_path>/Users/Branch/Documents/Research/fra/show/out</output_path>
+    <start>8:00</start>
+    <stop>17:00</stop>
+    <traffic>m,m,m,m,m,m,m,m,m</traffic>
+    <replications>100</replications>
+</parameters>
+
 <interarrival type="exponential">
-    <phase1>0</phase1>
-    <phase2>0</phase2>
-    <phase3>0</phase3>
+    <phase1 num="1">0</phase1>
+    <phase2 num="2">0</phase2>
+    <phase3 num="3">0</phase3>
 </interarrival>
+
+<task>
+    <name>My Task</name>
+    <priority>4, 3, 4</priority>
+    <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
+    <interarrival type="exponential" byPhase="true">
+        <phase0>0</phase0>
+        <phase1>0</phase1>
+        <phase2>0</phase2>
+    </interarrival>
+    <service type="lognormal" byPhase="true">
+        <phase0>0, 1.22</phase0>
+        <phase1>0</phase1>
+        <phase2>0</phase2>
+    </service>
+    <expiration type="uniform" byPhase="true">
+        <phase0>0</phase0>
+        <phase1>0</phase1>
+        <phase2>0</phase2>
+    </expiration>
+    <description>My description.</description>
+</task>
 
 <!-- <sked>
     <version>2</version>

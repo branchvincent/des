@@ -1,6 +1,6 @@
 /****************************************************************************
 *																			*
-*	File:		runSim.cpp													*
+*	File:		run.cpp													    *
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
@@ -15,7 +15,7 @@
 #include <iostream>
 #include <string>
 #include "Simulation.h"
-#include "params/LoadParameters.h"
+// #include "params/LoadParameters.h"
 #include "libs/ArgParser.h"
 
 using namespace std;

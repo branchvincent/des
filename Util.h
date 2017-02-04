@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string>
 #include <random>
+#include <sstream>
 
 using namespace std;
 
@@ -42,6 +43,32 @@ namespace util
 	string x = "hi";
 
 	vector<float> TRAFFIC = {1,1,1};
+
+    template <class T>
+    vector<T> stringToVector(string data, char delimiter = ',')
+    {
+    //  Replace delimiter with white space
+
+        for (int i = 0; i < data.size(); i++)
+            if (data[i] == delimiter)
+                data[i] = ' ';
+
+    //  Fill vector
+
+        T temp;
+        vector<T> vec;
+        istringstream in(data);
+        while (in >> temp)
+            vec.push_back(temp);
+
+        return vec;
+    }
+
+    string toLower(string s)
+    {
+        transform(s.begin(), s.end(), s.begin(), ::tolower);
+        return s;
+    }
 }
 
 // void Assert(bool condition, string message)
@@ -55,13 +82,37 @@ namespace util
 // 	}
 // }
 
+
+
 template <class T>
 ostream& operator <<(ostream& out, vector<T>& v)
 {
     out << "[";
-	for (auto const& vi : v)
-        out << " " << vi;
-    out << " ]";
+
+    if (v.size() > 0)
+        out << v[0];
+
+    for (int i = 1; i < v.size(); i++)
+        out << ", " << v[i];
+
+    out << "]";
+
+    return out;
+}
+
+template <class T>
+ostream& operator <<(ostream& out, const vector<T>& v)
+{
+    out << "[";
+
+    if (v.size() > 0)
+        out << v[0];
+
+    for (int i = 1; i < v.size(); i++)
+        out << ", " << v[i];
+
+    out << "]";
+
     return out;
 }
 

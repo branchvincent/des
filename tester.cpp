@@ -1,66 +1,76 @@
 #include <iostream>
 #include <string>
-#include <random>
+// #include <boost/property_tree/ptree.hpp>
+// #include <boost/property_tree/xml_parser.hpp>
 #include <vector>
-#include <memory>
 #include "Util.h"
-#include "distribution/UniformDistribution.h"
-// #include "distribution/Exponential.h"
-#include "distribution/ExponentialDistribution.h"
 #include "TaskType.h"
-
-#include <list>
-#include <boost/thread.hpp>
+#include "Distribution.h"
+#include <random>
+#include <typeinfo>
+#include "Parameters.h"
+#include <queue>
 
 using namespace std;
 
+// struct Flight
+// {
+//     std::string  carrier;
+//     unsigned     number;
+//     // Date         date;
+//     bool         cancelled;
+// };
+// typedef std::vector<Flight> Sked;
+
+typedef priority_queue<Task,vector<Task>> Queue;
+
 int main()
 {
-    // unique_ptr<A> a(new B());
-    // a->print();
+    // ptree pt;
+    // read_xml("params.xml", pt);
+
+    // Parameters p("params.xml");
+
+    // TaskType t(pt.get_child("task"));
     //
-    // vector<unique_ptr<Distribution>> l;
-    // l.push_back(unique_ptr<ExponentialDistribution>(new ExponentialDistribution(1)));
-    // l.push_back(unique_ptr<UniformDistribution>(new UniformDistribution(0,1)));
-    // cout << l[1]->getParameters()[1] << endl;
+    // for (int i = 0; i < 4; i++)
+    //     cout << t.genTask(0) << endl;
 
-    //
-    // cout << l[0]->getMax() << endl;
+    Task t1("t1", 8, 0, 4, 100);
+    Task t2("t2", 10, 0, 4, 100);
 
-    string name = "MyTask";
-    vector<int> priority = {1,2,3};
-    vector<bool> isAffectedByTraffic = {true, false, true};
-    vector<Distribution*> interarrival = {new ExponentialDistribution(1)};
-    vector<Distribution*> service = {new ExponentialDistribution(1)};
-    vector<Distribution*> expiration = {new ExponentialDistribution(1)};
-    cout << expiration << endl;
+    if (t1 < t2)
+        cout << t1 << " is of lesser priority than " << t2 << endl;
+    else
+        cout << t1 << " is of higher priority than " << t2 << endl;
 
-    TaskType t(name, priority, isAffectedByTraffic, interarrival, service, expiration);
-    cout << t.genTask(0).getArrTime();
-    cout << t.lastArrivalTime;
+    Queue q;
+    q.push(t1);
+    q.push(t2);
+    cout << q.top() << endl;
 
+    // for (auto& a : pt)
+    // {
+    //     cout << '[' << a.first << "]\n";
+    //     for (auto& b : a.second)
+    //     {
+    //         cout << b.first << "=" << b.second.data() << "\n";
+    //     }
+    // }
 
-    // delete interarrival;
-    // cout << interarrival[0]->getParameters()[0] << endl;
-    // cout << t.getInterarrival()->rand() << endl;
+    // Sked ans;
+    // for (ptree::value_type v : pt.get_child("sked"))
+    // {
+    //     if(v.first == "flight")
+    //     {
+    //         Flight f;
+    //         f.carrier = v.second.get<string>("carrier");
+    //         f.number = v.second.get<unsigned>("number");
+    //         // f.date = v.second.get<Date>("date");
+    //         f.cancelled = v.second.get("<xmlattr>.cancelled", false);
+    //         ans.push_back(f);
+    //     }
+    // }
 
-
-    // srand((unsigned int) time(0));
-
-    // Distribution* d = new UniformDistribution(0,1);
-    // unique_ptr<Distribution> dd(new UniformDistribution(0,1));
-    //
-    // vector<Distribution*> v;
-    // v.push_back(new ExponentialDistribution(0));
-    // v.push_back(new UniformDistribution(0,1));
-    //
-    // // UniformDistribution* u = v[1];
-    // unique_ptr<UniformDistribution> t(*dd);
-    // cout << dd->getMax() << endl;
-    // cout << ((unique_ptr<UniformDistribution>)dd)->getMax() << endl;
-
-    // UniformDistribution d(1,2);
-    // cout << d.getMax() << endl;
-
-	return 0;
+    return 0;
 }

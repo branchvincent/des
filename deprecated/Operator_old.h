@@ -26,7 +26,7 @@ using namespace params;
 
 //	Functions and definitions
 
-bool cmpPrty(Task* t1, Task* t2) 
+bool cmpPrty(Task* t1, Task* t2)
 {
 	if (t1->getPriority() == t2->getPriority())
 		return t1->getExpTime() > t2->getExpTime();
@@ -47,9 +47,9 @@ class Operator
 //	Public member functions
 
 	public:
-		
+
 	//	Constructor
-	
+
 //        Operator(string nm, NewParams& pms, Statistics& sts) :
 //        Operator() :
 //            name(""),
@@ -65,7 +65,7 @@ class Operator
             sharedStats(sts),
             stats(),
 			trainNum(tNum) {}
-		
+
 	//	Inspectors
 
         string getName() const {return name;}
@@ -80,16 +80,16 @@ class Operator
         bool needToIntrp(Queue& queue);
 		vector<int> getTaskNums() {return taskNums;}
 		float getUtil(int i) {return stats.getUtil(i);}
-	
+
 	//	Mutators
-    
+
 		void procArr(Task* task);
 		void procIntrp(float currTime);
 		void procDep(Task* task, bool stop);
         void servNextTask(float currTime);
         void clear();
         void endRep() {stats.endRep(); clear();}
-				
+
 	//	Other member functions
 
         void output();
@@ -99,10 +99,10 @@ class Operator
 //			return op;
 //		}
 
-	//	void plot() {stats.plot(name);}	
+	//	void plot() {stats.plot(name);}
 
 //  Private member functions
-    
+
     private:
         float getFatigueFactor(float time) {return 1 + (time/60 * 0.01);}
         bool currTaskExp();
@@ -135,7 +135,7 @@ ostream& operator<<(ostream& out, const Operator& op) {op.output(out); return ou
 *																			*
 ****************************************************************************/
 
-float Operator::getDepTime() 
+float Operator::getDepTime()
 {
 	if (isBusy())
 		return currTask->getDepTime();
@@ -171,31 +171,31 @@ bool Operator::needToIntrp(Queue& queue)
 void Operator::procArr(Task* task)
 {
 //	Enqueue task
-    
+
     taskQueue.push(task);
-    
+
     if (DEBUG_ON) cout << name << ": Adding " << *task << " of " << taskQueue.size() << endl;
 //    if (taskQueue.size() > 50) cout << "\t\t\tQueue size = " << taskQueue.size() << endl;
-    
+
 //  Get task attributes
-    
+
     float currTime = task->getArrTime();
     int type = task->getType();
     int timeInt = currTime/INT_SIZE;
     task->setQueTime(currTime);
-    
+
 //  Update stats
-    
+
     stats.incNumTasksIn(type, timeInt, 1);
-    
+
 //	Service next task, if idle
-    
+
     if (isIdle())
         servNextTask(currTime);
-    
+
 //  Interrupt current task, if applicable
-    
-    else if (needToIntrp(taskQueue)) 
+
+    else if (needToIntrp(taskQueue))
         procIntrp(currTime);
 
 	return;
@@ -212,17 +212,17 @@ void Operator::procArr(Task* task)
 void Operator::procIntrp(float currTime)
 {
 //  Check that the operator is busy
-    
+
     if (isIdle())
     {
         cerr << "Error: Cannot process task interruption. Exiting..." << endl;
         exit(1);
     }
-    
+
     if (DEBUG_ON) cout << "\t\t " << name << ": Task interrupted at " << currTime << endl; //" " << *currTask << endl;
-    
+
 //	Update stats
-    
+
     updateUtil(currTask, currTime);
     float depTime = currTask->getDepTime();
     currTask->setSerLeft(depTime - currTime);
@@ -230,11 +230,11 @@ void Operator::procIntrp(float currTime)
     currTask->setQueTime(currTime);
 
 //	Add current task to queue and service next task
-    
+
     taskQueue.push(currTask);
     currTask = NULL;
     servNextTask(currTime);
-    
+
     return;
 }
 
@@ -249,23 +249,23 @@ void Operator::procIntrp(float currTime)
 void Operator::procDep(Task* task, bool stop)
 {
 //	Get task attributes
-    
+
     float depTime = task->getDepTime();
     float begTime = task->getBegTime();
     int type = task->getType();
     int timeInt = begTime/INT_SIZE;
 
 //	Update stats
-    
+
     if (DEBUG_ON) cout << "\t " << name << ": Task departing at " << depTime << " and busy for " << depTime - begTime << endl;
     updateUtil(task, depTime);
     stats.incNumTasksOut(type, timeInt, 1);
 
 //  Start next task, if applicable
-    
+
 //    delete currTask;
     currTask = NULL;
-	
+
 	if (!stop)
 		servNextTask(depTime);
 
@@ -283,14 +283,14 @@ void Operator::procDep(Task* task, bool stop)
 void Operator::clear()
 {
 //  Clear current task
-    
+
     currTask = NULL;
-    
+
 //  Clear queue
-    
+
     while (!taskQueue.empty())
         taskQueue.pop();
-    
+
     return;
 }
 
@@ -305,28 +305,28 @@ void Operator::clear()
 //void Operator::output(ostream& out) const
 //{
 ////  Output operator's status and number of enqueued tasks
-//    
+//
 //    if (currTask != NULL)
 //        cout << "Operator is busy until " << currTask->getDepTime();
 //    else
 //        cout << "Operator is not busy";
-//    
+//
 //    cout << " and has " << taskQueue.size() << " tasks in queue." << endl;
-//    
+//
 ////  Output queue
-//    
+//
 //    cout << "Queue = {" << endl;
-//    
+//
 //    Queue tmpQ = taskQueue;
-//    
+//
 //    while (!tmpQ.empty())
 //    {
 //        cout << *tmpQ.top() << endl;
 //        tmpQ.pop();
 //    }
-//    
+//
 //    cout << "}" << endl;
-//    
+//
 //    return;
 //}
 
@@ -343,37 +343,37 @@ void Operator::clear()
 void Operator::servNextTask(float currTime)
 {
 //  Check that a task can be serviced
-    
+
 	if (!taskQueue.empty())
 	{
 	//	Get next task
-        
+
         if (DEBUG_ON) cout << "\t " << name << ": Task starting at " << currTime;
-		
+
         currTask = taskQueue.top();
         taskQueue.pop();
         currTask->setBegTime(currTime);
-        
+
         if (DEBUG_ON) cout << " " << *currTask << endl;
-        
+
 	//	Account for fatigue, if applicable
-		
+
 		float serTime = currTask->getSerLeft();
-        
+
 		if (FATIGUE_ON)
 		{
 			serTime *= getFatigueFactor(currTime);
             currTask->setSerLeft(serTime);
             serTime = currTask->getSerLeft();
 		}
-        
+
     //  Set depature time
-        
+
         float depTime = currTime + serTime;
         currTask->setDepTime(depTime);
-    
+
     //  Update stats
-        
+
         int timeInt = currTime/INT_SIZE;
         int type = currTask->getType();
         float waitTime = currTime - currTask->getQueTime();
@@ -381,11 +381,11 @@ void Operator::servNextTask(float currTime)
         sharedStats.incWaitTime(type, timeInt, waitTime);
 
     //	Check to see if task expired
-        
+
         if (currTaskExp())
             procExp(currTime);
     }
-		
+
 	return;
 }
 
@@ -400,20 +400,20 @@ void Operator::servNextTask(float currTime)
 bool Operator::currTaskExp()
 {
 //  Get task attributes
-    
+
     float depTime = currTask->getDepTime();
     float expTime = currTask->getExpTime();
-    
+
 //  Check if depature time has been set
-    
+
     if (isinf(depTime))
     {
         cerr << "Error: Current task has not started. Exiting..." << endl;
         exit(1);
     }
-    
+
 //  Check for expiration
-    
+
     if (expTime < depTime)
         return true;
     else
@@ -433,17 +433,17 @@ void Operator::procExp(float currTime)
     if (DEBUG_ON) cout << "\t\t Task expired at " << currTime << endl;
 
 //  Get task attributes and update stats
-    
+
     int type = currTask->getType();
     int timeInt = currTime/INT_SIZE;
     stats.incNumTasksExp(type, timeInt, 1);
     sharedStats.incNumTasksExp(type, timeInt, 1);
 
 //  Start next task
-    
+
     currTask = NULL;
     servNextTask(currTime);
-    
+
     return;
 }
 
@@ -464,15 +464,15 @@ void Operator::updateUtil(Task* task, float currTime)
 
     float begTime = task->getBegTime();
     int type = task->getType();
-		
+
 //	Get interval times and update time
-	
+
     int timeInt = begTime/INT_SIZE;
 	float beginInt = timeInt * INT_SIZE;
 	float endInt = beginInt + INT_SIZE;
 	float timeBusy = 0;
 	float percBusy = 0;
- 
+
 //	Record utilization
 
 	while (currTime > endInt)
@@ -482,17 +482,17 @@ void Operator::updateUtil(Task* task, float currTime)
 		stats.incUtil(type, timeInt, percBusy);
 		stats.incSerTime(type, timeInt, timeBusy);
         sharedStats.incSerTime(type, timeInt++, timeBusy);
-        
+
         if (timeBusy < 0)
         {
             cout << "WARNING: timeBusy = " << timeBusy << endl;
             cout << "\t task = " << *task << endl;
         }
-		
+
         beginInt = endInt;
 		endInt += INT_SIZE;
 	}
-	
+
 	timeBusy = currTime - max(begTime, beginInt);
 	percBusy = timeBusy/INT_SIZE;
 	stats.incUtil(type, timeInt, percBusy);
@@ -504,7 +504,7 @@ void Operator::updateUtil(Task* task, float currTime)
         cout << "WARNING: timeBusy = " << timeBusy << endl;
         cout << "\t task = " << *task << endl;
     }
-    
+
 	return;
 }
 
@@ -519,7 +519,7 @@ void Operator::updateUtil(Task* task, float currTime)
 void Operator::output()
 {
 //  Output stats
-	
+
 	string file_name = name;
 	transform(file_name.begin(), file_name.end(), file_name.begin(), ::tolower);
 	replace(file_name.begin(), file_name.end(), ' ', '_');
@@ -530,11 +530,11 @@ void Operator::output()
         cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
         exit(1);
     }
-    
+
     fout << stats;
-	
+
 ////	Output idle trip
-//	
+//
 //	file = OUTPUT_PATH + "/" + name + "_idle_trip.csv";
 //	ofstream fout2(file);
 //	if (!fout2)
@@ -543,9 +543,9 @@ void Operator::output()
 //		exit(1);
 //	}
 //	stats.outputIdle(fout2);
-//	
+//
 ////	Output busy trip
-//	
+//
 //	file = OUTPUT_PATH + "/" + name + "_busy_trip.csv";
 //	ofstream fout3(file);
 //	if (!fout3)
@@ -554,7 +554,7 @@ void Operator::output()
 //		exit(1);
 //	}
 //	stats.outputBusy(fout3);
-	
+
     return;
 }
 

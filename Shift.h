@@ -11,14 +11,10 @@
 #ifndef SHIFT_H
 #define SHIFT_H
 
-#define BOOST_DATE_TIME_NO_LIB
-
 #include <iostream>
 #include <string>
-// #include <time.h>
 #include <sstream>
 #include <iomanip>
-// #include <locale>
 #include "Util.h"
 
 using namespace std;
@@ -37,7 +33,7 @@ class Shift
 
     //  Constructor
 
-		Shift(string start, string stop);
+		Shift(string start = "09:00", string stop = "17:00");
 
 	//	Inspectors
 
@@ -47,8 +43,6 @@ class Shift
         float getHours() const
             {ASSERT(duration > 0, "Shift duration cannot be negative");
             return duration/3600.;}
-
-    //  Other member functions
 
 //  Private member members
 
