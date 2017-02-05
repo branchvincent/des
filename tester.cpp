@@ -8,14 +8,16 @@
 // #include "src/Distribution.h"
 #include <random>
 #include <typeinfo>
-#include "src/Parameters.h"
+// #include "src/Parameters.h"
 #include <queue>
-#include "src/Traffic.h"
-#include "src/Flags.h"
+// #include "src/Traffic.h"
+// #include "src/Flags.h"
+#include "src/TaskType.h"
 
 using namespace std;
 
 // typedef priority_queue<Task,vector<Task>> Queue;
+// typedef <bool,string> pair;
 
 int main()
 {
@@ -25,16 +27,14 @@ int main()
     // Parameters p("params.xml");
     // cout << p << endl;
 
-    map<string,bool> m = {{"verbose", true}, {"traffic", false}};
-    // cout << m["verbose"] << endl;
+    Task t("MyType", 2, 1, 8, 40);
+    cout << t << endl;
+    t.start(5);
+    t.pause(7);
+    t.start(9);
+    t.finish(8);
+    // t.start(9);
 
-    // for (const auto &pair : m)
-    // {
-    //     cout << pair.first << " => " << pair.second << endl;
-    // }
-
-    Flags f;
-    cout << f.isOn("Verboses") << endl;
 
     // TaskType t(pt.get_child("task"));
     //

@@ -50,15 +50,15 @@ class TaskType
 		vector<Distribution> getExpiration() const {return expiration;}
 
 		int getPriority(int phase) const
-			{checkIndex(priority, phase); return priority[phase];}
+			{util::checkIndex(priority, phase); return priority[phase];}
 		bool getIsAffectedByTraffic(int phase) const
-			{checkIndex(isAffectedByTraffic, phase); return isAffectedByTraffic[phase];}
+			{util::checkIndex(isAffectedByTraffic, phase); return isAffectedByTraffic[phase];}
 		float randInterarrival(int phase = 0)
-			{checkIndex(interarrival, phase); return interarrival[phase].rand();}
+			{util::checkIndex(interarrival, phase); return interarrival[phase].rand();}
 		float randService(int phase = 0)
-			{checkIndex(service, phase); return service[phase].rand();}
+			{util::checkIndex(service, phase); return service[phase].rand();}
 		float randExpiration(int phase = 0)
-			{checkIndex(expiration, phase); return expiration[phase].rand();}
+			{util::checkIndex(expiration, phase); return expiration[phase].rand();}
 
 	//	Mutators
 
@@ -69,8 +69,6 @@ class TaskType
 //	Private member functions
 
 	private:
-		template <typename T> void checkIndex(const vector<T>& vec, int index) const
-			{ASSERT(index >= 0 && index < vec.size(), "Invalid array index");}
 		void readDistributionFromXML(vector<Distribution>& dists, ptree& xmlData);
 		float genArrivalTime(int phase);
 		float genServiceTime();

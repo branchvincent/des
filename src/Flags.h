@@ -14,11 +14,9 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <iterator>
 #include "Util.h"
 
 using namespace std;
-// typedef pair<string,bool> value_type;
 
 /****************************************************************************
 *																			*
@@ -39,9 +37,6 @@ class Flags
 	//	Inspectors
 
         bool isOn(string key);
-        // bool isFatigueOn() const {return fatigue;}
-        // bool isVerboseOn() const {return verbose;}
-        // bool isRandOn() const {return rand;}
 
     //  Other member functions
 
@@ -51,10 +46,6 @@ class Flags
 
 	private:
         map<string,bool> flags;
-		// bool traffic;
-		// bool fatigue;
-		// bool verbose;
-		// bool rand;
 };
 
 //	Operators
@@ -77,11 +68,11 @@ Flags::Flags(map<string,bool> flags) :
         {"rand", true}
     }
 {
-//
-    for (const auto &pair : flags)
+    for (const auto& pair : flags)
     {
-        ASSERT(util::contains(this->flags, pair.first), "Incompatible flag " << pair.first);
-        cout << pair.first << " => " << pair.second << endl;
+		string key = util::toLower(pair.first);
+        ASSERT(util::contains(this->flags, key), "Incompatible flag '" << key << "'");
+		this->flags[key] = pair.second;
     }
 }
 
@@ -97,21 +88,23 @@ void Flags::output(ostream& out) const
 {
 //  Output true flags
 
-    // multimap<string,bool>::iterator it;
-    //
-    // for(it = next(flags.begin()); it != flags.end(); ++it)
-    // {
-    //     out << it->first << " on" << endl;
-    // }
+	bool first = true;
 
-    for (const auto &pair : flags)
+    for (const auto& pair : flags)
     {
         if (pair.second)
         {
-            out << pair.first << " on" << endl;
+			if (first)
+			{
+				out << pair.first << " on";
+				first = false;
+			}
+			else
+			{
+				out << ", " << pair.first << " on";
+			}
         }
     }
-    return;
 }
 
 /****************************************************************************
@@ -125,7 +118,7 @@ void Flags::output(ostream& out) const
 bool Flags::isOn(string key)
 {
     key = util::toLower(key);
-    ASSERT(util::contains(flags, key), "Incompatible flag " << key);
+    ASSERT(util::contains(flags, key), "Incompatible flag '" << key << "'");
     return flags[key];
 }
 
