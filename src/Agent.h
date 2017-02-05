@@ -24,7 +24,7 @@ using namespace std;
 
 //	Functions and definitions
 
-typedef priority_queue<Task,list<Task>> Queue;
+typedef priority_queue<Task&,list<Task&>> Queue;
 
 /****************************************************************************
 *																			*
@@ -40,31 +40,27 @@ class Agent
 
 	//	Constructor
 
-        Agent(string type, vector<TaskTypes> taskTypes) : //, Statistics& sts) :
-            type(type),
-			taskTypes(taskTypes),
-            currTask(),
-            taskQueue(&cmpPrty),
-            // sharedStats(sts),
-            // stats()
-			{}
+		Agent();
+        // Agent(string name, vector<TaskTypes> taskTypes);
 
 	//	Inspectors
 
-        string getType() const {return type;}
-        bool isIdle() const {return !busy;}
-		bool isBusy() const {return busy;}
-        int getQueueSize() const {return (int)taskQueue.size();}
-		Task& getCurrTask() const {return currTask;}
-        float getDepTime() const;
+        // string getType() const {return type;}
+        // bool isIdle() const {return !busy;}
+		// bool isBusy() const {return busy;}
+        // int getQueueSize() const {return (int)taskQueue.size();}
+		// Task& getCurrTask() const {return currTask;}
+        // float getDepTime() const;
         // bool needToIntrp(Queue& queue);
 		// float getUtil(int i) {return stats.getUtil(i);}
 
 	//	Mutators
 
-// 		void procArr(Task* task);
-// 		void procIntrp(float currTime);
-// 		void procDep(Task* task, bool stop);
+		// void arrive(Task& task, float time);
+		// void interrupt(float time);
+		// void depart(Task& task, float time);
+		// void service(Task& task, float time);
+
 //         void servNextTask(float currTime);
 //         void clear();
 //         void endRep() {stats.endRep(); clear();}
@@ -85,128 +81,124 @@ class Agent
 //	Data members
 
 	private:
-        string type;
-		vector<TaskTypes> taskTypes;	// tasks to handle
-		Queue taskQueue;           		// task queue
-		Task currTask;             		// current task
-		bool busy;
+        // string type;
+		// vector<TaskTypes> taskTypes;	// types of tasks
+		// Queue queue;           			// task queue
+		// Task& currTask;             		// current task
+		// bool busy;						// busy
 		// Statistics& sharedStats;		// shared stats
         // Statistics stats;          	 	// local stats
 };
 
-//	Operators
-
-// ostream& operator<<(ostream& out, const Operator& op) {op.output(out); return out;}
+// //	Operators
 //
-/****************************************************************************
-*																			*
-*	Function:	getDepTime													*
-*																			*
-*	Purpose:	To get the depature time of the current task				*
-*																			*
-****************************************************************************/
-
-float Agent::getDepTime()
-{
-	if (busy)
-		return currTask.getDepTime();
-	else
-		return INFINITY;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	needToIntrp                                                 *
-*																			*
-*	Purpose:	To determine if the current task needs to be interrupted by *
-*               by the specified task                                       *
-*																			*
-****************************************************************************/
-
-bool Agent::needToIntrp(Queue& queue)
-{
-    if (busy && queue.size() > 1)
-        return currTask < queue.top();
-    else
-        return false;
-}
+// // ostream& operator<<(ostream& out, const Operator& op) {op.output(out); return out;}
+// //
+// /****************************************************************************
+// *																			*
+// *	Function:	Agent														*
+// *																			*
+// *	Purpose:	To construct an agent										*
+// *																			*
+// ****************************************************************************/
+// Agent(string name, vector<TaskTypes> taskTypes) : //, Statistics& sts) :
+//    name(name),
+//    taskTypes(taskTypes),
+//    currTask(),
+//    taskQueue(), //&cmpPrty),
+//    // sharedStats(sts),
+//    // stats()
+// {}
 //
 // /****************************************************************************
 // *																			*
-// *	Function:	procArr                                                     *
+// *	Function:	getNextEvent												*
 // *																			*
-// *	Purpose:	To enqueue the specified task								*
+// *	Purpose:	To get the time of the next event							*
 // *																			*
 // ****************************************************************************/
 //
-void Agent::procArr(Task& task)
-{
-//	Enqueue task
-
-    taskQueue.push(task);
-
-    // if (DEBUG_ON) cout << name << ": Adding " << *task << " of " << taskQueue.size() << endl;
-
-//  Get task attributes
-
-    float currTime = task->getArrTime();
-    int type = task->getType();
-    int timeInt = currTime/INT_SIZE;
-    task->setQueTime(currTime);
-
-//  Update stats
-
-    stats.incNumTasksIn(type, timeInt, 1);
-
-//	Service next task, if idle
-
-    if (!busy)
-        servNextTask(currTime);
-
-//  Interrupt current task, if applicable
-
-    else if (needToIntrp(taskQueue))
-        procIntrp(currTime);
-
-	return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	processIntrp												*
-*																			*
-*	Purpose:	To process an interruption of the current task              *
-*																			*
-****************************************************************************/
-
-void Agent::procIntrp(float currTime)
-{
-//  Check that the Agent is busy
-
-    if (!busy)
-    {
-        cerr << "Error: Cannot process task interruption. Exiting..." << endl;
-        exit(1);
-    }
-
-    if (DEBUG_ON) cout << "\t\t " << name << ": Task interrupted at " << currTime << endl;
-
-//	Update stats
-
-    updateUtil(currTask, currTime);
-    float depTime = currTask->getDepTime();
-    currTask->setSerLeft(depTime - currTime);
-    currTask->setDepTime(INFINITY);
-    currTask->setQueTime(currTime);
-
-//	Add current task to queue and service next task
-
-    taskQueue.push(currTask);
-    currTask = NULL;
-    servNextTask(currTime);
-
-    return;
-}
+// float Agent::getNextEvent()
+// {
+// 	if (busy)
+// 		return currTask.getNextEvent();
+// 	else
+// 		return INFINITY;
+// }
+//
+// // /****************************************************************************
+// // *																			*
+// // *	Function:	procArr                                                     *
+// // *																			*
+// // *	Purpose:	To enqueue the specified task								*
+// // *																			*
+// // ****************************************************************************/
+// //
+// void Agent::arrival(Task& task, float time)
+// {
+// //	Enqueue task
+//
+// 	task.start(time);
+//     queue.push(task);
+//
+//     // if (DEBUG_ON) cout << name << ": Adding " << *task << " of " << taskQueue.size() << endl;
+//
+// //  Get task attributes
+//
+//     // float currTime = task->getArrTime();
+//     // int type = task->getType();
+//     // int timeInt = currTime/INT_SIZE;
+//     // task->setQueTime(currTime);
+//
+// //  Update stats
+//
+//     // stats.incNumTasksIn(type, timeInt, 1);
+//
+// //	Service next task, if idle
+//
+//     if (!busy)
+//         servNextTask(currTime);
+//
+// //  Interrupt current task, if applicable
+//
+//     else if (needToInterrupt())
+//         interrupt(currTime);
+//
+// 	return;
+// }
+//
+// /****************************************************************************
+// *																			*
+// *	Function:	processIntrp												*
+// *																			*
+// *	Purpose:	To process an interruption of the current task              *
+// *																			*
+// ****************************************************************************/
+//
+// void Agent::interrupt(float currTime)
+// {
+// //  Check that the Agent is busy
+//
+// 	ASSERT(not busy, "Cannot interrupt idle agent");
+//
+//     // if (DEBUG_ON) cout << "\t\t " << name << ": Task interrupted at " << currTime << endl;
+//
+// //	Update stats
+//
+//     // updateUtil(currTask, currTime);
+//     // float depTime = currTask->getDepTime();
+//     // currTask->setSerLeft(depTime - currTime);
+//     // currTask->setDepTime(INFINITY);
+//     // currTask->setQueTime(currTime);
+//
+// //	Add current task to queue and service next task
+//
+//     queue.push(currTask);
+//     busy = false;
+//     servNextTask(currTime);
+//
+//     return;
+// }
 //
 // /****************************************************************************
 // *																			*
@@ -216,7 +208,7 @@ void Agent::procIntrp(float currTime)
 // *																			*
 // ****************************************************************************/
 //
-// void Agent::procDep(Task* task, bool stop)
+// void Agent::depart(Task& task)
 // {
 // //	Get task attributes
 //
@@ -241,65 +233,75 @@ void Agent::procIntrp(float currTime)
 //     return;
 // }
 //
-/****************************************************************************
-*																			*
-*	Function:	clear														*
-*																			*
-*	Purpose:	To clear the Agent                                       	*
-*																			*
-****************************************************************************/
-
-void Agent::clear()
-{
-//  Clear current task
-
-	busy = false;
-	currTask = Task();
-
-//  Clear queue
-
-    while (!taskQueue.empty())
-        taskQueue.pop();
-
-    return;
-}
-//
 // /****************************************************************************
 // *																			*
-// *	Function:	output														*
+// *	Function:	needToIntrp                                                 *
 // *																			*
-// *	Purpose:	To output an Agent										*
+// *	Purpose:	To determine if the current task needs to be interrupted by *
+// *               by the specified task                                       *
 // *																			*
 // ****************************************************************************/
 //
-// //void Agent::output(ostream& out) const
-// //{
-// ////  Output Agent's status and number of enqueued tasks
-// //
-// //    if (currTask != NULL)
-// //        cout << "Agent is busy until " << currTask->getDepTime();
-// //    else
-// //        cout << "Agent is not busy";
-// //
-// //    cout << " and has " << taskQueue.size() << " tasks in queue." << endl;
-// //
-// ////  Output queue
-// //
-// //    cout << "Queue = {" << endl;
-// //
-// //    Queue tmpQ = taskQueue;
-// //
-// //    while (!tmpQ.empty())
-// //    {
-// //        cout << *tmpQ.top() << endl;
-// //        tmpQ.pop();
-// //    }
-// //
-// //    cout << "}" << endl;
-// //
-// //    return;
-// //}
+// bool Agent::needToInterrupt()
+// {
+//     if (busy and queue.size() >= 1)
+//         return currTask < queue.top();
+//     else
+//         return false;
+// }
 //
+// //
+// /****************************************************************************
+// *																			*
+// *	Function:	reset														*
+// *																			*
+// *	Purpose:	To reset the Agent                                       	*
+// *																			*
+// ****************************************************************************/
+//
+// void Agent::reset()
+// {
+// 	busy = false;
+// 	currTask = Task();
+//     while (!taskQueue.empty()) taskQueue.pop();
+// }
+// //
+// // /****************************************************************************
+// // *																			*
+// // *	Function:	output														*
+// // *																			*
+// // *	Purpose:	To output an Agent										*
+// // *																			*
+// // ****************************************************************************/
+// //
+// // //void Agent::output(ostream& out) const
+// // //{
+// // ////  Output Agent's status and number of enqueued tasks
+// // //
+// // //    if (currTask != NULL)
+// // //        cout << "Agent is busy until " << currTask->getDepTime();
+// // //    else
+// // //        cout << "Agent is not busy";
+// // //
+// // //    cout << " and has " << taskQueue.size() << " tasks in queue." << endl;
+// // //
+// // ////  Output queue
+// // //
+// // //    cout << "Queue = {" << endl;
+// // //
+// // //    Queue tmpQ = taskQueue;
+// // //
+// // //    while (!tmpQ.empty())
+// // //    {
+// // //        cout << *tmpQ.top() << endl;
+// // //        tmpQ.pop();
+// // //    }
+// // //
+// // //    cout << "}" << endl;
+// // //
+// // //    return;
+// // //}
+// //
 // /****************************************************************************
 // *																			*
 // *	Function:	servNextTask												*

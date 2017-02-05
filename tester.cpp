@@ -1,38 +1,51 @@
 #include <iostream>
 #include <string>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <vector>
-#include "src/Util.h"
+// #include <cmath>
+#include "src/Task.h"
+// #include <boost/property_tree/ptree.hpp>
+// #include <boost/property_tree/xml_parser.hpp>
+// #include <vector>
+// #include "src/Util.h"
+// // #include "src/TaskType.h"
+// // #include "src/Distribution.h"
+// #include <random>
+// #include <typeinfo>
+// // #include "src/Parameters.h"
+// #include <queue>
+// // #include "src/Traffic.h"
+// // #include "src/Flags.h"
 // #include "src/TaskType.h"
-// #include "src/Distribution.h"
-#include <random>
-#include <typeinfo>
-// #include "src/Parameters.h"
-#include <queue>
-// #include "src/Traffic.h"
-// #include "src/Flags.h"
-#include "src/TaskType.h"
 
 using namespace std;
 
 // typedef priority_queue<Task,vector<Task>> Queue;
 // typedef <bool,string> pair;
 
+void inner(int& x) {x++;}
+void outer(int& x) {inner(x);}
+
 int main()
 {
+    int x = 100;
+    outer(x);
+    cout << x << endl;
+    // float x = 1;
+    // cout << x/2 << endl;
     // ptree pt;
     // read_xml("../params.xml", pt);
 
     // Parameters p("params.xml");
     // cout << p << endl;
 
-    Task t("MyType", 2, 1, 8, 40);
-    cout << t << endl;
-    t.start(5);
-    t.pause(7);
-    t.start(9);
-    t.finish(8);
+    // cout << INFINITY << endl;
+    // Task t("MyType", 2, 1, INFINITY, 40);
+    // cout << t << endl;
+    // t.start(5);
+    // t.pause(6);
+    // t.finish(8);
+    // t.pause(7);
+    // t.start(9);
+    // t.finish(15);
     // t.start(9);
 
 

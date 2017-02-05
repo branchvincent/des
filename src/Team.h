@@ -31,7 +31,7 @@ using boost::property_tree::ptree;
 //  - Add shared task ID as a subset
 //  - Pass all queues to each operator for interruptions
 
-class Train
+class Team
 {
 //  Friend class
 

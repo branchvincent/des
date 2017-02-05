@@ -13,9 +13,8 @@
 
 #include <iostream>
 #include <string>
-#include <random>
 #include <cmath>
-#include <algorithm>
+#include "Util.h"
 
 using namespace std;
 
@@ -33,33 +32,25 @@ class Task
 
 	//	Constructor
 
-		Task(string type, float priority, float arrival, float service, float expiration);
+		Task(string name, float priority, float arrival, float service, float expiration);
 
 	//	Inspectors
 
-		// string getType() const {return type;}
+		string getName() const {return name;}
 		int getPriority() const {return priority;}
 		float getArrival() const {return arrival;}
-		// float getService() const {return serTime;}
-		// float getDepartue() const {return depTime;}
+		float getDepartue() const {return departure;}
 		float getExpiration() const {return expiration;}
-        // float get() const {return begTime;}
-        // float getQueTime() const {return queTime;}
-        // float getSerLeft() const {return serLeft;}
+		float getWaitTime() const {return wait;}
+		float getNextEvent() const;
+
+	//	Mutators
 
 		void start(float time);
 		void pause(float time);
 		void resume(float time);
 		void finish(float time);
 		void expire(float time);
-		// float getWaitTime();
-
-	//	Mutators
-
-		// void setDepTime(float t) {depTime = t;}
-        // void setSerLeft(float t) {serLeft = t;}
-        // void setBegTime(float t) {begTime = t;}
-        // void setQueTime(float t) {queTime = t;}
 
 	//	Other member functions
 
@@ -70,7 +61,8 @@ class Task
 //	Data members
 
 	private:
-		string type;		// type
+		// Agent agent;
+		string name;		// name
 		int priority;		// priority level
 		float arrival;		// arrival time (min)
 		float service; 		// service time (min)
@@ -91,25 +83,64 @@ bool operator<(const Task& t1, const Task& t2) {return !t1.higherPriority(t2);}
 *																			*
 *	Function:	Task														*
 *																			*
-*	Purpose:	To construct a task of the specified type					*
+*	Purpose:	To construct a task											*
 *																			*
 ****************************************************************************/
 
-Task::Task(string type, float priority, float arrival, float service, float expiration) :
-    type(type),
+Task::Task(string name, float priority, float arrival, float service, float expiration) :
+    name(name),
     priority(priority),
     arrival(arrival),
     service(service),
-	departure(INFINITY),
+	departure(-1),
 	expiration(expiration),
 	wait(0),
     lastEvent(-1),
 	status("premature")
-{}
+{
+//	Check for negatives
+
+	ASSERT(priority >= 0, "Priority cannot be negative");
+	ASSERT(arrival >= 0, "Arrival cannot be negative");
+	ASSERT(service >= 0, "Service cannot be negative");
+	ASSERT(expiration >= 0, "Expiration cannot be negative");
+
+//	Check for infinites
+
+	ASSERT(priority < INFINITY, "Priority cannot be infinite");
+	ASSERT(arrival < INFINITY, "Arrival cannot be infinite");
+	ASSERT(service < INFINITY, "Service cannot be infinite");
+	ASSERT(expiration < INFINITY, "Expiration cannot be infinite");
+	ASSERT(arrival + service <= expiration, "Task expires too soon");
+}
 //	if (aTime != -1)
 // 	{
 // 		arrTime = aTime;
 // 	}
+
+/****************************************************************************
+*																			*
+*	Function:	getNextEvent												*
+*																			*
+*	Purpose:	To return the time of the next event						*
+*																			*
+****************************************************************************/
+
+float Task::getNextEvent() const
+{
+	if (status == "in progress")
+		return min(departure, expiration);
+	else
+		return INFINITY;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	start														*
+*																			*
+*	Purpose:	To start servicing a task									*
+*																			*
+****************************************************************************/
 
 void Task::start(float time)
 {
@@ -124,9 +155,17 @@ void Task::start(float time)
 		lastEvent = time;
 		status = "in progress";
 
-		cout << "Starting task..." << *this << endl;
+		cout << time <<  ": Starting task..." << *this << endl;
 	}
 }
+
+/****************************************************************************
+*																			*
+*	Function:	pause														*
+*																			*
+*	Purpose:	To pause servicing a task									*
+*																			*
+****************************************************************************/
 
 void Task::pause(float time)
 {
@@ -136,8 +175,16 @@ void Task::pause(float time)
 	lastEvent = time;
 	status = "waiting";
 
-	cout << "Pausing task..." << *this << endl;
+	cout << time << ": Pausing task..." << *this << endl;
 }
+
+/****************************************************************************
+*																			*
+*	Function:	resume														*
+*																			*
+*	Purpose:	To resume servicing a task									*
+*																			*
+****************************************************************************/
 
 void Task::resume(float time)
 {
@@ -146,19 +193,35 @@ void Task::resume(float time)
 	lastEvent = time;
 	status = "in progress";
 
-	cout << "Resuming task..." << *this << endl;
+	cout << time << ": Resuming task..." << *this << endl;
 }
+
+/****************************************************************************
+*																			*
+*	Function:	finish														*
+*																			*
+*	Purpose:	To finish servicing a task									*
+*																			*
+****************************************************************************/
 
 void Task::finish(float time)
 {
 	ASSERT(status == "in progress", "Task not in progress cannot be finished");
 	service -= time - lastEvent;
-	ASSERT(service == 0, "Task has not finished");
+	ASSERT(service == 0, "Task has not finished " << service);
 	lastEvent = time;
 	status = "done";
 
-	cout << "Finishing task..." << *this << endl;
+	cout << time << ": Finishing task..." << *this << endl;
 }
+
+/****************************************************************************
+*																			*
+*	Function:	expire														*
+*																			*
+*	Purpose:	To expire a task											*
+*																			*
+****************************************************************************/
 
 void Task::expire(float time)
 {
@@ -172,7 +235,7 @@ void Task::expire(float time)
 
 	ASSERT(service > 0, "Task has actually finished");
 
-	cout << "Expiring task..." << *this << endl;
+	cout << time << ": Expiring task..." << *this << endl;
 }
 
 /****************************************************************************
@@ -186,7 +249,7 @@ void Task::expire(float time)
 void Task::output(ostream& out) const
 {
 	cout << "Priority: " << priority << ", ";
-	cout << "Type " << type << ", ";
+	cout << "Name " << name << ", ";
 	cout << "Arrival " << arrival << ", ";
 	cout << "Service " << service <<  ", ";
 	cout << "Departure " << departure << ", ";
