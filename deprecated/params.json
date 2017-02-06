@@ -1,7 +1,0 @@
-{
-    "output_path"       : "/out",
-    "begin_time"        : "12:00",
-    "end_time"          : "14:00",
-    "traffic_levels"    : ["m", "m", "m", "m", "m", "m", "m", "m"],
-    "num_reps"          : 100
-}
