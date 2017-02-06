@@ -1,6 +1,6 @@
 /****************************************************************************
 *																			*
-*	File:		Team.h														*
+*	File:		Team.cpp													*
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
@@ -8,15 +8,9 @@
 *																			*
 ****************************************************************************/
 
-#ifndef TEAM_H
-#define TEAM_H
-
 #include <iostream>
 #include <string>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include "TaskType.h"
-#include "Agent.h"
+#include "Team.h"
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -31,63 +25,6 @@ using boost::property_tree::ptree;
 //  - Shared task to op with current lowest priority
 //  - Add fatigue for just human operators
 
-class Team
-{
-//  Friend class
-
- //   	friend class Agent;
-
-//	Public member functions
-
-	public:
-
-	//	Constructor
-
-		Team(const ptree& xmlData);
-		// Team(string name, vector<Agent> agents, vector<TaskTypes> taskTypes);
-
-	// 	Inspector
-
-    //     // int getQueueSize() const {return ops[0].getQueueSize();}
-    //     Task getNextTask();
-    //     float getNextDeptTime();
-    //     bool isBusy() const;
-	// 	// float getUtil(int i, int j) {return ops[i].getUtil(j);}
-	//
-    // // 	Mutators
-	//
-	// 	void createTasks()
-	// 	{
-	// 		for (const auto& agent : agents)
-	// 		{
-	//
-	// 		}
-	// 	}
-	//
-    //     void arrive(Task* task);
-	// 	void depart(Task* task);
-    //     void reset() {for (const auto& agent : agents) agent.reset();};
-    //     void endRep();
-	//
-    // //  Other member functions
-	//
-    //     void output();
-        void output(ostream& out) const;
-
-//	Data members
-
-	private:
-//      Params& params;
-        // Statistics stats;
-		string name;
-        vector<Agent> agents;
-		vector<TaskType> taskTypes;
-		// vector<Phase> phases;
-		// Team supervisor;
-};
-
-ostream& operator<<(ostream& out, const Team& t) {t.output(out); return out;}
-
 /****************************************************************************
 *																			*
 *	Function:	Team														*
@@ -100,22 +37,22 @@ Team::Team(const ptree& xmlData)
 {
 	name = xmlData.get<string>("name");
 
-	for (const auto& task : xmlData.get_child("tasks"))
-	{
-		if (task.first == "task")
-		{
-			taskTypes.push_back(TaskType(task.second));
-		}
-	}
-
-	for (const auto& agent : xmlData.get_child("agents"))
-	{
-		if (agent.first == "agent")
-		{
-			agents.push_back(Agent(agent.second, taskTypes));
-			// agents.push_back(Agent(*this, agent.second));
-		}
-	}
+	// for (const auto& task : xmlData.get_child("tasks"))
+	// {
+	// 	if (task.first == "task")
+	// 	{
+	// 		taskTypes.push_back(TaskType(task.second));
+	// 	}
+	// }
+	//
+	// for (const auto& agent : xmlData.get_child("agents"))
+	// {
+	// 	if (agent.first == "agent")
+	// 	{
+	// 		// agents.push_back(Agent(agent.second, taskTypes));
+	// 		// agents.push_back(Agent(*this, agent.second));
+	// 	}
+	// }
 
 	// for (int i = 0; i < num_tasks; i++)
 	// {
@@ -124,6 +61,25 @@ Team::Team(const ptree& xmlData)
 	// }
 	// 	// dists.push_back(Distribution(type, parameters));
 	// priority = util::toVector<int>(xmlData.get<string>("priority"));
+}
+
+/****************************************************************************
+*																			*
+*	Function:	output                                                      *
+*																			*
+*	Purpose:	To output a team                                            *
+*																			*
+****************************************************************************/
+
+void Team::output(ostream& out) const
+{
+	out << "Name: " << name << endl;
+//	out << "Task types: " << taskTypes << endl;
+	out << "Agents: ";
+
+//	for (const auto& agent : agents)
+//		out << agent.name << ", ";
+	// vector<TaskTypes> taskTypes;
 }
 
 //Team::Team(string name, vector<Agent> agents) : name(name), agents(agents), taskTypes(taskTypes) //stats(), ops()
@@ -362,24 +318,7 @@ Team::Team(const ptree& xmlData)
 //     return;
 // }
 //
-/****************************************************************************
-*																			*
-*	Function:	output                                                      *
-*																			*
-*	Purpose:	To output a team                                            *
-*																			*
-****************************************************************************/
 
-void Team::output(ostream& out) const
-{
-	out << "Name: " << name << endl;
-	out << "Task types: " << taskTypes << endl;
-	out << "Agents: ";
-
-	for (const auto& agent : agents)
-		out << agent.name << ", ";
-	// vector<TaskTypes> taskTypes;
-}
 //
 // /****************************************************************************
 // *																			*
@@ -412,4 +351,6 @@ void Team::output(ostream& out) const
 //     return;
 // }
 
-#endif
+//	Operators
+
+ostream& operator<<(ostream& out, const Team& t) {t.output(out); return out;}

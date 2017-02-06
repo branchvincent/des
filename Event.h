@@ -32,8 +32,9 @@ class Event
 	public:
 
     //  Constructor
-
-		Event(string type, tm time, Task& task, Agent& agent);
+	
+		Event(string type) : {}
+//		Event(string type, tm time, Task& task, Agent& agent);
 
 	//	Inspectors
 
@@ -72,10 +73,10 @@ bool operator>(const Event& e1, const Event& e2) {return !e1.before(e2);}
 *																			*
 ****************************************************************************/
 
-Event::Event(string type, tm time, Task& task, Agent& agent) : type(type), time(time), agent(agent)
-{
-	ASSERT(util::contains(valid_types, type), "Invalid event type");
-}
+//Event::Event(string type, tm time, Task& task, Agent& agent) : type(type), time(time), agent(agent)
+//{
+//	ASSERT(util::contains(valid_types, type), "Invalid event type");
+//}
 
 /****************************************************************************
 *																			*

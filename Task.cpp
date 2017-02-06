@@ -1,6 +1,6 @@
 /****************************************************************************
 *																			*
-*	File:		Task.h														*
+*	File:		Task.cpp													*
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
@@ -8,12 +8,10 @@
 *																			*
 ****************************************************************************/
 
-#ifndef TASK_H
-#define TASK_H
-
 #include <iostream>
 #include <string>
 #include <cmath>
+#include "Task.h"
 #include "Utility.h"
 
 using namespace std;
@@ -24,61 +22,6 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-class Task
-{
-//	Public member functions
-
-	public:
-
-	//	Constructor
-
-		Task(string name, float priority, float arrival, float service, float expiration);
-
-	//	Inspectors
-
-		string getName() const {return name;}
-		int getPriority() const {return priority;}
-		float getArrival() const {return arrival;}
-		float getDepartue() const {return departure;}
-		float getExpiration() const {return expiration;}
-		float getWaitTime() const {return wait;}
-		float getNextEvent() const;
-
-	//	Mutators
-
-		void start(float time);
-		void pause(float time);
-		void resume(float time);
-		void finish(float time);
-		void expire(float time);
-
-	//	Other member functions
-
-		void output(ostream& out) const;
-		bool higherPriority(const Task& task) const;
-		bool arrivesSooner(const Task& task) const {return arrival < task.getArrival();}
-
-//	Data members
-
-	private:
-		// Agent agent;
-		string name;		// name
-		int priority;		// priority level
-		float arrival;		// arrival time (min)
-		float service; 		// service time (min)
-		float departure;	// depature time (min)
-		float expiration;	// expiration time (min)
-        float wait;      	// wait time (min)
-		float lastEvent;	// time of last event (min)
-		string status;		// current status
-};
-
-//	Operators
-
-ostream& operator<<(ostream& out, const Task& t) {t.output(out); return out;}
-bool operator>(const Task& t1, const Task& t2) {return t1.higherPriority(t2);}
-bool operator<(const Task& t1, const Task& t2) {return !t1.higherPriority(t2);}
-
 /****************************************************************************
 *																			*
 *	Function:	Task														*
@@ -87,8 +30,8 @@ bool operator<(const Task& t1, const Task& t2) {return !t1.higherPriority(t2);}
 *																			*
 ****************************************************************************/
 
-Task::Task(string name, float priority, float arrival, float service, float expiration) :
-    name(name),
+Task::Task(int priority, float arrival, float service, float expiration) :
+    // type(type),
     priority(priority),
     arrival(arrival),
     service(service),
@@ -113,10 +56,13 @@ Task::Task(string name, float priority, float arrival, float service, float expi
 	ASSERT(expiration < INFINITY, "Expiration cannot be infinite");
 	ASSERT(arrival + service <= expiration, "Task expires too soon");
 }
-//	if (aTime != -1)
-// 	{
-// 		arrTime = aTime;
-// 	}
+
+//string Task::getName() const {return name;}
+int Task::getPriority() const {return priority;}
+float Task::getArrival() const {return arrival;}
+float Task::getDepartue() const {return departure;}
+float Task::getExpiration() const {return expiration;}
+float Task::getWaitTime() const {return wait;}
 
 /****************************************************************************
 *																			*
@@ -249,7 +195,7 @@ void Task::expire(float time)
 void Task::output(ostream& out) const
 {
 	cout << "Priority: " << priority << ", ";
-	cout << "Name " << name << ", ";
+//	cout << "Name " << name << ", ";
 	cout << "Arrival " << arrival << ", ";
 	cout << "Service " << service <<  ", ";
 	cout << "Departure " << departure << ", ";
@@ -272,4 +218,10 @@ bool Task::higherPriority(const Task& task) const
 		return this->priority > task.getPriority();
 }
 
-#endif
+bool Task::arrivesSooner(const Task& task) const {return arrival < task.getArrival();}
+
+//	Operators
+
+ostream& operator<<(ostream& out, const Task& t) {t.output(out); return out;}
+bool operator>(const Task& t1, const Task& t2) {return t1.higherPriority(t2);}
+bool operator<(const Task& t1, const Task& t2) {return !t1.higherPriority(t2);}
