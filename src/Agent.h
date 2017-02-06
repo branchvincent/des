@@ -20,15 +20,13 @@
 #include <list>
 #include <boost/property_tree/ptree.hpp>
 #include "Task.h"
+#include "Shift.h"
+#include "TaskType.h"
+#include "Utility.h"
 // #include "Statistics.h"
 
 using namespace std;
 using boost::property_tree::ptree;
-
-//	Functions and definitions
-
-// typedef priority_queue<Task> Queue;
-class Team;
 
 /****************************************************************************
 *																			*
@@ -38,13 +36,18 @@ class Team;
 
 class Agent
 {
+//	Friend class
+
+	friend class Team;
+
 //	Public member functions
 
 	public:
 
 	//	Constructor
 
-		Agent(Team& team, const ptree& xmlData);
+		Agent(const ptree& xmlData, vector<TaskType> taskTypes);
+		// Agent(Team& team, const ptree& xmlData);
         // Agent(string name, vector<TaskTypes> taskTypes);
 
 	//	Inspectors
@@ -73,7 +76,7 @@ class Agent
 //
 //         void output();
         void output(ostream& out) const;
-//
+
 // //  Private member functions
 //
 //     private:
@@ -85,22 +88,43 @@ class Agent
 //	Data members
 
 	private:
-        string type;
-		// vector<TaskTypes> taskTypes;	// types of tasks
-		// priority_queue<Task> queue; 	// task queue
+        string name;
+		Shift shift;
+		vector<TaskType> taskTypes;		// types of tasks
+		priority_queue<Task> queue; 	// task queue
 		// Task& currTask;             		// current task
-		// bool busy;						// busy
+		bool busy;						// busy
+		// Team& team;
 		// Statistics& sharedStats;		// shared stats
         // Statistics stats;          	 	// local stats
 };
 
-// //	Operators
-//
+//	Operators
+
 ostream& operator<<(ostream& out, const Agent& a) {a.output(out); return out;}
 
-Agent::Agent(Team& team, const ptree& xmlData)
+/****************************************************************************
+*																			*
+*	Function:	Agent														*
+*																			*
+*	Purpose:	To construct an agent										*
+*																			*
+****************************************************************************/
+
+Agent::Agent(const ptree& xmlData, vector<TaskType> taskTypes) : busy(false)//, team(team)
 {
-	type = xmlData.get<string>("name");
+	name = xmlData.get<string>("name");
+	// shift = team.shift;h an
+	// shift = Shift(util::toVector<string>(xmlData.get<string>("shift")));
+
+	for (const auto& i : util::toVector<int>(xmlData.get<string>("tasks")))
+	{
+		util::checkIndex(taskTypes, i);
+		this->taskTypes.push_back(taskTypes[i]);
+	}
+
+	// taskTypes = team.taskTypes;
+	// cout << team.taskTypes << endl;
 }
 
 // /****************************************************************************
@@ -285,7 +309,9 @@ Agent::Agent(Team& team, const ptree& xmlData)
 
 void Agent::output(ostream& out) const
 {
-	out << "Name: " << type;
+	out << "Name: " << name << endl;
+	out << "Shift: " << shift << endl;
+	out << "Tasks: " << taskTypes;
 
 //    if (currTask != NULL)
 //        cout << "Agent is busy until " << currTask->getDepTime();

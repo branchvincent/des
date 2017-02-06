@@ -16,7 +16,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include "Task.h"
 #include "Distribution.h"
-#include "Util.h"
+#include "Utility.h"
 
 using namespace std;
 using boost::property_tree::ptree;

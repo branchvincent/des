@@ -79,12 +79,16 @@ class Simulation
 //	Data members
 
 	private:
-//      Params pms;				// run parameters
-//		Operator dispatch;		// dispactcher
-        vector<Team> teams;	// trains
-		vector<int> endTimes;   // phase end times
-		list<Task> taskList;	// task list
-		float currTime;
+		vector<BatchedTeam> batches;
+		Flags flags;
+		Parameters parameters;
+		list<Event> events;
+// //      Params pms;				// run parameters
+// //		Operator dispatch;		// dispactcher
+//         vector<Team> teams;	// trains
+// 		vector<int> endTimes;   // phase end times
+// 		list<Task> taskList;	// task list
+// 		float currTime;
 };
 
 //	Operators

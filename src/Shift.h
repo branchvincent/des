@@ -15,7 +15,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
-#include "Util.h"
+#include "Utility.h"
 
 using namespace std;
 
@@ -33,16 +33,16 @@ class Shift
 
     //  Constructor
 
-		Shift(string start = "19:00", string stop = "17:00");
+		Shift(vector<string> times);
+		Shift(string start = "9:00", string stop = "17:00");
 
 	//	Inspectors
 
+		// string getStart() {return string(put_time(&start, "%c"));}
         string getStart() const {return asctime(&start);}
         string getStop() const {return asctime(&stop);}
-        // string getStart() {return string(put_time(&start, "%c"));}
         float getHours() const
-            {ASSERT(duration > 0, "Shift duration cannot be negative");
-            return duration/3600.;}
+			{ASSERT(duration > 0, "Shift duration cannot be negative"); return duration/3600.;}
 
 	//	Other member functions
 
@@ -64,6 +64,20 @@ class Shift
 //	Operators
 
 ostream& operator<<(ostream& out, const Shift& s) {s.output(out); return out;}
+
+/****************************************************************************
+*																			*
+*	Function:	Shift       												*
+*																			*
+*	Purpose:	To construct a shift                                        *
+*																			*
+****************************************************************************/
+
+Shift::Shift(vector<string> times)
+{
+	ASSERT(times.size() == 2, "A shift requires two times");
+	*this = Shift(times[0], times[1]);
+}
 
 /****************************************************************************
 *																			*
@@ -100,8 +114,8 @@ Shift::Shift(string start, string stop)
 
 void Shift::readTimeString(string time, tm& date)
 {
-    istringstream stream("2017-01-01 " + time);
-    stream >> get_time(&date, "%Y-%m-%d %H:%M");
+    istringstream stream("2017-01-01 " + time + ":00");
+    stream >> get_time(&date, "%Y-%m-%d %H:%M:%S");
     ASSERT(!stream.fail(), "Failed to read time " << time);
     return;
 }
@@ -117,7 +131,7 @@ void Shift::readTimeString(string time, tm& date)
 void Shift::output(ostream& out) const
 {
     out << put_time(&start, "%H:%M") << " to " << put_time(&stop, "%H:%M");
-    return;
+	// out << put_time(&start, "%c") << " to " << getStop();
 }
 
 #endif

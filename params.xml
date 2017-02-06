@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <parameters>
     <output_path>/Users/Branch/Documents/Research/fra/show/out</output_path>
-    <start>8:00</start>
+    <start>2:00</start>
     <stop>17:00</stop>
     <traffic>m,m,m,m,m,m,m,m,m</traffic>
     <replications>100</replications>
@@ -19,7 +19,23 @@
     <agents>
         <agent>
             <name>engineer</name>
-            <tasks>task1, task2</tasks>
+            <!-- <shift>8:00, 17:00</shift> -->
+            <tasks>0</tasks>
+        </agent>
+        <agent>
+            <name>conductor</name>
+            <!-- <shift>8:00, 17:00</shift> -->
+            <tasks>0</tasks>
+        </agent>
+        <agent>
+            <name>positive train control</name>
+            <!-- <shift>8:00, 17:00</shift> -->
+            <tasks>0</tasks>
+        </agent>
+        <agent>
+            <name>cruise control</name>
+            <!-- <shift>8:00, 17:00</shift> -->
+            <tasks>0</tasks>
         </agent>
     </agents>
     <tasks>

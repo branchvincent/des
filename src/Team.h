@@ -35,7 +35,7 @@ class Team
 {
 //  Friend class
 
-   // friend Agent;
+ //   	friend class Agent;
 
 //	Public member functions
 
@@ -112,7 +112,8 @@ Team::Team(const ptree& xmlData)
 	{
 		if (agent.first == "agent")
 		{
-			agents.push_back(Agent(*this, agent.second));
+			agents.push_back(Agent(agent.second, taskTypes));
+			// agents.push_back(Agent(*this, agent.second));
 		}
 	}
 
@@ -373,7 +374,10 @@ void Team::output(ostream& out) const
 {
 	out << "Name: " << name << endl;
 	out << "Task types: " << taskTypes << endl;
-	out << "Agents: " << agents;
+	out << "Agents: ";
+
+	for (const auto& agent : agents)
+		out << agent.name << ", ";
 	// vector<TaskTypes> taskTypes;
 }
 //

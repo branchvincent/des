@@ -21,11 +21,33 @@
 using namespace std;
 using boost::property_tree::ptree;
 
+// class B;
+//
+// class A
+// {
+// public:
+//     friend class B;
+//     A() : x(5) {}
+// private: int x;
+//     B b;
+// };
+//
+// class B
+// {
+// public:
+//     B() : a() {}
+//     void print() {cout << a.x << endl;}
+// private:
+//     A a;
+// };
+
 int main()
 {
     ptree pt;
-    read_xml("params.xml", pt);
+    read_xml("/Users/Branch/Documents/Research/fra/shado/params.xml", pt);
 
+    // B b;
+    // b.print();
     // Parameters p("params.xml");
     // cout << p << endl;
 
@@ -40,9 +62,11 @@ int main()
     // t.finish(15);
     // t.start(9);
 
+    // cout << B().a.s << endl;
+
     Team t(pt.get_child("team"));
     cout << t << endl;
-    
+
     // TaskType t(pt.get_child("task"));
     // cout << t << endl;
     //
@@ -69,7 +93,7 @@ int main()
     return 0;
 }
 
-void test()
+void temp()
 {
     // struct Flight
     // {
