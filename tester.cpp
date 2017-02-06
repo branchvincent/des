@@ -2,8 +2,9 @@
 #include <string>
 // #include <cmath>
 #include "src/Task.h"
-// #include <boost/property_tree/ptree.hpp>
-// #include <boost/property_tree/xml_parser.hpp>
+#include "src/Agent.h"
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 // #include <vector>
 // #include "src/Util.h"
 // // #include "src/TaskType.h"
@@ -14,25 +15,16 @@
 // #include <queue>
 // // #include "src/Traffic.h"
 // // #include "src/Flags.h"
-// #include "src/TaskType.h"
+#include "src/TaskType.h"
+#include "src/Team.h"
 
 using namespace std;
-
-// typedef priority_queue<Task,vector<Task>> Queue;
-// typedef <bool,string> pair;
-
-void inner(int& x) {x++;}
-void outer(int& x) {inner(x);}
+using boost::property_tree::ptree;
 
 int main()
 {
-    int x = 100;
-    outer(x);
-    cout << x << endl;
-    // float x = 1;
-    // cout << x/2 << endl;
-    // ptree pt;
-    // read_xml("../params.xml", pt);
+    ptree pt;
+    read_xml("params.xml", pt);
 
     // Parameters p("params.xml");
     // cout << p << endl;
@@ -48,8 +40,11 @@ int main()
     // t.finish(15);
     // t.start(9);
 
-
+    Team t(pt.get_child("team"));
+    cout << t << endl;
+    
     // TaskType t(pt.get_child("task"));
+    // cout << t << endl;
     //
     // for (int i = 0; i < 4; i++)
     //     cout << t.genTask(0) << endl;

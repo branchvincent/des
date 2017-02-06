@@ -21,6 +21,8 @@
 
 using namespace std;
 
+bool compareArrivals(Task t1, Task t2) {return t1.arrivesSooner(t2);}
+
 /****************************************************************************
 *																			*
 *	Definition of Phase class												*
@@ -35,78 +37,78 @@ class Phase
 
 	//	Constructor
 
-        Phase(string type, vector<TaskTypes> taskTypes) : //, Statistics& sts) :
-            type(type),
-			taskTypes(taskTypes),
-            currTask(),
-            taskQueue(&cmpPrty),
-            // sharedStats(sts),
-            // stats()
-			{}
+        Phase(Team& team, int num, float start, float stop);
 
 	//	Inspectors
 
-        string getType() const {return type;}
-        bool isIdle() const {return !busy;}
-		bool isBusy() const {return busy;}
-        int getQueueSize() const {return (int)taskQueue.size();}
-		Task& getCurrTask() const {return currTask;}
-        float getDepTime() const;
-        // bool needToIntrp(Queue& queue);
-		// float getUtil(int i) {return stats.getUtil(i);}
 
 	//	Mutators
 
-// 		void procArr(Task* task);
-// 		void procIntrp(float currTime);
-// 		void procDep(Task* task, bool stop);
-//         void servNextTask(float currTime);
-//         void clear();
-//         void endRep() {stats.endRep(); clear();}
-//
-// 	//	Other member functions
-//
-//         void output();
-//         void output(ostream& out) const {out << stats << endl;}
-//
-// //  Private member functions
-//
+
+	//	Other member functions
+
+        // void output(ostream& out) const {out << stats << endl;}
+
+//  Private member functions
+
 //     private:
-//         float getFatigueFactor(float time) {return 1 + (time/60 * 0.01);}
-//         bool currTaskExp();
-//         void procExp(float currTime);
-//         void updateUtil(Task* task, float currTime);
+
 
 //	Data members
 
 	private:
-        string type;
-		vector<TaskTypes> taskTypes;	// tasks to handle
-		Queue taskQueue;           		// task queue
-		Task currTask;             		// current task
-		bool busy;
-		// Statistics& sharedStats;		// shared stats
-        // Statistics stats;          	 	// local stats
+		Team& team;
+		int num;
+        float start;
+		float stop;
+		vector<Task> tasks;
 };
 
 //	Operators
 
 // ostream& operator<<(ostream& out, const Operator& op) {op.output(out); return out;}
-//
+
 /****************************************************************************
 *																			*
-*	Function:	getDepTime													*
+*	Function:	Phase														*
 *																			*
-*	Purpose:	To get the depature time of the current task				*
+*	Purpose:	To construct a phase										*
 *																			*
 ****************************************************************************/
 
-float Phase::getDepTime()
+float Phase::Phase(Team& team, int num, float start, float stop) : times(times)
 {
-	if (busy)
-		return currTask.getDepTime();
-	else
-		return INFINITY;
+//	Create all tasks
+
+	list<Task> temp;
+
+	for (const auto& taskType : team.taskTypes)
+	{
+		Task task = taskType.genTask(num);
+		float arrival = task.getArrival();
+
+	//	Add tasks that arrive in time
+
+		while (arrival < stop)
+		{
+			temp.push_back(task);			// add current
+			task = taskType.genTask(num);	// get next
+			arrival = task.getArrival();
+		}
+	}
+
+//	Merge lists
+
+	tasks.merge(temp, compareArrivals);
+}
+
+void Phase::run()
+{
+	cout << "Beginning Phase " << number << "." << endl;
+
+
+
+	cout << "Phase " << number << " completed." << endl;
 }
 
 #endif

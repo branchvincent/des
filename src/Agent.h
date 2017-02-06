@@ -17,14 +17,18 @@
 #include <string>
 #include <queue>
 #include <algorithm>
+#include <list>
+#include <boost/property_tree/ptree.hpp>
 #include "Task.h"
 // #include "Statistics.h"
 
 using namespace std;
+using boost::property_tree::ptree;
 
 //	Functions and definitions
 
-typedef priority_queue<Task&,list<Task&>> Queue;
+// typedef priority_queue<Task> Queue;
+class Team;
 
 /****************************************************************************
 *																			*
@@ -40,7 +44,7 @@ class Agent
 
 	//	Constructor
 
-		Agent();
+		Agent(Team& team, const ptree& xmlData);
         // Agent(string name, vector<TaskTypes> taskTypes);
 
 	//	Inspectors
@@ -68,7 +72,7 @@ class Agent
 // 	//	Other member functions
 //
 //         void output();
-//         void output(ostream& out) const {out << stats << endl;}
+        void output(ostream& out) const;
 //
 // //  Private member functions
 //
@@ -81,9 +85,9 @@ class Agent
 //	Data members
 
 	private:
-        // string type;
+        string type;
 		// vector<TaskTypes> taskTypes;	// types of tasks
-		// Queue queue;           			// task queue
+		// priority_queue<Task> queue; 	// task queue
 		// Task& currTask;             		// current task
 		// bool busy;						// busy
 		// Statistics& sharedStats;		// shared stats
@@ -92,8 +96,13 @@ class Agent
 
 // //	Operators
 //
-// // ostream& operator<<(ostream& out, const Operator& op) {op.output(out); return out;}
-// //
+ostream& operator<<(ostream& out, const Agent& a) {a.output(out); return out;}
+
+Agent::Agent(Team& team, const ptree& xmlData)
+{
+	type = xmlData.get<string>("name");
+}
+
 // /****************************************************************************
 // *																			*
 // *	Function:	Agent														*
@@ -266,41 +275,39 @@ class Agent
 //     while (!taskQueue.empty()) taskQueue.pop();
 // }
 // //
-// // /****************************************************************************
-// // *																			*
-// // *	Function:	output														*
-// // *																			*
-// // *	Purpose:	To output an Agent										*
-// // *																			*
-// // ****************************************************************************/
-// //
-// // //void Agent::output(ostream& out) const
-// // //{
-// // ////  Output Agent's status and number of enqueued tasks
-// // //
-// // //    if (currTask != NULL)
-// // //        cout << "Agent is busy until " << currTask->getDepTime();
-// // //    else
-// // //        cout << "Agent is not busy";
-// // //
-// // //    cout << " and has " << taskQueue.size() << " tasks in queue." << endl;
-// // //
-// // ////  Output queue
-// // //
-// // //    cout << "Queue = {" << endl;
-// // //
-// // //    Queue tmpQ = taskQueue;
-// // //
-// // //    while (!tmpQ.empty())
-// // //    {
-// // //        cout << *tmpQ.top() << endl;
-// // //        tmpQ.pop();
-// // //    }
-// // //
-// // //    cout << "}" << endl;
-// // //
-// // //    return;
-// // //}
+/****************************************************************************
+*																			*
+*	Function:	output														*
+*																			*
+*	Purpose:	To output an Agent										*
+*																			*
+****************************************************************************/
+
+void Agent::output(ostream& out) const
+{
+	out << "Name: " << type;
+
+//    if (currTask != NULL)
+//        cout << "Agent is busy until " << currTask->getDepTime();
+//    else
+//        cout << "Agent is not busy";
+//
+//    cout << " and has " << taskQueue.size() << " tasks in queue." << endl;
+//
+// //  Output queue
+//
+//    cout << "Queue = {" << endl;
+//
+//    Queue tmpQ = taskQueue;
+//
+//    while (!tmpQ.empty())
+//    {
+//        cout << *tmpQ.top() << endl;
+//        tmpQ.pop();
+//    }
+//
+//    cout << "}" << endl;
+}
 // //
 // /****************************************************************************
 // *																			*

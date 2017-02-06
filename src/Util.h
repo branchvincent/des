@@ -48,7 +48,7 @@ namespace util
 	vector<float> TRAFFIC = {1,1,1};
 
     template <class T>
-    vector<T> stringToVector(string data, char delimiter = ',')
+    vector<T> toVector(string data, char delimiter = ',')
     {
     //  Replace delimiter with white space
 

@@ -35,7 +35,7 @@ class TaskType
 
 	//	Constructors
 
-		TaskType(ptree& xmlData);
+		TaskType(const ptree& xmlData);
 		TaskType(string name, vector<int> priority, vector<bool> isAffectedByTraffic,
 			vector<Distribution> interarrival, vector<Distribution> service,
 			vector<Distribution> expiration);
@@ -65,11 +65,12 @@ class TaskType
 	//	Other member functions
 
 		Task genTask(int phase);
+        void output(ostream& out) const;
 
 //	Private member functions
 
 	private:
-		void readDistributionFromXML(vector<Distribution>& dists, ptree& xmlData);
+		void readDistributionFromXML(vector<Distribution>& dists, const ptree& xmlData);
 		float genArrivalTime(int phase);
 		float genServiceTime(int phase);
 		float genExpirationTime(int phase, float arrivalTime, float serviceTime);
@@ -86,6 +87,8 @@ class TaskType
 		float lastArrival;
 };
 
+ostream& operator<<(ostream& out, const TaskType& t) {t.output(out); return out;}
+
 /****************************************************************************
 *																			*
 *	Function:	TaskType													*
@@ -94,11 +97,11 @@ class TaskType
 *																			*
 ****************************************************************************/
 
-TaskType::TaskType(ptree& xmlData) : lastArrival(0)
+TaskType::TaskType(const ptree& xmlData) : lastArrival(0)
 {
 	name = xmlData.get<string>("name");
-	priority = util::stringToVector<int>(xmlData.get<string>("priority"));
-	isAffectedByTraffic = util::stringToVector<bool>(xmlData.get<string>("isAffectedByTraffic"));
+	priority = util::toVector<int>(xmlData.get<string>("priority"));
+	isAffectedByTraffic = util::toVector<bool>(xmlData.get<string>("isAffectedByTraffic"));
 	readDistributionFromXML(interarrival, xmlData.get_child("interarrival"));
 	readDistributionFromXML(service, xmlData.get_child("service"));
 	readDistributionFromXML(expiration, xmlData.get_child("expiration"));
@@ -236,27 +239,47 @@ float TaskType::genExpirationTime(int phase, float arrivalTime, float serviceTim
 *																			*
 ****************************************************************************/
 
-void TaskType::readDistributionFromXML(vector<Distribution>& dists, ptree& xmlData)
+void TaskType::readDistributionFromXML(vector<Distribution>& dists, const ptree& xmlData)
 {
 	string type = util::toLower(xmlData.get<string>("<xmlattr>.type"));
 	bool byPhase = xmlData.get<bool>("<xmlattr>.byPhase", false);
 
 	if (byPhase)
 	{
-		int num_phases = 3; // TODO
-		for (int i = 0; i < num_phases; i++)
+		for (const auto& phase : xmlData)
 		{
-			vector<float> parameters = util::stringToVector<float>(xmlData.get<string>("phase" + to_string(i)));
-			dists.push_back(Distribution(type, parameters));
+			if (phase.first == "phase")
+			{
+				vector<float> parameters = util::toVector<float>(phase.second.get<string>(""));
+				dists.push_back(Distribution(type, parameters));
+			}
 		}
 	}
 	else
 	{
-		vector<float> parameters = util::stringToVector<float>(xmlData.get<string>(""));
+		vector<float> parameters = util::toVector<float>(xmlData.get<string>(""));
 		dists.push_back(Distribution(type, parameters));
 	}
 
 	return;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	output 														*
+*																			*
+*	Purpose:	To return a random number									*
+*																			*
+****************************************************************************/
+
+void TaskType::output(ostream& out) const
+{
+	out << "Name: " << name << endl;
+	out << "Priority: " << priority << endl;
+	out << "Traffic effect: " << isAffectedByTraffic << endl;
+	out << "Interarrival: " << interarrival << endl;
+	out << "Service: " << service << endl;
+	out << "Expiration: " << expiration;
 }
 
 #endif

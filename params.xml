@@ -13,24 +13,77 @@
     <phase3 num="3">0</phase3>
 </interarrival>
 
+<!-- <teams> -->
+<team>
+    <name>Train</name>
+    <agents>
+        <agent>
+            <name>engineer</name>
+            <tasks>task1, task2</tasks>
+        </agent>
+    </agents>
+    <tasks>
+        <task>
+            <name>My Task</name>
+            <priority>4, 3, 4</priority>
+            <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
+            <interarrival type="exponential" byPhase="true">
+                <phase>0</phase>
+                <phase>0</phase>
+                <phase>0</phase>
+            </interarrival>
+            <service type="lognormal" byPhase="true">
+                <phase>0,2</phase>
+                <phase>0,2</phase>
+                <phase>0,2</phase>
+            </service>
+            <expiration type="uniform" byPhase="true">
+                <phase>0,2</phase>
+                <phase>0,2</phase>
+                <phase>0,2</phase>
+            </expiration>
+            <description>My description.</description>
+        </task>
+        <task>
+            <name>My Task</name>
+            <priority>4, 3, 4</priority>
+            <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
+            <interarrival type="exponential" byPhase="true">
+                <phase>0</phase>
+                <phase>0</phase>
+                <phase>0</phase>
+            </interarrival>
+            <service type="lognormal">0,2
+            </service>
+            <expiration type="uniform" byPhase="true">
+                <phase>0,2</phase>
+                <phase>0,2</phase>
+                <phase>0,2</phase>
+            </expiration>
+            <description>My description.</description>
+        </task>
+    </tasks>
+</team>
+<!-- </teams> -->
+
 <task>
     <name>My Task</name>
     <priority>4, 3, 4</priority>
     <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
     <interarrival type="exponential" byPhase="true">
-        <phase0>0</phase0>
-        <phase1>0</phase1>
-        <phase2>0</phase2>
+        <phase>0</phase>
+        <phase>0</phase>
+        <phase>0</phase>
     </interarrival>
     <service type="lognormal" byPhase="true">
-        <phase0>0, 1.22</phase0>
-        <phase1>0</phase1>
-        <phase2>0</phase2>
+        <phase>0,2</phase>
+        <phase>0,2</phase>
+        <phase>0,2</phase>
     </service>
     <expiration type="uniform" byPhase="true">
-        <phase0>0</phase0>
-        <phase1>0</phase1>
-        <phase2>0</phase2>
+        <phase>0,2</phase>
+        <phase>0,2</phase>
+        <phase>0,3</phase>
     </expiration>
     <description>My description.</description>
 </task>

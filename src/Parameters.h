@@ -95,7 +95,7 @@ Parameters::Parameters(string file) :
 
 	outputPath = params.get<string>("parameters.output_path");
 	numReps = params.get<int>("parameters.replications");
-	traffic = util::stringToVector<char>(params.get<string>("parameters.traffic"));
+	traffic = util::toVector<char>(params.get<string>("parameters.traffic"));
 }
 
 /****************************************************************************

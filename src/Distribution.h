@@ -86,11 +86,20 @@ void Distribution::construct()
 //	Set distribution
 
 	if (type == "exponential")
+	{
+		ASSERT(parameters.size() == 1, "Exponential distribution requires 1 parameter");
 		exp_distribution = exponential_distribution<float>(parameters[0]);
+	}
 	else if (type == "lognormal")
+	{
+		ASSERT(parameters.size() == 2, "Lognormal distribution requires 2 parameters");
 		log_distribution = lognormal_distribution<float>(parameters[0], parameters[1]);
+	}
 	else
+	{
+		ASSERT(parameters.size() == 2, "Uniform distribution requires 2 parameters");
 		uni_distribution = uniform_real_distribution<float>(parameters[0], parameters[1]);
+	}
 }
 
 /****************************************************************************
