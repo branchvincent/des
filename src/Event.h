@@ -53,7 +53,7 @@ class Event
 
 	private:
 		string type;
-        tm time;
+        time_t time;
 		Task task;
 		Agent agent;
 };

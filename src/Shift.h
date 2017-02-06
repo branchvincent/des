@@ -39,8 +39,10 @@ class Shift
 	//	Inspectors
 
 		// string getStart() {return string(put_time(&start, "%c"));}
-        string getStart() const {return asctime(&start);}
-        string getStop() const {return asctime(&stop);}
+		time_t getStart() {return timegm(&start);}
+        time_t getStop() {return timegm(&stop);}
+        string getStartString() const {return asctime(&start);}
+        string getStopString() const {return asctime(&stop);}
         float getHours() const
 			{ASSERT(duration > 0, "Shift duration cannot be negative"); return duration/3600.;}
 
@@ -55,7 +57,7 @@ class Shift
 
 //	Data members
 
-	private:
+	public:
         tm start;
         tm stop;
         time_t duration;

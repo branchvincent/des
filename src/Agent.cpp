@@ -1,6 +1,6 @@
 /****************************************************************************
 *																			*
-*	File:		Agent.h														*
+*	File:		Agent.cpp													*
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
@@ -8,102 +8,9 @@
 *																			*
 ****************************************************************************/
 
-#ifndef AGENT_H
-#define AGENT_H
-
 #include <iostream>
 #include <string>
-#include <queue>
-#include <algorithm>
-#include <list>
-#include <boost/property_tree/ptree.hpp>
-#include "Task.h"
-#include "Shift.h"
-#include "TaskType.h"
-#include "Utility.h"
-// #include "Statistics.h"
-
-using namespace std;
-using boost::property_tree::ptree;
-
-/****************************************************************************
-*																			*
-*	Definition of Agent class												*
-*																			*
-****************************************************************************/
-
-class Agent
-{
-//	Friend class
-
-	friend class Team;
-
-//	Public member functions
-
-	public:
-
-	//	Constructor
-
-		Agent(const ptree& xmlData, vector<TaskType> taskTypes);
-		// Agent(Team& team, const ptree& xmlData);
-        // Agent(string name, vector<TaskTypes> taskTypes);
-
-	//	Inspectors
-
-        // string getType() const {return type;}
-        // bool isIdle() const {return !busy;}
-		// bool isBusy() const {return busy;}
-        // int getQueueSize() const {return (int)taskQueue.size();}
-		// Task& getCurrTask() const {return currTask;}
-        // float getDepTime() const;
-        // bool needToIntrp(Queue& queue);
-		// float getUtil(int i) {return stats.getUtil(i);}
-
-	//	Mutators
-
-		// void arrive(Task& task, float time);
-		// void interrupt(float time);
-		// void depart(Task& task, float time);
-		// void service(Task& task, float time);
-
-//         void servNextTask(float currTime);
-//         void clear();
-//         void endRep() {stats.endRep(); clear();}
-//
-// 	//	Other member functions
-
-		Event getNextEvent()
-		{
-			if (arrivingTasks.front().getArrival() < currTask.getDepartue())
-				return Event("arrival")
-			else
-				return Event("departure");
-		}
-//         void output();
-        void output(ostream& out) const;
-
-// //  Private member functions
-//
-//     private:
-//         float getFatigueFactor(float time) {return 1 + (time/60 * 0.01);}
-//         bool currTaskExp();
-//         void procExp(float currTime);
-//         void updateUtil(Task* task, float currTime);
-
-//	Data members
-
-	private:
-        string name;
-		Shift shift;
-		vector<TaskType> taskTypes;		// types of tasks
-		priority_queue<Task> queue; 	// task queue
-		list<Task> arrivingTasks;
-		// Task& currTask;             		// current task
-		bool busy;						// busy
-		// Team& team;
-		// Statistics& sharedStats;		// shared stats
-        // Statistics stats;          	 	// local stats
-};
+#include "Agent.h"
 
 //	Operators
 
@@ -128,10 +35,31 @@ Agent::Agent(const ptree& xmlData, vector<TaskType> taskTypes) : busy(false)//, 
 		util::checkIndex(taskTypes, i);
 		this->taskTypes.push_back(taskTypes[i]);
 	}
-
-	// taskTypes = team.taskTypes;
-	// cout << team.taskTypes << endl;
 }
+
+Event Agent::getNextEvent()
+{
+	if (arrivingTasks.front().getArrival() < currTask.getDepartue())
+		return Event("arrival")
+	else
+		return Event("departure");
+}
+
+/****************************************************************************
+*																			*
+*	Function:	output														*
+*																			*
+*	Purpose:	To output an agent											*
+*																			*
+****************************************************************************/
+
+void Agent::output(ostream& out) const
+{
+	out << "Name: " << name << endl;
+	out << "Shift: " << shift << endl;
+	out << "Tasks: " << taskTypes;
+}
+
 
 // /****************************************************************************
 // *																			*
@@ -305,20 +233,6 @@ Agent::Agent(const ptree& xmlData, vector<TaskType> taskTypes) : busy(false)//, 
 //     while (!taskQueue.empty()) taskQueue.pop();
 // }
 // //
-/****************************************************************************
-*																			*
-*	Function:	output														*
-*																			*
-*	Purpose:	To output an Agent										*
-*																			*
-****************************************************************************/
-
-void Agent::output(ostream& out) const
-{
-	out << "Name: " << name << endl;
-	out << "Shift: " << shift << endl;
-	out << "Tasks: " << taskTypes;
-
 //    if (currTask != NULL)
 //        cout << "Agent is busy until " << currTask->getDepTime();
 //    else
@@ -546,5 +460,3 @@ void Agent::output(ostream& out) const
 //
 //     return;
 // }
-
-#endif

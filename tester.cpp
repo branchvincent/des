@@ -17,6 +17,7 @@
 // // #include "src/Flags.h"
 #include "src/TaskType.h"
 #include "src/Team.h"
+#include "src/Shift.h"
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -43,6 +44,14 @@ using boost::property_tree::ptree;
 
 int main()
 {
+    Shift s("1:00", "2:00");
+    cout << s << endl;
+    cout << (s.getStop() - s.getStart())/3600. << endl;
+    cout << s << endl;
+
+    // bool b = s.start < s.stop;
+    // cout << b << endl;
+
     ptree pt;
     read_xml("/Users/Branch/Documents/Research/fra/shado/params.xml", pt);
 
