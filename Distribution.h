@@ -35,6 +35,7 @@ class Distribution
 
 	//	Constructor
 
+		Distribution() : type("exponential"), parameters{0,1} {construct();}
 		Distribution(string type, vector<float> p) : type(type), parameters(p) {construct();}
 		Distribution(string type, float p) : type(type), parameters{p} {construct();}
 		Distribution(string type, float p1, float p2) : type(type), parameters{p1, p2} {construct();}
@@ -132,7 +133,6 @@ void Distribution::output(ostream& out) const
 {
 	out << "Type: " << type << ", ";
 	out << "Parameters: " << parameters;
-	return;
 }
 
 #endif

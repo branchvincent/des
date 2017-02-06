@@ -3,7 +3,9 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include "Task.h"
+//#include "TaskType.h"
 // #include "src/Agent.h"
+// #include "Utility.h"
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -41,11 +43,12 @@ int main()
     ptree data;
     read_xml("/Users/Branch/Documents/Research/fra/shado/params.xml", data);
 
+    // cout << util::seed << endl;
     Task t(2, 1, 3, 40);
-    // TaskType t(pt.get_child("task"));
+//     TaskType t(data.get_child("task"));
     // Team t(pt.get_child("team"));
     // Parameters t("params.xml");
-   // cout << t << endl;
+   cout << t << endl;
 
     return 0;
 }

@@ -10,7 +10,6 @@
 
 #include <iostream>
 #include <string>
-#include <cmath>
 #include "Task.h"
 #include "Utility.h"
 
@@ -30,8 +29,13 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
+//Task::Task(int priority, float arrival, float service, float expiration) : type(TaskType())
+//{
+//	*this = Task(type, priority, arrival, service, expiration);
+//}
+
 Task::Task(int priority, float arrival, float service, float expiration) :
-    // type(type),
+//	type(type),
     priority(priority),
     arrival(arrival),
     service(service),
@@ -199,7 +203,7 @@ void Task::output(ostream& out) const
 	cout << "Arrival " << arrival << ", ";
 	cout << "Service " << service <<  ", ";
 	cout << "Departure " << departure << ", ";
-	cout << "Expiration " << expiration << ")";
+	cout << "Expiration " << expiration;
 }
 
 /****************************************************************************
