@@ -2,16 +2,18 @@
 #include <string>
  // #include "Task.cpp"
 // #include "Distribution.h"
-//#include "TaskType.h"
-// #include "TaskType.h"
-// #include "Utility.h"
+#include "test/Task.h"
+#include "test/TaskType.h"
+// #include "test/Task.h"
+// #include "test/Utility.h"
+// #include "test/Distribution.h"
 // #include "Parameters.h"
 // #include "Flags.h"
 // #include "Simulation.h"
 
-// #include <boost/property_tree/ptree.hpp>
-// #include <boost/property_tree/xml_parser.hpp>
-// using boost::property_tree::ptree;
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+using boost::property_tree::ptree;
 
 using namespace std;
 
@@ -28,19 +30,19 @@ class A
 
 int main()
 {
-    // ptree data;
-    // read_xml("/Users/Branch/Documents/Research/fra/shado/params.xml", data);
+    ptree data;
+    read_xml("/Users/Branch/Documents/Research/fra/shado/params.xml", data);
 
    // Distribution t;
    // Task t(2, 1, 3, 40);
-   // TaskType t(data.get_child("task"));
+   TaskType t(data.get_child("task"));
    // Team t(pt.get_child("teadm"));
    // Parameters t("params.xml");
 
     // if (static_cast<bool>(s))
     //     cout << "TRUE" << endl;
    // Simulation t("params.xml");
-   // cout << t << endl;
+   cout << t << endl;
 
     return 0;
 }

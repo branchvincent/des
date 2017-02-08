@@ -46,8 +46,10 @@ class ArgParser
 //	Private member functions
 
 	private:
+		void addFlags();
+		void readFlags();
 		bool isValid();
-		void handleOpts();
+		// void handleOpts();
 		void printUsage();
 
 //	Data members
@@ -72,39 +74,7 @@ ArgParser::ArgParser()
 	p.overview = "SHOW command line options.";
 	p.syntax = "show [parameterFile] [OPTIONS]";
 	p.example = "show ~/Documents/params.xml\n\n";
-
-//	Add options
-
-	p.add(
-		"", 	// Default
-		false, 	// Required?
-		0, 		// Number of args expected
-		false, 	// Delimiter if expecting multiple args
-		"Display usage instructions.", 		// Help description
-		"-h",		// Flag tokens
-		"-help",
-		"--help"
-	);
-
-	p.add(
-		"", 	// Default
-		false, 	// Required?
-		0, 		// Number of args expected
-		false, 	// Delimiter if expecting multiple args
-		"Print inputs for debugging.", 		// Help description
-		"--debug"		// Flag tokens
-	);
-
-	p.add(
-		"", 	// Default
-		false, 	// Required?
-		0, 		// Number of args expected
-		false, 	// Delimiter if expecting multiple args
-		"Print inputs for debugging.", 		// Help description
-		"-v",		// Flag tokens
-		"-verbose",
-		"--verbose"
-	);
+	addFlags();
 }
 
 /****************************************************************************
@@ -131,9 +101,43 @@ void ArgParser::parse(int argc, const char* argv[])
 
 //	Handle options
 
-	handleOpts();
+	readFlags();
 
 	return;
+}
+
+void ArgParser::addFlags()
+{
+	p.add(
+		"", 	// Default
+		false, 	// Required?
+		0, 		// Number of args expected
+		false, 	// Delimiter if expecting multiple args
+		"Display usage instructions.",
+		"-h",
+		"-help",
+		"--help"
+	);
+
+	p.add(
+		"", 	// Default
+		false, 	// Required?
+		0, 		// Number of args expected
+		false, 	// Delimiter if expecting multiple args
+		"Print inputs for debugging.", 		// Help description
+		"--debug"		// Flag tokens
+	);
+
+	p.add(
+		"", 	// Default
+		false, 	// Required?
+		0, 		// Number of args expected
+		false, 	// Delimiter if expecting multiple args
+		"Print inputs for debugging.", 		// Help description
+		"-v",		// Flag tokens
+		"-verbose",
+		"--verbose"
+	);
 }
 
 /****************************************************************************
@@ -176,9 +180,9 @@ bool ArgParser::isValid()
 //			cerr << "ERROR: Got unexpected number of arguments for option " << unexpectedOpt << ".\n\n";
 //		return false;
 //	}
-//
-////	Check for unknown options
-//
+
+//	Check for unknown options
+
 	if (p.unknownArgs.size() > 0)
 	{
 		for (string* unknownOpt : p.unknownArgs)
@@ -188,7 +192,6 @@ bool ArgParser::isValid()
 
 	if (!p.gotValid(badOpts, badArgs))
 	{
-		cout << "HERE" << endl;
 		for (string badOpt : badOpts)
 			cerr << "ERROR: " << badOpt << ".\n\n";
 		for (string badArg : badArgs)
@@ -207,7 +210,7 @@ bool ArgParser::isValid()
 *																			*
 ****************************************************************************/
 
-void ArgParser::handleOpts()
+void ArgParser::readFlags()
 {
 //	Check help flag
 
@@ -217,10 +220,11 @@ void ArgParser::handleOpts()
 		exit(0);
 	}
 
-//	Check debug flag
+//	Check other flags
 
 	flags.add("debug", p.isSet("--debug"));
 	flags.add("verbose", p.isSet("-v"));
+	flags.add("rand", p.isSet("-r"));
 
 	// string pretty;
 	// p.prettyPrint(pretty);

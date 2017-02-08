@@ -13,11 +13,10 @@
 
 #include <iostream>
 #include <string>
-// #include "TaskType.h"
 
 using namespace std;
 
-//class TaskType;
+class TaskType;
 
 /****************************************************************************
 *																			*

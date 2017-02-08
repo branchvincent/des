@@ -12,7 +12,6 @@
 #define SIMULATION_H
 
 #include <iostream>
-// #include <fstream>
 #include <string>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -62,9 +61,6 @@ class Simulation
 //  Private member functions
 
     private:
-
-    //  Used by run
-
         // void runRep();
         // void runPhase(int phase);
         // void genTasks(int type, int phase, int trainNum);
@@ -129,6 +125,20 @@ Simulation::Simulation(string file, Flags flags = Flags()) : parameters(file), f
 
 /****************************************************************************
 *																			*
+*	Function:	run                                                         *
+*																			*
+*	Purpose:	To run the simulation for the specified number of           *
+*               replications                                                *
+*																			*
+****************************************************************************/
+
+void Simulation::run()
+{
+	
+}
+
+/****************************************************************************
+*																			*
 *	Function:	output														*
 *																			*
 *	Purpose:	To output a simulation										*
@@ -141,20 +151,6 @@ void Simulation::output(ostream& out) const
 	out << "Flags: " << flags;
 }
 
-
-/****************************************************************************
-*																			*
-*	Function:	run                                                         *
-*																			*
-*	Purpose:	To run the simulation for the specified number of           *
-*               replications                                                *
-*																			*
-****************************************************************************/
-
-void Simulation::run()
-{
-	
-}
 // //  Run simulation the specified number of times
 //
 // //	string file = OUTPUT_PATH + "/des_status";
