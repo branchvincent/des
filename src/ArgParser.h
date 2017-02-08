@@ -4,8 +4,6 @@
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
-*	Date:		Jan 6, 2016													*
-*																			*
 *	Purpose:	This file defines the ArgParser class.						*
 *																			*
 ****************************************************************************/
@@ -15,7 +13,8 @@
 
 #include <iostream>
 #include <string>
-#include "argParserLib.h"
+#include "../libs/EZOptionParser.h"
+#include "Flags.h"
 
 using namespace std;
 using namespace ez;
@@ -38,7 +37,7 @@ class ArgParser
 
 	//	Inspectors
 
-		const ezOptionParser& getParser() {return opt;}
+		const Flags& getFlags() {return flags;}
 
 	//	Other member functions
 
@@ -54,7 +53,8 @@ class ArgParser
 //	Data members
 
 	private:
-		ezOptionParser opt;
+		ezOptionParser p;
+		Flags flags;
 };
 
 /****************************************************************************
@@ -68,14 +68,14 @@ class ArgParser
 ArgParser::ArgParser()
 {
 //	Set details
-	
-	opt.overview = "SHOW command line options.";
-	opt.syntax = "show [parameterFile] [OPTIONS]";
-	opt.example = "show ~/Documents/params.txt\n\n";
-	
+
+	p.overview = "SHOW command line options.";
+	p.syntax = "show [parameterFile] [OPTIONS]";
+	p.example = "show ~/Documents/params.xml\n\n";
+
 //	Add options
 
-	opt.add(
+	p.add(
 		"", 	// Default
 		false, 	// Required?
 		0, 		// Number of args expected
@@ -85,8 +85,8 @@ ArgParser::ArgParser()
 		"-help",
 		"--help"
 	);
-	
-	opt.add(
+
+	p.add(
 		"", 	// Default
 		false, 	// Required?
 		0, 		// Number of args expected
@@ -94,8 +94,8 @@ ArgParser::ArgParser()
 		"Print inputs for debugging.", 		// Help description
 		"--debug"		// Flag tokens
 	);
-	
-	opt.add(
+
+	p.add(
 		"", 	// Default
 		false, 	// Required?
 		0, 		// Number of args expected
@@ -118,21 +118,21 @@ ArgParser::ArgParser()
 void ArgParser::parse(int argc, const char* argv[])
 {
 //	Parse arguments
-	
-	opt.parse(argc, argv);
-	
+
+	p.parse(argc, argv);
+
 //	Check for flag errors
-	
+
 	if (!isValid())
 	{
 		printUsage();
 		exit(1);
 	}
-	
+
 //	Handle options
-	
+
 	handleOpts();
-	
+
 	return;
 }
 
@@ -147,46 +147,46 @@ void ArgParser::parse(int argc, const char* argv[])
 bool ArgParser::isValid()
 {
 //	Check for required argument
-	
-	cout << "FirstArgs = " << opt.firstArgs.size() << endl;
-	cout << "LastArgs = " << opt.lastArgs.size() << endl;
-	
-	if (opt.firstArgs.size() + opt.lastArgs.size() < 2)
-	{
-		cerr << "ERROR: Expected at least 1 argument.\n\n";
-		return false;
-	}
-	
+
+	cout << "FirstArgs = " << p.firstArgs.size() << endl;
+	cout << "LastArgs = " << p.lastArgs.size() << endl;
+
+	// if (p.firstArgs.size() + p.lastArgs.size() < 2)
+	// {
+	// 	cerr << "ERROR: Expected at least 1 argument.\n\n";
+	// 	return false;
+	// }
+
 //	Check for required options
-	
+
 	vector<string> badOpts, badArgs;
-	
-//	if (!opt.gotRequired(badOpts))
+
+//	if (!p.gotRequired(badOpts))
 //	{
 //		for (string missingOpt : badOpts)
 //			cerr << "ERROR: Missing required option " << missingOpt << ".\n\n";
 //		return false;
 //	}
-//	
+//
 ////	Check for correct number of arguments
-//	
-//	if (!opt.gotExpected(badOpts))
+//
+//	if (!p.gotExpected(badOpts))
 //	{
 //		for (string unexpectedOpt : badOpts)
 //			cerr << "ERROR: Got unexpected number of arguments for option " << unexpectedOpt << ".\n\n";
 //		return false;
 //	}
-//	
+//
 ////	Check for unknown options
-//	
-	if (opt.unknownArgs.size() > 0)
+//
+	if (p.unknownArgs.size() > 0)
 	{
-		for (string* unknownOpt : opt.unknownArgs)
+		for (string* unknownOpt : p.unknownArgs)
 			cerr << "ERROR: " << &unknownOpt << ".\n\n";
 		return false;
 	}
-	
-	if (!opt.gotValid(badOpts, badArgs))
+
+	if (!p.gotValid(badOpts, badArgs))
 	{
 		cout << "HERE" << endl;
 		for (string badOpt : badOpts)
@@ -195,13 +195,13 @@ bool ArgParser::isValid()
 			cerr << "ERROR: " << badArg << ".\n\n";
 		return false;
 	}
-	
+
 	return true;
 }
 
 /****************************************************************************
 *																			*
-*	Function:	handleOpts()												*
+*	Function:	handleOpts													*
 *																			*
 *	Purpose:	To handle the specified options								*
 *																			*
@@ -210,29 +210,22 @@ bool ArgParser::isValid()
 void ArgParser::handleOpts()
 {
 //	Check help flag
-	
-	if (opt.isSet("-h"))
+
+	if (p.isSet("-h"))
 	{
 		printUsage();
 		exit(0);
 	}
-	
+
 //	Check debug flag
-	
-	if (opt.isSet("--debug"))
-	{
-		string pretty;
-		opt.prettyPrint(pretty);
-		cout << pretty;
-	}
-	
-//	Check for verbose flag
-	
-	if (opt.isSet("-v"))
-	{
-		cout << "Verbose" << endl;
-	}
-	
+
+	flags.add("debug", p.isSet("--debug"));
+	flags.add("verbose", p.isSet("-v"));
+
+	// string pretty;
+	// p.prettyPrint(pretty);
+	// cout << pretty;
+
 	return;
 }
 
@@ -247,9 +240,8 @@ void ArgParser::handleOpts()
 void ArgParser::printUsage()
 {
 	string usage;
-	opt.getUsage(usage);
+	p.getUsage(usage);
 	cout << usage;
-	return;
 }
 
 #endif

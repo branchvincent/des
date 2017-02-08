@@ -36,7 +36,12 @@ class Flags
 
 	//	Inspectors
 
-        bool isOn(string key);
+        const bool& isOn(string key);
+
+	//	Mutators
+
+		void add(string flag, bool value)
+			{string key = util::toLower(flag); flags[key] = value;}
 
     //  Other member functions
 
@@ -60,18 +65,18 @@ ostream& operator<<(ostream& out, const Flags& f) {f.output(out); return out;}
 *																			*
 ****************************************************************************/
 
-Flags::Flags(map<string,bool> flags) :
-    flags{
-        {"traffic", true},
-        {"fatigue", true},
-        {"verbose", false},
-        {"rand", true}
-    }
+Flags::Flags(map<string,bool> flags) //:
+    // flags{
+    //     {"traffic", true},
+    //     {"fatigue", true},
+    //     {"verbose", false},
+    //     {"rand", true}
+    // }
 {
     for (const auto& pair : flags)
     {
 		string key = util::toLower(pair.first);
-        ASSERT(util::contains(this->flags, key), "Incompatible flag '" << key << "'");
+        // ASSERT(util::contains(this->flags, key), "Incompatible flag '" << key << "'");
 		this->flags[key] = pair.second;
     }
 }

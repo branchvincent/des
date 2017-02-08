@@ -56,13 +56,6 @@ class Parameters
 		Traffic traffic;
 		// vector<Team> teams;
 		// vector<Batches> batches;
-
-	//	Flags
-
-		bool isTrafficOn;
-		bool isFatigueOn;
-		bool isVerboseOn;
-		bool isRandOn;
 };
 
 //	Operators
@@ -80,11 +73,7 @@ ostream& operator<<(ostream& out, const Parameters& p) {p.output(out); return ou
 Parameters::Parameters(string file) :
 	numReps(100),
 	numPhases(3),
-	intSize(10),
-	isTrafficOn(true),
-	isFatigueOn(true),
-	isVerboseOn(false),
-	isRandOn(true)
+	intSize(10)
 {
 //	Read parameter file
 
@@ -112,7 +101,6 @@ void Parameters::output(ostream& out) const
 	out << "Shift = " << shift << endl;
 	out << "Replications = " << numReps << endl;
 	out << "Traffic = " << traffic;
-	return;
 }
 
 #endif

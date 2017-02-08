@@ -16,7 +16,7 @@
 #include <boost/property_tree/ptree.hpp>
 //#include "Distribution.h"
 //#include "Task.h"
-#include "Utility.h"
+#include "Utility2.h"
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -37,7 +37,7 @@ class TaskType
 	public:
 
 	//	Constructors
-	
+
 		TaskType();
 		TaskType(const ptree& xmlData);
 		TaskType(string name, vector<int> priority, vector<bool> isAffectedByTraffic,

@@ -29,13 +29,8 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-//Task::Task(int priority, float arrival, float service, float expiration) : type(TaskType())
-//{
-//	*this = Task(type, priority, arrival, service, expiration);
-//}
-
-Task::Task(int priority, float arrival, float service, float expiration) :
-//	type(type),
+Task::Task( int priority, float arrival, float service, float expiration) :
+    // type(type),
     priority(priority),
     arrival(arrival),
     service(service),
@@ -200,10 +195,10 @@ void Task::output(ostream& out) const
 {
 	cout << "Priority: " << priority << ", ";
 //	cout << "Name " << name << ", ";
-	cout << "Arrival " << arrival << ", ";
-	cout << "Service " << service <<  ", ";
-	cout << "Departure " << departure << ", ";
-	cout << "Expiration " << expiration;
+	cout << "Arrival: " << arrival << ", ";
+	cout << "Service: " << service <<  ", ";
+	cout << "Departure: " << departure << ", ";
+	cout << "Expiration: " << expiration;
 }
 
 /****************************************************************************

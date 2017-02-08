@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <string>
-#include "TaskType.h"
+// #include "TaskType.h"
 
 using namespace std;
 
@@ -36,9 +36,9 @@ class Task
 	public:
 
 	//	Constructor
-	
+
 		Task(int priority, float arrival, float service, float expiration);
-//		Task(TaskType& type, int priority, float arrival, float service, float expiration);
+		// Task(TaskType& type, int priority, float arrival, float service, float expiration);
 
 	//	Inspectors
 
@@ -67,7 +67,7 @@ class Task
 //	Data members
 
 	private:
-		TaskType type;		// type
+		// TaskType& type;		// type
 		int priority;		// priority level
 		float arrival;		// arrival time (min)
 		float service; 		// service time (min)

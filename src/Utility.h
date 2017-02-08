@@ -1,6 +1,6 @@
 /****************************************************************************
 *																			*
-*	File:		Utility.cpp													*
+*	File:		Utility.h													*
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
@@ -8,16 +8,31 @@
 *																			*
 ****************************************************************************/
 
+#ifndef UTILITY_H
+#define UTILITY_H
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 #include <random>
 #include <sstream>
+#include <fstream>
 #include <algorithm>
-#include "Utility.h"
 
 using namespace std;
+
+//  Assert function to output error message
+
+#define ASSERT(condition, message) \
+    do { \
+        if (!(condition)) { \
+            cerr << "ASSERTION ERROR: " << message << "." << endl; \
+            cerr << "In " << __FILE__ << ", line " << __LINE__ << ": '" << #condition << "' failed" << endl; \
+			cerr << "Exiting..." << endl; \
+            terminate(); \
+        } \
+    } while (false)
 
 /****************************************************************************
 *																			*
@@ -25,24 +40,32 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
+namespace util
+{
 //	Public member functions
 
-string util::toLower(string s)
-    {transform(s.begin(), s.end(), s.begin(), ::tolower); return s;}
+    bool exists(string file) {ifstream f(file); return f.good();}
 
-template <class T> bool util::contains(vector<T>& vec, const T& data)
-    {return find(vec.begin(), vec.end(), data) != vec.end();}
+    template <class T> vector<T> toVector(string data, char delimiter = ',');
 
-template <class T, class P> bool util::contains(map<T,P>& m, const T& key)
-    {return m.find(key) != m.end();}
+    string toLower(string s)
+        {transform(s.begin(), s.end(), s.begin(), ::tolower); return s;}
 
-template <typename T> void util::checkIndex(const vector<T>& vec, int index)
-    {ASSERT(index >= 0 && index < vec.size(), "Invalid array index");}
+    template <class T> bool contains(vector<T>& vec, const T& data)
+        {return find(vec.begin(), vec.end(), data) != vec.end();}
+
+    template <class T, class P> bool contains(map<T,P>& m, const T& key)
+        {return m.find(key) != m.end();}
+
+    template <typename T> void checkIndex(const vector<T>& vec, int index)
+        {ASSERT(index >= 0 && index < vec.size(), "Invalid array index");}
 
 //  Data members
-float util::seed = rand();
-default_random_engine util::randNumGen(seed);
-vector<float> util::TRAFFIC = {1,1,1};
+
+    float seed = rand();
+    default_random_engine randNumGen(seed);
+    vector<float> TRAFFIC = {1,1,1};
+}
 
 /****************************************************************************
 *																			*
@@ -68,14 +91,6 @@ vector<T> util::toVector(string data, char delimiter)
     istringstream in(data);
     while (in >> temp)
         vec.push_back(temp);
-
-    // string stemp;
-    // while (getline(in, stemp, delimiter))
-    // {
-    //     istringstream iss(stemp);
-    //     iss >> temp;
-    //     vec.push_back(temp);
-    // }
 
     return vec;
 }
@@ -111,3 +126,5 @@ ostream& operator<<(ostream& out, const vector<T>& v)
     out << "]";
     return out;
 }
+
+#endif
