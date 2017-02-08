@@ -1,8 +1,8 @@
-# des
-Discrete Event Simulation
+# SHADO
+Simulation of Humans and Automation in Dispatch Operations
 
 This program runs a discrete event simulation with various tasks that have specified interarrival and service time distributions.
 
 Unix Compilation Command 
 
-g++ -std=c++11 -o DES runSim.cpp;
+g++ shado.cpp src/*.cpp -std=c++11;

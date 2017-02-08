@@ -4,11 +4,8 @@
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
-*	Date:		Jun 6, 2016													*
-*																			*
-*	Purpose:	This file executes a discrete event simulation for the      *
-*               specified parameters and outputs the results to the         *
-*               specified file.                                             *
+*	Purpose:	This file executes the discrete event simulation for the    *
+*               specified parameters.                                       *
 *																			*
 ****************************************************************************/
 
@@ -39,11 +36,19 @@ int main(int argc, const char* argv[])
 //  Intialize and run simulation
 
     Simulation sim(file, flags);
-//	sim.run();
-    cout << "Runtime: " << t.elapsed() << " s";
+	// sim.run();
+    if (flags.isOn("verbose")) cout << "Runtime: " << t.elapsed() << " s";
 
 	return 0;
 }
+
+/****************************************************************************
+*																			*
+*	Function:	getFlags    												*
+*																			*
+*	Purpose:	To get the flags from the command line                      *
+*																			*
+****************************************************************************/
 
 Flags getFlags(int argc, const char* argv[])
 {

@@ -97,18 +97,12 @@ void Flags::output(ostream& out) const
 
     for (const auto& pair : flags)
     {
-        if (pair.second)
-        {
-			if (first)
-			{
-				out << pair.first << " on";
-				first = false;
-			}
-			else
-			{
-				out << ", " << pair.first << " on";
-			}
-        }
+		if (first) first = false;
+		else out << ", ";
+
+		out << pair.first;
+		if (pair.second) out << " on";
+		else out << " off";
     }
 }
 
@@ -120,7 +114,7 @@ void Flags::output(ostream& out) const
 *																			*
 ****************************************************************************/
 
-bool Flags::isOn(string key)
+const bool& Flags::isOn(string key)
 {
     key = util::toLower(key);
     ASSERT(util::contains(flags, key), "Incompatible flag '" << key << "'");

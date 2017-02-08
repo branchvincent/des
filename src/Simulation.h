@@ -56,7 +56,7 @@ class Simulation
 
 	//	Other member functions
 
-        // void run();
+        void run();
 		void output(ostream& out) const;
 
 //  Private member functions
@@ -142,17 +142,19 @@ void Simulation::output(ostream& out) const
 }
 
 
-// /****************************************************************************
-// *																			*
-// *	Function:	run                                                         *
-// *																			*
-// *	Purpose:	To run the simulation for the specified number of           *
-// *               replications                                                *
-// *																			*
-// ****************************************************************************/
-//
-// void Simulation::run()
-// {
+/****************************************************************************
+*																			*
+*	Function:	run                                                         *
+*																			*
+*	Purpose:	To run the simulation for the specified number of           *
+*               replications                                                *
+*																			*
+****************************************************************************/
+
+void Simulation::run()
+{
+	
+}
 // //  Run simulation the specified number of times
 //
 // //	string file = OUTPUT_PATH + "/des_status";
