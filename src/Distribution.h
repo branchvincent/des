@@ -8,24 +8,66 @@
 *																			*
 ****************************************************************************/
 
+#ifndef DISTRIBUTION_H
+#define DISTRIBUTION_H
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <random>
-#include "Distribution.h"
 #include "Utility.h"
 
 using namespace std;
 
 vector<string> valid_distributions = {"exponential", "lognormal", "uniform"};
 
-Distribution::Distribution() : type("exponential"), parameters{0} {construct();}
-Distribution::Distribution(string type, vector<float> p) : type(type), parameters(p) {construct();}
-Distribution::Distribution(string type, float p) : type(type), parameters{p} {construct();}
-Distribution::Distribution(string type, float p1, float p2) : type(type), parameters{p1, p2} {construct();}
+/****************************************************************************
+*																			*
+*	Definition of Distribution class										*
+*																			*
+****************************************************************************/
 
-string Distribution::getType() const {return type;}
-vector<float> Distribution::getParameters() const {return parameters;}
+class Distribution
+{
+//	Public member functions
+
+	public:
+
+	//	Constructor
+
+		Distribution() : type("exponential"), parameters{0} {construct();}
+		Distribution(string type, vector<float> p) : type(type), parameters(p) {construct();}
+		Distribution(string type, float p) : type(type), parameters{p} {construct();}
+		Distribution(string type, float p1, float p2) : type(type), parameters{p1, p2} {construct();}
+
+	//	Inspectors
+
+		string getType() const;
+		vector<float> getParameters() const;
+
+	//	Other member functions
+
+		float rand();
+		void output(ostream& out) const;
+
+//	Private member functions
+
+	private:
+		void construct();
+
+//	Data members
+
+	private:
+		string type;
+		vector<float> parameters;
+		exponential_distribution<float> exp_distribution;
+		lognormal_distribution<float> log_distribution;
+		uniform_real_distribution<float> uni_distribution;
+};
+
+//	Operators
+
+ostream& operator<<(ostream& out, const Distribution& d)  {d.output(out); return out;}
 
 /****************************************************************************
 *																			*
@@ -93,6 +135,4 @@ void Distribution::output(ostream& out) const
 	out << "Parameters: " << parameters;
 }
 
-//	Operators
-
-ostream& operator<<(ostream& out, const Distribution& d) {d.output(out); return out;}
+#endif
