@@ -29,7 +29,7 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Task::Task( int priority, float arrival, float service, float expiration) :
+Task::Task(int priority, float arrival, float service, float expiration) :
     // type(type),
     priority(priority),
     arrival(arrival),
