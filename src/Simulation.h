@@ -134,7 +134,6 @@ Simulation::Simulation(string file, Flags flags = Flags()) : parameters(file), f
 
 void Simulation::run()
 {
-	
 }
 
 /****************************************************************************
