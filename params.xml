@@ -44,9 +44,9 @@
             <priority>4, 3, 4</priority>
             <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
             <interarrival type="exponential" byPhase="true">
-                <phase>0</phase>
-                <phase>0</phase>
-                <phase>0</phase>
+                <phase>10</phase>
+                <phase>0.1</phase>
+                <phase>0.1</phase>
             </interarrival>
             <service type="lognormal" byPhase="true">
                 <phase>0,2</phase>
