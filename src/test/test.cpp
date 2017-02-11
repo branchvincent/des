@@ -3,6 +3,7 @@
  #include "Task.h"
 #include "Agent.h"
 #include "TaskType.h"
+#include "Team.h"
 // #include "test/Task.h"
 #include "Distribution.h"
 // #include "test/Distribution.h"
@@ -31,8 +32,8 @@ int main()
    // Task t1(2, 1, 3, 40);
    // TaskType t(data.get_child("task"));
    // Shift t;
-   Agent t(data.get_child("team.agents.agent"));
-   // Team t(pt.get_child("teadm"));
+   // Agent t(data.get_child("team.agents.agent"));
+   Team t(data.get_child("team"));
    // Parameters t("params.xml");
 
     // if (static_cast<bool>(s))

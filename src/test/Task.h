@@ -28,7 +28,7 @@ class Task
 {
 //	Friends
 
-//	friend class TaskType;
+	friend class TaskType;
 
 //	Public member functions
 

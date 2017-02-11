@@ -15,14 +15,16 @@
 #include <string>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-//#include "Agent.h"
-//#include "TaskType.h"
+#include "Agent.h"
+#include "TaskType.h"
+#include "Shift.h"
 
 using namespace std;
 using boost::property_tree::ptree;
 
 //class Agent;
 //class TaskType;
+class Event;
 
 /****************************************************************************
 *																			*
@@ -34,7 +36,7 @@ class Team
 {
 //  Friend class
 
- //   	friend class Agent;
+   	friend class Agent;
 
 //	Public member functions
 
@@ -52,9 +54,11 @@ class Team
     //     float getNextDeptTime();
     //     bool isBusy() const;
 	// 	// float getUtil(int i, int j) {return ops[i].getUtil(j);}
-	//
-    // // 	Mutators
-	//
+
+    // 	Mutators
+
+		Event getNextEvent();
+
 	// 	void createTasks()
 	// 	{
 	// 		for (const auto& agent : agents)
@@ -76,11 +80,12 @@ class Team
 //	Data members
 
 	private:
-//      Params& params;
         // Statistics stats;
 		string name;
-//        vector<Agent> agents;
-//		vector<TaskType> taskTypes;
+   		vector<Agent> agents;
+		vector<TaskType> taskTypes;
+		Shift shift;
+		list<Task> arrivingTasks;
 		// vector<Phase> phases;
 		// Team supervisor;
 };

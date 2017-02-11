@@ -37,31 +37,47 @@ Team::Team(const ptree& xmlData)
 {
 	name = xmlData.get<string>("name");
 
-	// for (const auto& task : xmlData.get_child("tasks"))
-	// {
-	// 	if (task.first == "task")
-	// 	{
-	// 		taskTypes.push_back(TaskType(task.second));
-	// 	}
-	// }
-	//
-	// for (const auto& agent : xmlData.get_child("agents"))
-	// {
-	// 	if (agent.first == "agent")
-	// 	{
-	// 		// agents.push_back(Agent(agent.second, taskTypes));
-	// 		// agents.push_back(Agent(*this, agent.second));
-	// 	}
-	// }
+	for (const auto& task : xmlData.get_child("tasks"))
+	{
+		if (task.first == "task")
+		{
+			taskTypes.push_back(TaskType(task.second));
+		}
+	}
 
-	// for (int i = 0; i < num_tasks; i++)
-	// {
-	// 	TaskType task(xmlData.get_child("tasks.task" + to_string(i)));
-	// 	cout << task << endl;
-	// }
-	// 	// dists.push_back(Distribution(type, parameters));
-	// priority = util::toVector<int>(xmlData.get<string>("priority"));
+	for (const auto& agent : xmlData.get_child("agents"))
+	{
+		if (agent.first == "agent")
+		{
+			agents.push_back(Agent(*this, agent.second));
+		}
+	}
+
+// 	for (int i = 0; i < num_tasks; i++)
+// 	{
+// 		TaskType task(xmlData.get_child("tasks.task" + to_string(i)));
+// 		cout << task << endl;
+// 	}
+// 		// dists.push_back(Distribution(type, parameters));
+// 	priority = util::toVector<int>(xmlData.get<string>("priority"));
 }
+
+Event Agent::getNextEvent()
+{
+	vector<Event> events;
+
+	for (const auto& agent : agents)
+	{
+		events.push_back(agent.getNextEvent())
+	}
+
+	return min(events);
+	// if (arrivingTasks.front().getArrival() < currTask.getDepartue())
+	// 	return Event("arrival")
+	// else
+	// 	return Event("departure");
+}
+
 
 /****************************************************************************
 *																			*
@@ -74,12 +90,11 @@ Team::Team(const ptree& xmlData)
 void Team::output(ostream& out) const
 {
 	out << "Name: " << name << endl;
-//	out << "Task types: " << taskTypes << endl;
+	out << "Task types: " << taskTypes << endl;
 	out << "Agents: ";
 
-//	for (const auto& agent : agents)
-//		out << agent.name << ", ";
-	// vector<TaskTypes> taskTypes;
+	for (const auto& agent : agents)
+		out << agent.getName() << ", ";
 }
 
 //Team::Team(string name, vector<Agent> agents) : name(name), agents(agents), taskTypes(taskTypes) //stats(), ops()

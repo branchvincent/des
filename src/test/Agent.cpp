@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include "Agent.h"
+#include "Team.h"
 
 using namespace std;
 
@@ -22,26 +23,48 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Agent::Agent(const ptree& xmlData) //: team(team), busy(false)
+Agent::Agent(Team& team, const ptree& xmlData) : team(team), currTask(NULL), taskTypes(), queue()
 {
 	name = xmlData.get<string>("name");
-	// shift = team.shift;h an
 	// shift = Shift(util::toVector<string>(xmlData.get<string>("shift")));
 
-	// for (const auto& i : util::toVector<int>(xmlData.get<string>("tasks")))
-	// {
-	// 	util::checkIndex(taskTypes, i);
-	// 	this->taskTypes.push_back(taskTypes[i]);
-	// }
+	for (const auto& i : util::toVector<int>(xmlData.get<string>("tasks")))
+	{
+		util::checkIndex(team.taskTypes, i);
+		taskTypes.push_back(team.taskTypes[i]);
+	}
 }
 
-//Event Agent::getNextEvent()
-//{
-//	if (arrivingTasks.front().getArrival() < currTask.getDepartue())
-//		return Event("arrival")
-//	else
-//		return Event("departure");
-//}
+Event Agent::getNextEvent()
+{
+    if (currTask)
+    {
+        if (team.arrivingTasks.front())
+        {
+            Task& arrTask = team.arrivingTasks.front();
+
+            if (arrTask.arrival < currTask.departure)
+        		return Event("arrival", time, arrTask, *this);
+        	else
+        		return Event("departure", time, currTask, *this);
+        }
+        else
+        {
+            return Event("departure", time, currTask, *this);
+        }
+    }
+    else
+    {
+         if (team.arrivingTasks.front())
+         {
+             return Event("arrival", time, team.arrivingTasks.front(), *this);
+         }
+         else
+         {
+             return None
+         }
+    }
+}
 
 /****************************************************************************
 *																			*

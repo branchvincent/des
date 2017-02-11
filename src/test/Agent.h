@@ -27,6 +27,7 @@ using namespace std;
 using boost::property_tree::ptree;
 
 class Event;
+class Team;
 
 /****************************************************************************
 *																			*
@@ -46,20 +47,20 @@ class Agent
 
 	//	Constructor
 
-		Agent(const ptree& xmlData);
+		Agent(Team& team, const ptree& xmlData);
 		// Agent(Team& team, const ptree& xmlData);
        // Agent(string name, vector<TaskTypes> taskTypes);
 
 	//	Inspectors
 
-       // string getType() const {return type;}
-       // bool isIdle() const {return !busy;}
-		// bool isBusy() const {return busy;}
-       // int getQueueSize() const {return (int)taskQueue.size();}
-		// Task& getCurrTask() const {return currTask;}
-       // float getDepTime() const;
-       // bool needToIntrp(Queue& queue);
-		// float getUtil(int i) {return stats.getUtil(i);}
+		const string& getName() const {return name;}
+		const bool isIdle() const {return currTask == NULL;}
+		const bool isBusy() const {return !isIdle();}
+		const int getQueueSize() const {return (int)queue.size();}
+		// const Task& getCurrTask() const {return currTask;}
+		const float& getDepTime() const;
+		const bool& needToIntrp(priority_queue<Task>& queue);
+		// const float getUtil(int i) {return stats.getUtil(i);}
 
 	//	Mutators
 
@@ -74,9 +75,9 @@ class Agent
 //
 // 	//	Other member functions
 
-//		Event getNextEvent();
+		Event getNextEvent();
 //         void output();
-       void output(ostream& out) const;
+   		void output(ostream& out) const;
 
 // //  Private member functions
 //
@@ -89,15 +90,11 @@ class Agent
 //	Data members
 
 	private:
-		// Team& team;
+		Team& team;
         string name;
-		Shift shift;
 		vector<TaskType> taskTypes;		// types of tasks
 		priority_queue<Task> queue; 	// task queue
-		list<Task> arrivingTasks;
-		// Task& currTask;             		// current task
-		bool busy;						// busy
-		// Team& team;
+		Task* currTask;             	// current task
 		// Statistics& sharedStats;		// shared stats
        // Statistics stats;          	 	// local stats
 };
