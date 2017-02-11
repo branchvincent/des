@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include "Task.h"
+#include "TaskType.h"
 #include "Utility.h"
 
 using namespace std;
@@ -29,8 +30,8 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Task::Task(int priority, float arrival, float service, float expiration) :
-    // type(type),
+Task::Task(TaskType& type, int priority, float arrival, float service, float expiration) :
+    type(type),
     priority(priority),
     arrival(arrival),
     service(service),
@@ -49,19 +50,20 @@ Task::Task(int priority, float arrival, float service, float expiration) :
 
 //	Check for infinites
 
-	ASSERT(priority < INFINITY, "Priority cannot be infinite");
-	ASSERT(arrival < INFINITY, "Arrival cannot be infinite");
-	ASSERT(service < INFINITY, "Service cannot be infinite");
-	ASSERT(expiration < INFINITY, "Expiration cannot be infinite");
-	ASSERT(arrival + service <= expiration, "Task expires too soon");
+	// ASSERT(priority < INFINITY, "Priority cannot be infinite");
+	// ASSERT(arrival < INFINITY, "Arrival cannot be infinite");
+	// ASSERT(service < INFINITY, "Service cannot be infinite");
+	// ASSERT(expiration < INFINITY, "Expiration cannot be infinite");
+	// ASSERT(arrival + service <= expiration, "Task expires too soon");
 }
 
-//string Task::getName() const {return name;}
-int Task::getPriority() const {return priority;}
-float Task::getArrival() const {return arrival;}
-float Task::getDepartue() const {return departure;}
-float Task::getExpiration() const {return expiration;}
-float Task::getWaitTime() const {return wait;}
+//  Inspectors
+
+// const TaskType& Task::getType();int Task::getPriority() const {return priority;}
+// float Task::getArrival() const {return arrival;}
+// float Task::getDepartue() const {return departure;}
+// float Task::getExpiration() const {return expiration;}
+// float Task::getWaitTime() const {return wait;}
 
 /****************************************************************************
 *																			*
@@ -193,8 +195,8 @@ void Task::expire(float time)
 
 void Task::output(ostream& out) const
 {
+    // cout << "Type: " << type.name << ", ";
 	cout << "Priority: " << priority << ", ";
-//	cout << "Name " << name << ", ";
 	cout << "Arrival: " << arrival << ", ";
 	cout << "Service: " << service <<  ", ";
 	cout << "Departure: " << departure << ", ";

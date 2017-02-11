@@ -18,8 +18,6 @@
 
 using namespace std;
 
-// vector<string> valid_distributions = {"exponential", "lognormal", "uniform"};
-
 /****************************************************************************
 *																			*
 *	Definition of Distribution class										*
@@ -41,8 +39,8 @@ class Distribution
 
 	//	Inspectors
 
-		const string& getType();
-		const vector<float>& getParameters();
+		const string& getType() const {return type;}
+		const vector<float>& getParameters() const {return parameters;}
 
 	//	Other member functions
 

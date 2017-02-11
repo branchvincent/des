@@ -17,15 +17,11 @@
 #include <boost/property_tree/ptree.hpp>
 #include "Distribution.h"
 
-// #include "Task.h"
-
-// #include "Utility.h"
-
 using namespace std;
 using boost::property_tree::ptree;
 
 // class Distribution;
-// class Task;
+class Task;
 
 /****************************************************************************
 *																			*
@@ -66,7 +62,7 @@ class TaskType
 
 	//	Other member functions
 
-		// Task genTask(int phase);
+		Task genTask(int phase);
         void output(ostream& out) const;
 
 //	Private member functions

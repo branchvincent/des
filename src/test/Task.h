@@ -16,7 +16,7 @@
 
 using namespace std;
 
-// class TaskType;
+class TaskType;
 
 /****************************************************************************
 *																			*
@@ -36,17 +36,16 @@ class Task
 
 	//	Constructor
 
-		Task(int priority, float arrival, float service, float expiration);
-		// Task(TaskType& type, int priority, float arrival, float service, float expiration);
+		Task(TaskType& type, int priority, float arrival, float service, float expiration);
 
 	//	Inspectors
 
-//		string getName() const;
-		int getPriority() const;
-		float getArrival() const;
-		float getDepartue() const;
-		float getExpiration() const;
-		float getWaitTime() const;
+		const TaskType& getType() const {return type;}
+		const int& getPriority() const {return priority;}
+		const float& getArrival() const {return arrival;}
+		const float& getDepartue() const {return departure;}
+		const float& getExpiration() const {return expiration;}
+		const float& getWaitTime() const {return wait;}
 		float getNextEvent() const;
 
 	//	Mutators
@@ -66,7 +65,7 @@ class Task
 //	Data members
 
 	private:
-		// TaskType& type;		// type
+		TaskType& type;		// type
 		int priority;		// priority level
 		float arrival;		// arrival time (min)
 		float service; 		// service time (min)

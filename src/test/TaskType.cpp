@@ -12,7 +12,7 @@
 #include <string>
 #include <boost/property_tree/ptree.hpp>
 #include "TaskType.h"
-// #include "Task.h"
+#include "Task.h"
 #include "Distribution.h"
 #include "Utility.h"
 
@@ -106,15 +106,14 @@ float TaskType::randExpiration(int phase)
 *																			*
 ****************************************************************************/
 
-// Task TaskType::genTask(int phase)
-// {
-// 	float arrivalTime = 1;//genArrivalTime(phase);
-// 	float serviceTime = 2; //genServiceTime(phase);
-// 	float expirationTime = 3;//genExpirationTime(phase, arrivalTime, serviceTime);
-// 	lastArrival = arrivalTime;
-// //	return Task(name, priority[phase], arrivalTime, serviceTime, expirationTime);
-// 	return Task(priority[phase], arrivalTime, serviceTime, expirationTime);
-// }
+Task TaskType::genTask(int phase)
+{
+	float arrivalTime = genArrivalTime(phase);
+	float serviceTime = genServiceTime(phase);
+	float expirationTime = genExpirationTime(phase, arrivalTime, serviceTime);
+	lastArrival = arrivalTime;
+	return Task(*this, priority[phase], arrivalTime, serviceTime, expirationTime);
+}
 
 /****************************************************************************
 *																			*

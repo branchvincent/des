@@ -19,13 +19,17 @@ using namespace std;
 
 vector<string> valid_distributions = {"exponential", "lognormal", "uniform"};
 
+//	Constuctors
+
 Distribution::Distribution() : type("exponential"), parameters{0} {construct();}
 Distribution::Distribution(string type, vector<float> p) : type(type), parameters(p) {construct();}
 Distribution::Distribution(string type, float p) : type(type), parameters{p} {construct();}
 Distribution::Distribution(string type, float p1, float p2) : type(type), parameters{p1, p2} {construct();}
 
-const string& Distribution::getType() {return type;}
-const vector<float>& Distribution::getParameters() {return parameters;}
+//	Inspectors
+
+// const string& Distribution::getType() const {return type;}
+// const vector<float>& Distribution::getParameters() const {return parameters;}
 
 /****************************************************************************
 *																			*
