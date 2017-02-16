@@ -12,6 +12,8 @@
 #include <string>
 #include "Agent.h"
 #include "Team.h"
+#include "Event.h"
+#include "Shift.h"
 
 using namespace std;
 
@@ -23,7 +25,7 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Agent::Agent(Team& team, const ptree& xmlData) : team(team), currTask(NULL), taskTypes(), queue()
+Agent::Agent(Team& team, const ptree& xmlData) : team(team), taskTypes(), queue(), currTask(NULL)
 {
 	name = xmlData.get<string>("name");
 	// shift = Shift(util::toVector<string>(xmlData.get<string>("shift")));
@@ -35,36 +37,36 @@ Agent::Agent(Team& team, const ptree& xmlData) : team(team), currTask(NULL), tas
 	}
 }
 
-Event Agent::getNextEvent()
-{
-    if (currTask)
-    {
-        if (team.arrivingTasks.front())
-        {
-            Task& arrTask = team.arrivingTasks.front();
-
-            if (arrTask.arrival < currTask.departure)
-        		return Event("arrival", time, arrTask, *this);
-        	else
-        		return Event("departure", time, currTask, *this);
-        }
-        else
-        {
-            return Event("departure", time, currTask, *this);
-        }
-    }
-    else
-    {
-         if (team.arrivingTasks.front())
-         {
-             return Event("arrival", time, team.arrivingTasks.front(), *this);
-         }
-         else
-         {
-             return None
-         }
-    }
-}
+// Event Agent::getNextEvent()
+// {
+//     if (currTask)
+//     {
+//         if (team.arrivingTasks.front())
+//         {
+//             Task& arrTask = team.arrivingTasks.front();
+//
+//             if (arrTask.arrival < currTask.departure)
+//         		return Event("arrival", time, arrTask, *this);
+//         	else
+//         		return Event("departure", time, currTask, *this);
+//         }
+//         else
+//         {
+//             return Event("departure", time, currTask, *this);
+//         }
+//     }
+//     else
+//     {
+//          if (team.arrivingTasks.front())
+//          {
+//              return Event("arrival", time, team.arrivingTasks.front(), *this);
+//          }
+//          else
+//          {
+//              return Event("arrival", time, team.arrivingTasks.front(), *this); //TODO return none
+//          }
+//     }
+// }
 
 /****************************************************************************
 *																			*
@@ -77,7 +79,7 @@ Event Agent::getNextEvent()
 void Agent::output(ostream& out) const
 {
 	out << "Name: " << name << endl;
-	out << "Shift: " << shift << endl;
+	// out << "Shift: " << shift << endl;
 	out << "Tasks: " << taskTypes;
 }
 

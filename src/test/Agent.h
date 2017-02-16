@@ -75,7 +75,7 @@ class Agent
 //
 // 	//	Other member functions
 
-		Event getNextEvent();
+		// Event getNextEvent();
 //         void output();
    		void output(ostream& out) const;
 

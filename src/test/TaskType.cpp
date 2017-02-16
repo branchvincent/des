@@ -21,12 +21,6 @@ using boost::property_tree::ptree;
 
 /****************************************************************************
 *																			*
-*	Definition of TaskType class											*
-*																			*
-****************************************************************************/
-
-/****************************************************************************
-*																			*
 *	Function:	TaskType													*
 *																			*
 *	Purpose:	To construct a task type									*
@@ -80,12 +74,16 @@ TaskType::TaskType(string name, vector<int> priority, vector<bool> isAffectedByT
 	lastArrival(0)
 {}
 
+//	Inspectors
+
 const string& TaskType::getName() const {return name;}
 vector<int> TaskType::getPriority() const {return priority;}
 vector<bool> TaskType::getIsAffectedByTraffic() const {return isAffectedByTraffic;}
 vector<Distribution> TaskType::getInterarrival() const {return interarrival;}
 vector<Distribution> TaskType::getService() const {return service;}
 vector<Distribution> TaskType::getExpiration() const {return expiration;}
+
+//	Mutators
 
 int TaskType::getPriority(int phase) const
 	{util::checkIndex(priority, phase); return priority[phase];}

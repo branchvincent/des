@@ -29,6 +29,7 @@ class Task
 //	Friends
 
 	friend class TaskType;
+	friend class Agent;
 
 //	Public member functions
 

@@ -48,6 +48,13 @@ namespace util
     inline string toLower(string s)
         {transform(s.begin(), s.end(), s.begin(), ::tolower); return s;}
 
+    inline float secToMin(const float& t) {return t/60.;}
+    // inline float secToHr(const time_t& t) {return t/3600.;}
+    // inline float MinToHr(const time_t& t) {return t/60.;}
+    // inline float HrToMin(const time_t& t) {return t*60.;}
+    inline float minToSec(const float& t) {return t*60.;}
+    // inline float HrToSec(const time_t& t) {return t*3600.;}
+
     template <class T> bool contains(vector<T>& vec, const T& data)
         {return find(vec.begin(), vec.end(), data) != vec.end();}
 

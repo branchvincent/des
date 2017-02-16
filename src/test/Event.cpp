@@ -1,6 +1,6 @@
 /****************************************************************************
 *																			*
-*	File:		Event.h												        *
+*	File:		Event.cpp												    *
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
@@ -8,62 +8,17 @@
 *																			*
 ****************************************************************************/
 
-#ifndef EVENT_H
-#define EVENT_H
-
 #include <iostream>
 #include <string>
+// #include <ctime>
+#include "Event.h"
+#include "Task.h"
+#include "Agent.h"
 #include "Utility.h"
 
 using namespace std;
 
 vector<string> valid_types = {"arrival", "departure"};
-
-/****************************************************************************
-*																			*
-*	Definition of Event class		     						            *
-*																			*
-****************************************************************************/
-
-class Event
-{
-//	Public member functions
-
-	public:
-
-    //  Constructor
-
-		// Event(string type) : {}
-		inline Event(string type, tm time, Task& task, Agent& agent);
-
-	//	Inspectors
-
-
-	//	Other member functions
-
-		inline void process();
-		bool before(const Event& event) {return time < event.time;}
-		inline void output(ostream& out) const;
-
-//  Private member members
-
-    private:
-
-
-//	Data members
-
-	private:
-		string type;
-        time_t time;
-		Task& task;
-		Agent& agent;
-};
-
-//	Operators
-
-inline ostream& operator<<(ostream& out, const Event& e) {e.output(out); return out;}
-inline bool operator<(const Event& e1, const Event& e2) {return e1.before(e2);}
-inline bool operator>(const Event& e1, const Event& e2) {return !e1.before(e2);}
 
 /****************************************************************************
 *																			*
@@ -74,6 +29,12 @@ inline bool operator>(const Event& e1, const Event& e2) {return !e1.before(e2);}
 ****************************************************************************/
 
 Event::Event(string type, tm time, Task& task, Agent& agent) : type(type),
+	time(mktime(&time)), task(task), agent(agent)
+{
+	ASSERT(util::contains(valid_types, type), "Invalid event type");
+}
+
+Event::Event(string type, time_t time, Task& task, Agent& agent) : type(type),
 	time(time), task(task), agent(agent)
 {
 	ASSERT(util::contains(valid_types, type), "Invalid event type");
@@ -91,13 +52,17 @@ void Event::process()
 {
 	if (type == "arrival")
 	{
-		task.arrive(time);
+		task.start(time);
 	}
 	else if (type == "departure")
 	{
 		task.finish(time);
 	}
 }
+
+
+bool Event::before(const Event& event) const {return time < event.time;}
+
 
 /****************************************************************************
 *																			*
@@ -110,8 +75,13 @@ void Event::process()
 void Event::output(ostream& out) const
 {
 	out << "Type: " << type << endl;
-	out << "Time: " << time << endl;
+	// out << "Time: " << time << endl;
 	out << "Agent: " << agent << endl;
 }
 
-#endif
+
+//	Operators
+
+ostream& operator<<(ostream& out, const Event& e) {e.output(out); return out;}
+bool operator<(const Event& e1, const Event& e2) {return e1.before(e2);}
+bool operator>(const Event& e1, const Event& e2) {return !e1.before(e2);}

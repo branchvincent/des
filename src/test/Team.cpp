@@ -11,6 +11,8 @@
 #include <iostream>
 #include <string>
 #include "Team.h"
+#include "Event.h"
+#include <algorithm>
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -62,21 +64,21 @@ Team::Team(const ptree& xmlData)
 // 	priority = util::toVector<int>(xmlData.get<string>("priority"));
 }
 
-Event Agent::getNextEvent()
-{
-	vector<Event> events;
-
-	for (const auto& agent : agents)
-	{
-		events.push_back(agent.getNextEvent())
-	}
-
-	return min(events);
-	// if (arrivingTasks.front().getArrival() < currTask.getDepartue())
-	// 	return Event("arrival")
-	// else
-	// 	return Event("departure");
-}
+// Event Agent::getNextEvent()
+// {
+// 	vector<Event> events;
+//
+// 	for (const auto& agent : agents)
+// 	{
+// 		events.push_back(agent.getNextEvent())
+// 	}
+//
+// 	return min_element(events.begin(), events.end());
+// 	// if (arrivingTasks.front().getArrival() < currTask.getDepartue())
+// 	// 	return Event("arrival")
+// 	// else
+// 	// 	return Event("departure");
+// }
 
 
 /****************************************************************************

@@ -57,7 +57,7 @@ class Team
 
     // 	Mutators
 
-		Event getNextEvent();
+		// Event getNextEvent();
 
 	// 	void createTasks()
 	// 	{
