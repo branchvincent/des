@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters>
+    <output_path>/Users/Branch/Documents/Research/fra/show/out</output_path>
+    <start>2:00</start>
+    <stop>17:00</stop>
+    <traffic>m,m,m,m,m,m,m,m,m</traffic>
+    <replications>100</replications>
+</parameters>
+
+<interarrival type="exponential">
+    <phase1 num="1">0</phase1>
+    <phase2 num="2">0</phase2>
+    <phase3 num="3">0</phase3>
+</interarrival>
+
+<!-- <teams> -->
+<team>
+    <name>Train</name>
+    <agents>
+        <agent>
+            <name>engineer</name>
+            <tasks>0,1</tasks>
+        </agent>
+        <agent>
+            <name>conductor</name>
+            <tasks>0</tasks>
+        </agent>
+        <agent>
+            <name>positive train control</name>
+            <tasks>1</tasks>
+        </agent>
+        <agent>
+            <name>cruise control</name>
+            <tasks>0</tasks>
+        </agent>
+    </agents>
+    <tasks>
+        <task>
+            <name>My Task</name>
+            <priority>4, 3, 4</priority>
+            <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
+            <interarrival type="exponential" byPhase="true">
+                <phase>10</phase>
+                <phase>0.1</phase>
+                <phase>0.1</phase>
+            </interarrival>
+            <service type="lognormal">0,2</service>
+            <expiration type="uniform" byPhase="true">
+                <phase>0,2</phase>
+                <phase>0,2</phase>
+                <phase>0,2</phase>
+            </expiration>
+            <description>My description.</description>
+        </task>
+        <task>
+            <name>My Task</name>
+            <priority>4, 3, 4</priority>
+            <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
+            <interarrival type="exponential" byPhase="true">
+                <phase>0</phase>
+                <phase>0</phase>
+                <phase>0</phase>
+            </interarrival>
+            <service type="lognormal">0,2
+            </service>
+            <expiration type="uniform" byPhase="true">
+                <phase>0,2</phase>
+                <phase>0,2</phase>
+                <phase>0,2</phase>
+            </expiration>
+            <description>My description.</description>
+        </task>
+    </tasks>
+</team>
+<!-- </teams> -->
+
+<task>
+    <name>My Task</name>
+    <priority>4, 3, 4</priority>
+    <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
+    <interarrival type="exponential" byPhase="true">
+        <phase>0</phase>
+        <phase>0</phase>
+        <phase>0</phase>
+    </interarrival>
+    <service type="lognormal" byPhase="true">
+        <phase>0,2</phase>
+        <phase>0,2</phase>
+        <phase>0,2</phase>
+    </service>
+    <expiration type="uniform" byPhase="true">
+        <phase>0,2</phase>
+        <phase>0,2</phase>
+        <phase>0,3</phase>
+    </expiration>
+    <description>My description.</description>
+</task>
+
+<!-- <sked>
+    <version>2</version>
+    <flight>
+        <carrier>BA</carrier>
+        <number>4001</number>
+        <date>2011-07-21</date>
+    </flight>
+    <flight cancelled="true">
+        <carrier>BA</carrier>
+        <number>4002</number>
+        <date>2011-07-21</date>
+    </flight>
+</sked> -->
+
+<!-- Run Parameters -->
+<!-- <parameters>
+    <output_path>/Users/Branch/Documents/Research/fra/show/out</output_path>
+    <start>8:00</start>
+    <stop>17:00</stop>
+    <traffic>m,m,m,m,m,m,m,m,m</traffic>
+    <replications>100</replications>
+</parameters>
+
+<task_types>
+    <task>
+        <name>My Task</name>
+        <x>3</x>
+        <priority>4, 3, 4</priority>
+        <interarrival>e, 0, 0, 0</interarrival>
+        <service>e, 0, 0, 0</service>
+        <expiration>e, 0, 0, 0</expiration>
+        <isAffectedByTraffic>false,true,false</isAffectedByTraffic>
+        <description>My description.</description>
+    </task>
+</task_types> -->
+
+<!-- Agent Teams -->
+<!-- <level1>
+    <level2>
+        <level3a>3a</level3a>
+        <level3b>3b</level3c>
+        <level3c>3c</level3c>
+    </level2>
+</level1> -->
+
+<!-- <teams>
+    <team>
+        <name>Train</name>
+        <agents>
+            <agent>
+                <name>engineer</name>
+                <tasks>task1, task2</tasks>
+            </agent>
+        </agents>
+        <tasks>
+            <task>
+                <name>My Task</name>
+                <priority>4, 3, 4</priority>
+                <interarrival>e, 0, 0, 0</interarrival>
+                <service>e, 0, 0, 0</service>
+                <expiration>e, 0, 0, 0</expiration>
+                <isAffectedByTraffic>false,true,false</isAffectedByTraffic>
+                <description>My description.</description>
+            </task>
+        </tasks>
+    </team>
+</teams> -->
+
+<!-- Batch Teams -->
+<!-- <batches>
+    <batch>
+
+    </batch>
+</batches> -->
+<!-- <catalog>
+    <task>
+        <name>My name</name>
+        <priority>4, 3, 4</priority>
+        <interarrival>E, 0, 0, 0</interarrival>
+        <service>E, 0, 0, 0</service>
+        <expiration>E, 0, 0, 0</expiration>
+        <isAffectedByTraffic>false,true,false</isAffectedByTraffic>
+        <description>My description.</description>
+    </task>
+   <book id="bk101">
+      <author>Gambardella, Matthew</author>
+      <title>XML Developer's Guide</title>
+      <genre>Computer</genre>
+      <price>44.95</price>
+      <publish_date>2000-10-01</publish_date>
+      <description>An in-depth look at creating applications
+      with XML.</description>
+   </book>
+</catalog> -->
