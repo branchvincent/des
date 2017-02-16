@@ -13,10 +13,13 @@
 #include <algorithm>
 #include <list>
 #include "Team.h"
+// #include "Shift.h"
 #include "Event.h"
 
 using namespace std;
 using boost::property_tree::ptree;
+
+enum Status {before, working, after};
 
 /****************************************************************************
 *																			*
@@ -36,9 +39,11 @@ using boost::property_tree::ptree;
 *																			*
 ****************************************************************************/
 
-Team::Team(const ptree& xmlData)
+Team::Team(const ptree& xmlData, Shift shift) : shift(shift)
 {
 	name = xmlData.get<string>("name");
+
+//	Get task types
 
 	for (const auto& task : xmlData.get_child("tasks"))
 	{
@@ -48,6 +53,8 @@ Team::Team(const ptree& xmlData)
 		}
 	}
 
+//	Get agents
+
 	for (const auto& agent : xmlData.get_child("agents"))
 	{
 		if (agent.first == "agent")
@@ -55,6 +62,11 @@ Team::Team(const ptree& xmlData)
 			agents.push_back(Agent(*this, agent.second));
 		}
 	}
+
+//	Get shift
+
+	cout << "Shift " << shift << endl;
+	phases.push_back(Phase(*this, shift.getStart(), shift.getStop(), 0));
 
 // 	for (int i = 0; i < num_tasks; i++)
 // 	{
@@ -65,13 +77,45 @@ Team::Team(const ptree& xmlData)
 // 	priority = util::toVector<int>(xmlData.get<string>("priority"));
 }
 
+void Team::startPhase(int phase)
+{
+	list<Task> temp;
+
+	for (TaskType& taskType : taskTypes)
+	{
+		DateTime arrival;
+		DateTime stop = arrival + 3600;
+
+	//	Add tasks that arrive in time
+
+		while (arrival <= stop)
+		{
+			temp.push_back(taskType.genTask(phase));	// add current
+			arrival = temp.back().getArrival();
+		}
+		temp.pop_back();
+	}
+
+//	Merge lists
+
+	arrivingTasks.merge(temp);
+}
+
+/****************************************************************************
+*																			*
+*	Function:	getNextEvent												*
+*																			*
+*	Purpose:	To get the next event										*
+*																			*
+****************************************************************************/
+
 optional<Event> Team::getNextEvent()
 {
 	list<Event> events;
 
 //	Add current tasks
 
-	for (const auto& agent : agents)
+	for (const Agent& agent : agents)
 	{
 		optional<Event> e = agent.getNextEvent();
 		if (e) events.push_back(*e);
@@ -106,8 +150,16 @@ void Team::output(ostream& out) const
 	out << "Task types: " << taskTypes << endl;
 	out << "Agents: ";
 
+	bool first = true;
 	for (const auto& agent : agents)
-		out << agent.getName() << ", ";
+	{
+		if (first)
+		{
+			out << agent.getName();
+			first = false;
+		}
+		else out << ", " << agent.getName();
+	}
 }
 
 //Team::Team(string name, vector<Agent> agents) : name(name), agents(agents), taskTypes(taskTypes) //stats(), ops()

@@ -33,7 +33,7 @@ class DateTime
 
     //  Constructor
 
-		inline DateTime(string dateTime = "01-10 9:00");
+		inline DateTime(string dateTime = "01-01 9:00");
 		DateTime(time_t time) : time(time) {ASSERT(time >= 0, "Time cannot be negative " << time);}
 
 	//	Inspectors

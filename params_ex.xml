@@ -4,7 +4,7 @@
     <start>2:00</start>
     <stop>17:00</stop>
     <traffic>m,m,m,m,m,m,m,m,m</traffic>
-    <replications>100</replications>
+    <replications num="100"/>
 </parameters>
 
 <interarrival type="exponential">

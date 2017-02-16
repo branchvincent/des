@@ -68,10 +68,15 @@ class TaskType
 
 	//	Mutators
 
+	//	Operators
+
+		// TaskType& operator=(const TaskType& t);
+
 	//	Other member functions
 
 		Task genTask(int phase);
         void output(ostream& out) const;
+		// void copy(const TaskType& t);
 
 //	Private member functions
 

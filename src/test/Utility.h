@@ -18,6 +18,8 @@
 #include <random>
 #include <sstream>
 #include <algorithm>
+#include <list>
+#include <iterator>
 
 using namespace std;
 
@@ -124,26 +126,67 @@ vector<T> util::toVector(string data, char delimiter)
 *																			*
 ****************************************************************************/
 
-template <class T>
-ostream& operator<<(ostream& out, vector<T>& v)
-{
-    out << "[";
-    if (v.size() > 0)
-        out << v[0];
-    for (int i = 1; i < v.size(); i++)
-        out << ", " << v[i];
-    out << "]";
-    return out;
-}
+// template <class T>
+// ostream& operator<<(ostream& out, vector<T>& v)
+// {
+//     out << "[";
+//     if (v.size() > 0) out << v[0];
+//     for (int i = 1; i < v.size(); i++) out << ", " << v[i];
+//     out << "]";
+//     return out;
+// }
 
 template <class T>
 ostream& operator<<(ostream& out, const vector<T>& v)
 {
     out << "[";
-    if (v.size() > 0)
-        out << v[0];
-    for (int i = 1; i < v.size(); i++)
-        out << ", " << v[i];
+    if (v.size() > 0) out << v[0];
+    for (int i = 1; i < v.size(); i++) out << ", " << v[i];
+    out << "]";
+    return out;
+}
+
+/****************************************************************************
+*																			*
+*	Function:	operator<<     												*
+*																			*
+*	Purpose:	To output a list                                            *
+*																			*
+****************************************************************************/
+
+// template <class T>
+// ostream& operator<<(ostream& out, list<T>& l)
+// {
+//     out << "[";
+//
+//     bool first = true;
+//     for (const auto& li : l)
+//     {
+//         if (first)
+//         {
+//             out << li;
+//             first = false;
+//         }
+//         else out << ", " << li;
+//     }
+//     out << "]";
+//     return out;
+// }
+
+template <class T>
+ostream& operator<<(ostream& out, const list<T>& l)
+{
+    out << "[";
+    bool first = true;
+    for (const auto& li : l)
+    {
+        if (first)
+        {
+            out << li;
+            first = false;
+        }
+        else out << ", " << li;
+    }
     out << "]";
     return out;
 }

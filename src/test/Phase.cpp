@@ -36,20 +36,24 @@ Phase::Phase(Team& team, DateTime start, DateTime stop, int num) : team(team)
 
 	for (TaskType& taskType : team.taskTypes)
 	{
-		Task task = taskType.genTask(num);
+		DateTime arrival;
 
 	//	Add tasks that arrive in time
+		cout << arrival << " " << stop << endl;
 
-		while (task.getArrival() < stop)
+		while (arrival <= stop)
 		{
-			temp.push_back(task);			// add current
-			task = taskType.genTask(num);	// get next
+			temp.push_back(taskType.genTask(num));	// add current
+			arrival = temp.back().getArrival();
+			cout << "Here " << temp.size() << endl;
 		}
 	}
 
 //	Merge lists
 
 	arrivingTasks.merge(temp);
+
+	cout << "ArrivingTasks = " << arrivingTasks.size() << endl;
 }
 
 // void Phase::run()

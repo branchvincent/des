@@ -97,6 +97,7 @@ float TaskType::randService(int phase)
 	{util::checkIndex(service, phase); return service[phase].rand();}
 float TaskType::randExpiration(int phase)
 	{util::checkIndex(expiration, phase); return expiration[phase].rand();}
+// TaskType& TaskType::operator=(const TaskType& t) {if (this != &t) copy(t); return *this;}
 
 /****************************************************************************
 *																			*
@@ -267,6 +268,18 @@ void TaskType::output(ostream& out) const
 	out << "Service: " << service << endl;
 	out << "Expiration: " << expiration;
 }
+
+// void TaskType::copy(const TaskType& t)
+// {
+// 	team = t.team;
+// 	name = t.name;
+// 	priority = t.priority;
+// 	isAffectedByTraffic = t.isAffectedByTraffic;
+// 	interarrival = t.interarrival;
+// 	service = t.service;
+// 	expiration = t.expiration;
+// 	lastArrival = t.lastArrival;
+// }
 
 //	Operators
 

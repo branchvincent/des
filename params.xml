@@ -11,6 +11,12 @@
         <shift start="01-01 9:00" stop="01-01 17:00"></shift>
         <traffic>m,m,m,m,m,m,m,m,m</traffic>
     </batch>
+    <batch name="Train 2">
+        <team num="28" type="Train"></team>
+        <shift start="01-01 14:00" stop="01-02 02:00"></shift>
+        <traffic>m,m,m,m,m,m,m,m,m</traffic>
+        <!-- traffic = relative workload level -->
+    </batch>
     <batch name="Dispatcher 1">
         <team num="1" type="Dispatch"></team>
         <shift start="01-01 9:00" stop="01-01 17:00"></shift>
@@ -20,9 +26,10 @@
 <!-- Teams -->
 <teams>
     <team name="Train">
+        <phases num="3">30, 90, -30</phases>
         <!-- Agents -->
         <agents>
-            <agent name="engineer" task_ids="0,1"></agent>
+            <agent name="engineer" task_ids="0,1" default="true"></agent>
             <agent name="conductor" task_ids="1"></agent>
             <agent name="positive train control" task_ids="1"></agent>
             <agent name="cruise control" task_ids="0">
@@ -30,13 +37,14 @@
         <!-- Tasks -->
         <tasks>
             <task id="0" type="independent">
+                <!-- max number of task types -->
                 <name>My Task</name>
                 <priority>4, 3, 4</priority>
                 <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
                 <interarrival type="exponential" byPhase="true">
                     <phase>10</phase>
-                    <phase>0.1</phase>
-                    <phase>0.1</phase>
+                    <phase>10</phase>
+                    <phase>10</phase>
                 </interarrival>
                 <service type="lognormal">0,2</service>
                 <expiration type="uniform" byPhase="true">
@@ -45,6 +53,7 @@
                     <phase>0,2</phase>
                 </expiration>
                 <subtasks>
+                    <!-- subtask adds new tasktype -->
                     <subtask team="Train" id="1"></subtask>
                     <subtask team="Dispatch" id="0"></subtask>
                     <subtask team="Train" id="1"></subtask>
@@ -71,22 +80,7 @@
     <team name="Dispatch">
         <!-- Agents -->
         <agents>
-            <agent>
-                <name>engineer</name>
-                <tasks ids="0,1"></tasks>
-            </agent>
-            <agent>
-                <name>conductor</name>
-                <tasks ids="1"></tasks>
-            </agent>
-            <agent>
-                <name>positive train control</name>
-                <tasks ids="0"></tasks>
-            </agent>
-            <agent>
-                <name>cruise control</name>
-                <tasks ids="0"></tasks>
-            </agent>
+            <agent name="dispatcher" task_ids="0,1" default="true"></agent>
         </agents>
         <!-- Tasks -->
         <tasks>
@@ -107,7 +101,6 @@
                 </expiration>
                 <interaction>
                     <subtask team="Dispatch" id=""><subtask/>
-
                 <interaction>
             </task>
             <task id="1">

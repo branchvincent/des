@@ -11,8 +11,8 @@
 // #include "Parameters.h"
 // #include "Flags.h"
 // #include "Simulation.h"
-#include "Shift.h"
-#include "Utility.h"
+// #include "Shift.h"
+// #include "Utility.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -27,7 +27,8 @@ vector<float> util::TRAFFIC = {1,1,1};
 int main()
 {
     ptree data;
-    read_xml("/Users/Branch/Documents/Research/fra/shado/params.xml", data);
+    read_xml("/Users/Branch/Documents/Research/fra/shado/params_ex.xml", data);
+    // cout << data.get<int>("parameters.replications.<xmlattr>.num");
 
    // Distribution t;
    // Task t1(2, 1, 3, 40);

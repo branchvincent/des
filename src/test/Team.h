@@ -19,6 +19,7 @@
 #include "Agent.h"
 #include "TaskType.h"
 #include "Shift.h"
+#include "Phase.h"
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -48,7 +49,7 @@ class Team
 
 	//	Constructor
 
-		Team(const ptree& xmlData);
+		Team(const ptree& xmlData, Shift shift = Shift());
 		// Team(string name, vector<Agent> agents, vector<TaskTypes> taskTypes);
 
 	// 	Inspector
@@ -61,19 +62,8 @@ class Team
 
     // 	Mutators
 
+        void startPhase(int phase);
 		optional<Event> getNextEvent();
-
-		void createTasks(int phase)
-		{
-			for (TaskType& taskType : taskTypes)
-			{
-                Task task = taskType.genTask(phase);
-                while (task.getArrival() < 2000)    //TODO
-                {
-                    arrivingTasks.push_back(task);
-                }
-			}
-		}
 	//
     //     void arrive(Task* task);
 	// 	void depart(Task* task);
@@ -94,7 +84,9 @@ class Team
 		vector<TaskType> taskTypes;
 		Shift shift;
 		list<Task> arrivingTasks;
-		// vector<Phase> phases;
+		vector<Phase> phases;
+        int phase;
+        strint status;
 		// Team supervisor;
 };
 

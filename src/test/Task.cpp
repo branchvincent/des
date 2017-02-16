@@ -200,11 +200,11 @@ void Task::expire(DateTime time)
 void Task::output(ostream& out) const
 {
     // cout << "Type: " << type.name << ", ";
-	cout << "Priority: " << priority << ", ";
-	cout << "Arrival: " << arrival << ", ";
-	cout << "Service: " << service <<  ", ";
-	cout << "Departure: " << departure << ", ";
-	cout << "Expiration: " << expiration;
+	out << "Priority: " << priority << ", ";
+	out << "Arrival: " << arrival << ", ";
+	out << "Service: " << service <<  ", ";
+	out << "Departure: " << departure << ", ";
+	out << "Expiration: " << expiration;
 }
 
 /****************************************************************************

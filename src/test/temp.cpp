@@ -2,6 +2,8 @@
 #include <string>
 #include <queue>
 #include <boost/optional.hpp>
+#include <list>
+#include "Utility.h"
 
 using namespace std;
 
@@ -25,8 +27,12 @@ int main()
 {
     boost::optional<A&> opt = get("name");
     if (opt) cout << "True" << endl;
+    list<int> l;
+    // l.push_back(1);
+    // l.push_back(2);
 
-    A a;
+    cout << l;
+    // A a;
     // queue<int> q;
     // cout << q.front() << endl;
     // q.push(1);
