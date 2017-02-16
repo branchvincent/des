@@ -15,12 +15,14 @@
 #include <string>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <boost/optional.hpp>
 #include "Agent.h"
 #include "TaskType.h"
 #include "Shift.h"
 
 using namespace std;
 using boost::property_tree::ptree;
+using boost::optional;
 
 //class Agent;
 //class TaskType;
@@ -37,6 +39,8 @@ class Team
 //  Friend class
 
    	friend class Agent;
+    friend class TaskType;
+    friend class Phase;
 
 //	Public member functions
 
@@ -57,15 +61,19 @@ class Team
 
     // 	Mutators
 
-		// Event getNextEvent();
+		optional<Event> getNextEvent();
 
-	// 	void createTasks()
-	// 	{
-	// 		for (const auto& agent : agents)
-	// 		{
-	//
-	// 		}
-	// 	}
+		void createTasks(int phase)
+		{
+			for (TaskType& taskType : taskTypes)
+			{
+                Task task = taskType.genTask(phase);
+                while (task.getArrival() < 2000)    //TODO
+                {
+                    arrivingTasks.push_back(task);
+                }
+			}
+		}
 	//
     //     void arrive(Task* task);
 	// 	void depart(Task* task);

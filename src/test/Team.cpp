@@ -10,9 +10,10 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
+#include <list>
 #include "Team.h"
 #include "Event.h"
-#include <algorithm>
 
 using namespace std;
 using boost::property_tree::ptree;
@@ -43,7 +44,7 @@ Team::Team(const ptree& xmlData)
 	{
 		if (task.first == "task")
 		{
-			taskTypes.push_back(TaskType(task.second));
+			taskTypes.push_back(TaskType(*this, task.second));
 		}
 	}
 
@@ -64,21 +65,31 @@ Team::Team(const ptree& xmlData)
 // 	priority = util::toVector<int>(xmlData.get<string>("priority"));
 }
 
-// Event Agent::getNextEvent()
-// {
-// 	vector<Event> events;
-//
-// 	for (const auto& agent : agents)
-// 	{
-// 		events.push_back(agent.getNextEvent())
-// 	}
-//
-// 	return min_element(events.begin(), events.end());
-// 	// if (arrivingTasks.front().getArrival() < currTask.getDepartue())
-// 	// 	return Event("arrival")
-// 	// else
-// 	// 	return Event("departure");
-// }
+optional<Event> Team::getNextEvent()
+{
+	list<Event> events;
+
+//	Add current tasks
+
+	for (const auto& agent : agents)
+	{
+		optional<Event> e = agent.getNextEvent();
+		if (e) events.push_back(*e);
+	}
+
+//	Add arriving task
+
+	if (!arrivingTasks.empty())
+	{
+		optional<Event> e = arrivingTasks.front().getEvent();
+		if (e) events.push_back(*e);
+	}
+
+//	Return event
+
+	if (!events.empty()) return *min_element(events.begin(), events.end());
+	return optional<Event>();
+}
 
 
 /****************************************************************************

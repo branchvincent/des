@@ -18,7 +18,7 @@
 
 using namespace std;
 
-vector<string> valid_types = {"arrival", "departure"};
+vector<string> valid_types = {"arrival", "departure", "expiration", "none"};
 
 /****************************************************************************
 *																			*
@@ -28,14 +28,10 @@ vector<string> valid_types = {"arrival", "departure"};
 *																			*
 ****************************************************************************/
 
-Event::Event(string type, tm time, Task& task, Agent& agent) : type(type),
-	time(mktime(&time)), task(task), agent(agent)
-{
-	ASSERT(util::contains(valid_types, type), "Invalid event type");
-}
-
-Event::Event(string type, time_t time, Task& task, Agent& agent) : type(type),
-	time(time), task(task), agent(agent)
+Event::Event(string type, DateTime time, Task& task)
+	//, Agent& agent)
+	: type(type),
+	time(time), task(task)//, agent(agent)
 {
 	ASSERT(util::contains(valid_types, type), "Invalid event type");
 }
@@ -53,6 +49,7 @@ void Event::process()
 	if (type == "arrival")
 	{
 		task.start(time);
+		// task.type.team.arrivingTasks.pop_front();
 	}
 	else if (type == "departure")
 	{
@@ -60,9 +57,7 @@ void Event::process()
 	}
 }
 
-
 bool Event::before(const Event& event) const {return time < event.time;}
-
 
 /****************************************************************************
 *																			*
@@ -74,9 +69,9 @@ bool Event::before(const Event& event) const {return time < event.time;}
 
 void Event::output(ostream& out) const
 {
-	out << "Type: " << type << endl;
+	// out << "Type: " << type << endl;
 	// out << "Time: " << time << endl;
-	out << "Agent: " << agent << endl;
+	// out << "Agent: " << agent << endl;
 }
 
 

@@ -12,15 +12,13 @@
 #include <string>
 #include "Task.h"
 #include "TaskType.h"
+#include "Event.h"
+#include "DateTime.h"
 #include "Utility.h"
 
 using namespace std;
 
-/****************************************************************************
-*																			*
-*	Definition of Task class												*
-*																			*
-****************************************************************************/
+//  Statuses = premature, waiting, in progress, complete
 
 /****************************************************************************
 *																			*
@@ -30,15 +28,15 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Task::Task(TaskType& type, int priority, float arrival, float service, float expiration) :
+Task::Task(TaskType& type, int priority, DateTime arrival, float service, DateTime expiration) :
     type(type),
     priority(priority),
     arrival(arrival),
     service(service),
-	departure(-1),
+	departure(expiration),
 	expiration(expiration),
 	wait(0),
-    lastEvent(-1),
+    lastEvent(arrival),
 	status("premature")
 {
 //	Check for negatives
@@ -47,6 +45,7 @@ Task::Task(TaskType& type, int priority, float arrival, float service, float exp
 	ASSERT(arrival >= 0, "Arrival cannot be negative");
 	ASSERT(service >= 0, "Service cannot be negative");
 	ASSERT(expiration >= 0, "Expiration cannot be negative");
+    ASSERT(arrival + service <= expiration, "Task expires too soon");
 
 //	Check for infinites
 
@@ -73,12 +72,18 @@ Task::Task(TaskType& type, int priority, float arrival, float service, float exp
 *																			*
 ****************************************************************************/
 
-float Task::getNextEvent() const
+optional<Event> Task::getEvent()
 {
-	if (status == "in progress")
-		return min(departure, expiration);
-	else
-		return INFINITY;
+    if (status == "premature")
+        return Event("arrival", arrival, *this);
+	else if (status == "in progress")
+    {
+        if (departure < expiration)
+            return Event("departure", departure, *this);
+        else
+            return Event("expiration", expiration, *this);
+    }
+    return optional<Event>();
 }
 
 /****************************************************************************
@@ -89,7 +94,7 @@ float Task::getNextEvent() const
 *																			*
 ****************************************************************************/
 
-void Task::start(float time)
+void Task::start(DateTime time)
 {
 	if (status == "waiting")
 	{
@@ -99,9 +104,9 @@ void Task::start(float time)
 	{
 		ASSERT(status == "premature" && time >= arrival, "Task cannot be started before arrival");
 		wait += time - arrival;
+        departure = time + service;
 		lastEvent = time;
 		status = "in progress";
-
 		cout << time <<  ": Starting task..." << *this << endl;
 	}
 }
@@ -114,14 +119,14 @@ void Task::start(float time)
 *																			*
 ****************************************************************************/
 
-void Task::pause(float time)
+void Task::pause(DateTime time)
 {
 	ASSERT(status == "in progress", "Task not in progress cannot be paused");
 	service -= time - lastEvent;
 	ASSERT(service > 0, "Paused task has finished");
+    departure = expiration;
 	lastEvent = time;
 	status = "waiting";
-
 	cout << time << ": Pausing task..." << *this << endl;
 }
 
@@ -133,13 +138,13 @@ void Task::pause(float time)
 *																			*
 ****************************************************************************/
 
-void Task::resume(float time)
+void Task::resume(DateTime time)
 {
 	ASSERT(status == "waiting", "Task not waiting cannot be resumed");
 	wait += time - lastEvent;
+    departure = time + service;
 	lastEvent = time;
 	status = "in progress";
-
 	cout << time << ": Resuming task..." << *this << endl;
 }
 
@@ -151,14 +156,13 @@ void Task::resume(float time)
 *																			*
 ****************************************************************************/
 
-void Task::finish(float time)
+void Task::finish(DateTime time)
 {
 	ASSERT(status == "in progress", "Task not in progress cannot be finished");
 	service -= time - lastEvent;
 	ASSERT(service == 0, "Task has not finished " << service);
 	lastEvent = time;
-	status = "done";
-
+	status = "complete";
 	cout << time << ": Finishing task..." << *this << endl;
 }
 
@@ -170,7 +174,7 @@ void Task::finish(float time)
 *																			*
 ****************************************************************************/
 
-void Task::expire(float time)
+void Task::expire(DateTime time)
 {
 	ASSERT(time == expiration, "Task has not expired yet");
 	ASSERT(status == "in progress" or status == "waiting", "Task not in progress nor waiting cannot expire");
@@ -181,7 +185,7 @@ void Task::expire(float time)
 		wait += time - lastEvent;
 
 	ASSERT(service > 0, "Task has actually finished");
-
+    status = "complete";
 	cout << time << ": Expiring task..." << *this << endl;
 }
 
@@ -219,10 +223,12 @@ bool Task::higherPriority(const Task& task) const
 		return this->priority > task.getPriority();
 }
 
-bool Task::arrivesSooner(const Task& task) const {return arrival < task.getArrival();}
+bool Task::arrivesBefore(const Task& task) const {return arrival < task.getArrival();}
 
 //	Operators
 
 ostream& operator<<(ostream& out, const Task& t) {t.output(out); return out;}
-bool operator>(const Task& t1, const Task& t2) {return t1.higherPriority(t2);}
-bool operator<(const Task& t1, const Task& t2) {return !t1.higherPriority(t2);}
+bool operator<(const Task& t1, const Task& t2) {return t1.arrivesBefore(t2);}
+bool operator>(const Task& t1, const Task& t2) {return !t1.arrivesBefore(t2);}
+// bool operator>(const Task& t1, const Task& t2) {return t1.higherPriority(t2);}
+// bool operator<(const Task& t1, const Task& t2) {return !t1.higherPriority(t2);}

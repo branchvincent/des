@@ -21,7 +21,7 @@
 
 using namespace std;
 
-bool compareArrivals(Task t1, Task t2) {return t1.arrivesSooner(t2);}
+class Team;
 
 /****************************************************************************
 *																			*
@@ -37,7 +37,7 @@ class Phase
 
 	//	Constructor
 
-        Phase(Team& team, int num, float start, float stop);
+        Phase(Team& team, DateTime start, DateTime stop, int num);
 
 	//	Inspectors
 
@@ -58,57 +58,14 @@ class Phase
 
 	private:
 		Team& team;
+        DateTime start;
+		DateTime stop;
 		int num;
-        float start;
-		float stop;
-		vector<Task> tasks;
+		list<Task> arrivingTasks;
 };
 
 //	Operators
 
-// ostream& operator<<(ostream& out, const Operator& op) {op.output(out); return out;}
-
-/****************************************************************************
-*																			*
-*	Function:	Phase														*
-*																			*
-*	Purpose:	To construct a phase										*
-*																			*
-****************************************************************************/
-
-float Phase::Phase(Team& team, int num, float start, float stop) : times(times)
-{
-//	Create all tasks
-
-	list<Task> temp;
-
-	for (const auto& taskType : team.taskTypes)
-	{
-		Task task = taskType.genTask(num);
-		float arrival = task.getArrival();
-
-	//	Add tasks that arrive in time
-
-		while (arrival < stop)
-		{
-			temp.push_back(task);			// add current
-			task = taskType.genTask(num);	// get next
-			arrival = task.getArrival();
-		}
-	}
-
-//	Merge lists
-
-	tasks.merge(temp, compareArrivals);
-}
-
-void Phase::run()
-{
-	cout << "Beginning Phase " << number << "." << endl;
-
-
-
-	cout << "Phase " << number << " completed." << endl;
-}
+// ostream& operator<<(ostream& out, const Operator& op);
 
 #endif

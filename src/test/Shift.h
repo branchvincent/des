@@ -15,6 +15,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include "DateTime.h"
 #include "Utility.h"
 
 using namespace std;
@@ -34,33 +35,25 @@ class Shift
     //  Constructor
 
 		inline Shift(vector<string> times);
-		inline Shift(string start = "9:00", string stop = "17:00");
+		inline Shift(string t1 = "01-01 9:00", string t2 = "01-01 17:00");
 
 	//	Inspectors
 
-		// string getStart() {return string(put_time(&start, "%c"));}
-		time_t getStart() {return timegm(&start);}
-        time_t getStop() {return timegm(&stop);}
-        string getStartString() const {return asctime(&start);}
-        string getStopString() const {return asctime(&stop);}
-        float getHours() const
-			{ASSERT(duration > 0, "Shift duration cannot be negative"); return duration/3600.;}
+		const DateTime& getStart() const {return start;}
+		const DateTime& getStop() const {return stop;}
+		const time_t& getDuration() const {return duration;}
+        // float getHours() const {return duration/3600.;}
 
 	//	Other member functions
 
-		inline void output(ostream& out) const;
-
-//  Private member members
-
-    private:
-        inline void readTimeString(string time, tm& date);
+		inline void output(ostream& out) const {out << start << " to " << stop << endl;}
 
 //	Data members
 
 	public:
-        tm start;
-        tm stop;
-        time_t duration;
+        DateTime start;
+		DateTime stop;
+		time_t duration;
 };
 
 //	Operators
@@ -89,51 +82,10 @@ Shift::Shift(vector<string> times)
 *																			*
 ****************************************************************************/
 
-Shift::Shift(string start, string stop)
+Shift::Shift(string t1, string t2) : start(t1), stop(t2)
 {
-//  Read times
-
-    readTimeString(start, this->start);
-    readTimeString(stop, this->stop);
-
-//  Calculate duration
-
-	duration = difftime(timegm(&(this->stop)), timegm(&(this->start)));
-    if (duration < 0)
-    {
-        (this->stop).tm_mday += 1;
-        duration = difftime(mktime(&(this->stop)), mktime(&(this->start)));
-    }
-}
-
-/****************************************************************************
-*																			*
-*	Function:	readTimeString												*
-*																			*
-*	Purpose:	To create a date from a time string                         *
-*																			*
-****************************************************************************/
-
-void Shift::readTimeString(string time, tm& date)
-{
-    istringstream stream("2017-01-01 " + time + ":00");
-    stream >> get_time(&date, "%Y-%m-%d %H:%M:%S");
-    ASSERT(!stream.fail(), "Failed to read time " << time);
-    return;
-}
-
-/****************************************************************************
-*																			*
-*	Function:	output														*
-*																			*
-*	Purpose:	To output a shift					                        *
-*																			*
-****************************************************************************/
-
-void Shift::output(ostream& out) const
-{
-    out << put_time(&start, "%H:%M") << " to " << put_time(&stop, "%H:%M");
-	// out << put_time(&start, "%c") << " to " << getStop();
+	ASSERT(start < stop, "Shift cannot end before it begins");
+	duration = stop - start;
 }
 
 #endif

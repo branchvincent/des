@@ -37,36 +37,21 @@ Agent::Agent(Team& team, const ptree& xmlData) : team(team), taskTypes(), queue(
 	}
 }
 
-// Event Agent::getNextEvent()
-// {
-//     if (currTask)
-//     {
-//         if (team.arrivingTasks.front())
-//         {
-//             Task& arrTask = team.arrivingTasks.front();
-//
-//             if (arrTask.arrival < currTask.departure)
-//         		return Event("arrival", time, arrTask, *this);
-//         	else
-//         		return Event("departure", time, currTask, *this);
-//         }
-//         else
-//         {
-//             return Event("departure", time, currTask, *this);
-//         }
-//     }
-//     else
-//     {
-//          if (team.arrivingTasks.front())
-//          {
-//              return Event("arrival", time, team.arrivingTasks.front(), *this);
-//          }
-//          else
-//          {
-//              return Event("arrival", time, team.arrivingTasks.front(), *this); //TODO return none
-//          }
-//     }
-// }
+optional<Event> Agent::getNextEvent() const
+{
+    if (currTask)
+    {
+		optional<Event> nextEvent = currTask->getEvent();
+		// for (const Task& task : queue)
+		// {
+		// 	if (task.getNextEvent() < nextTask)
+		// 		nextTask = task.getNextEvent();
+		// }
+		if (nextEvent)
+        	return nextEvent;
+    }
+	return optional<Event>();
+}
 
 /****************************************************************************
 *																			*

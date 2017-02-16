@@ -16,12 +16,15 @@
 #include <vector>
 #include <boost/property_tree/ptree.hpp>
 #include "Distribution.h"
+// #include "DateTime.h"
 
 using namespace std;
 using boost::property_tree::ptree;
 
 // class Distribution;
+class Team;
 class Task;
+class DateTime;
 
 /****************************************************************************
 *																			*
@@ -34,6 +37,7 @@ class TaskType
 //	Friends
 
 	friend class Agent;
+	friend class Task;
 
 //	Public member functions
 
@@ -41,11 +45,11 @@ class TaskType
 
 	//	Constructors
 
-		TaskType();
-		TaskType(const ptree& xmlData);
-		TaskType(string name, vector<int> priority, vector<bool> isAffectedByTraffic,
-			vector<Distribution> interarrival, vector<Distribution> service,
-			vector<Distribution> expiration);
+		// TaskType();
+		TaskType(Team& team, const ptree& xmlData);
+		// TaskType(string name, vector<int> priority, vector<bool> isAffectedByTraffic,
+		// 	vector<Distribution> interarrival, vector<Distribution> service,
+		// 	vector<Distribution> expiration);
 
 	//	Inspectors
 
@@ -72,15 +76,16 @@ class TaskType
 //	Private member functions
 
 	private:
-		void readDistributionFromXML(vector<Distribution>& dists, const ptree& xmlData);
+		DateTime getAbsTime(float relativeTime);
 		float genArrivalTime(int phase);
 		float genServiceTime(int phase);
 		float genExpirationTime(int phase, float arrivalTime, float serviceTime);
+		void readDistributionFromXML(vector<Distribution>& dists, const ptree& xmlData);
 
 //	Data members
 
 	private:
-//		Team& team;
+		Team& team;
 		string name;
 		vector<int> priority;
 		vector<bool> isAffectedByTraffic;

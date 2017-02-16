@@ -23,6 +23,7 @@ using namespace std;
 
 //  Assert function to output error message
 
+#define MAX_TIME numeric_limits<int>::max()
 #define ASSERT(condition, message) \
     do { \
         if (!(condition)) { \
@@ -32,6 +33,7 @@ using namespace std;
             terminate(); \
         } \
     } while (false)
+
 
 /****************************************************************************
 *																			*
@@ -54,6 +56,7 @@ namespace util
     // inline float HrToMin(const time_t& t) {return t*60.;}
     inline float minToSec(const float& t) {return t*60.;}
     // inline float HrToSec(const time_t& t) {return t*3600.;}
+    // void convertInf(time_t& time) {if isinf(time) time }
 
     template <class T> bool contains(vector<T>& vec, const T& data)
         {return find(vec.begin(), vec.end(), data) != vec.end();}

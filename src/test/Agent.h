@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <list>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/optional.hpp>
 #include "Task.h"
 #include "Shift.h"
 #include "TaskType.h"
@@ -25,6 +26,7 @@
 
 using namespace std;
 using boost::property_tree::ptree;
+using boost::optional;
 
 class Event;
 class Team;
@@ -75,7 +77,7 @@ class Agent
 //
 // 	//	Other member functions
 
-		// Event getNextEvent();
+		optional<Event> getNextEvent() const;
 //         void output();
    		void output(ostream& out) const;
 

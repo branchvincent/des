@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <string>
+#include "DateTime.h"
 
 using namespace std;
 
@@ -34,8 +35,7 @@ class Event
     //  Constructor
 
 		// Event(string type) : {}
-		Event(string type, tm time, Task& task, Agent& agent);
-		Event(string type, time_t time, Task& task, Agent& agent);
+		Event(string type, DateTime time, Task& task); //, Agent& agent);
 
 	//	Inspectors
 
@@ -55,9 +55,9 @@ class Event
 
 	private:
 		string type;
-        time_t time;
+        DateTime time;
 		Task& task;
-		Agent& agent;
+		// Agent& agent;
 };
 
 //	Operators

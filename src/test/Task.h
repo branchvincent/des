@@ -13,10 +13,14 @@
 
 #include <iostream>
 #include <string>
+#include <boost/optional.hpp>
+#include "DateTime.h"
 
 using namespace std;
+using boost::optional;
 
 class TaskType;
+class Event;
 
 /****************************************************************************
 *																			*
@@ -37,44 +41,44 @@ class Task
 
 	//	Constructor
 
-		Task(TaskType& type, int priority, float arrival, float service, float expiration);
+		Task(TaskType& type, int priority, DateTime arrival, float service, DateTime expiration);
 
 	//	Inspectors
 
 		const TaskType& getType() const {return type;}
 		const int& getPriority() const {return priority;}
-		const float& getArrival() const {return arrival;}
-		const float& getDepartue() const {return departure;}
-		const float& getExpiration() const {return expiration;}
+		const DateTime& getArrival() const {return arrival;}
+		const DateTime& getDeparture() const {return departure;}
+		const DateTime& getExpiration() const {return expiration;}
 		const float& getWaitTime() const {return wait;}
-		float getNextEvent() const;
+		optional<Event> getEvent();
 
 	//	Mutators
 
-		void start(float time);
-		void pause(float time);
-		void resume(float time);
-		void finish(float time);
-		void expire(float time);
+		void start(DateTime time);
+		void pause(DateTime time);
+		void resume(DateTime time);
+		void finish(DateTime time);
+		void expire(DateTime time);
 
 	//	Other member functions
 
 		void output(ostream& out) const;
 		bool higherPriority(const Task& task) const;
-		bool arrivesSooner(const Task& task) const;
+		bool arrivesBefore(const Task& task) const;
 
 //	Data members
 
 	private:
-		TaskType& type;		// type
-		int priority;		// priority level
-		float arrival;		// arrival time (min)
-		float service; 		// service time (min)
-		float departure;	// depature time (min)
-		float expiration;	// expiration time (min)
-        float wait;      	// wait time (min)
-		float lastEvent;	// time of last event (min)
-		string status;		// current status
+		TaskType& type;			// type
+		int priority;			// priority level
+		DateTime arrival;		// arrival time (sec)
+		float service; 			// service time (sec)
+		DateTime departure;		// depature time (sec)
+		DateTime expiration;	// expiration time (sec)
+        float wait;      		// wait time (sec)
+		DateTime lastEvent;		// time of last event (sec)
+		string status;			// current status
 };
 
 //	Operators

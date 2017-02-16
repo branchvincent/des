@@ -1,11 +1,12 @@
 #include <iostream>
 #include <string>
- #include "Task.h"
-#include "Agent.h"
-#include "TaskType.h"
+ // #include "Task.h"
+// #include "Agent.h"
+// #include "TaskType.h"
+// #include "DateTime.h"
 #include "Team.h"
 // #include "test/Task.h"
-#include "Distribution.h"
+// #include "Distribution.h"
 // #include "test/Distribution.h"
 // #include "Parameters.h"
 // #include "Flags.h"
@@ -31,7 +32,11 @@ int main()
    // Distribution t;
    // Task t1(2, 1, 3, 40);
    // TaskType t(data.get_child("task"));
-   // Shift t;
+   // Task tk = t.genTask(0);
+   // cout << tk << endl;
+   // Shift t("01-01 12:00", "01-01 11:00");
+   // cout << t << endl;
+   // cout << t.duration << endl;
    // Agent t(data.get_child("team.agents.agent"));
    Team t(data.get_child("team"));
    // Parameters t("params.xml");
@@ -42,7 +47,7 @@ int main()
     // for (int i = 0; i < 1; i++)
     //     cout << t.genTask(0) << endl;
 
-    cout << t << endl;
+    cout << "Team: " << t << endl;
 
     return 0;
 }

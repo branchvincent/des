@@ -13,6 +13,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include "TaskType.h"
 #include "Task.h"
+#include "Team.h"
+#include "DateTime.h"
 #include "Distribution.h"
 #include "Utility.h"
 
@@ -27,15 +29,15 @@ using boost::property_tree::ptree;
 *																			*
 ****************************************************************************/
 
-TaskType::TaskType() :
-	name(""),
-	priority(-1),
-	isAffectedByTraffic{},
-	interarrival{},
-	service{},
-	expiration{},
-	lastArrival(-1)
-{}
+// TaskType::TaskType() :
+// 	name(""),
+// 	priority(-1),
+// 	isAffectedByTraffic{},
+// 	interarrival{},
+// 	service{},
+// 	expiration{},
+// 	lastArrival(-1)
+// {}
 
 /****************************************************************************
 *																			*
@@ -45,7 +47,7 @@ TaskType::TaskType() :
 *																			*
 ****************************************************************************/
 
-TaskType::TaskType(const ptree& xmlData) //: team(team), lastArrival(0)
+TaskType::TaskType(Team& team, const ptree& xmlData) : team(team), lastArrival(0)
 {
 	name = xmlData.get<string>("name");
 	priority = util::toVector<int>(xmlData.get<string>("priority"));
@@ -63,16 +65,16 @@ TaskType::TaskType(const ptree& xmlData) //: team(team), lastArrival(0)
 *																			*
 ****************************************************************************/
 
-TaskType::TaskType(string name, vector<int> priority, vector<bool> isAffectedByTraffic,
-	vector<Distribution> interarrival, vector<Distribution> service, vector<Distribution> expiration) :
-	name(name),
-	priority(priority),
-	isAffectedByTraffic(isAffectedByTraffic),
-	interarrival(interarrival),
-	service(service),
-	expiration(expiration),
-	lastArrival(0)
-{}
+// TaskType::TaskType(string name, vector<int> priority, vector<bool> isAffectedByTraffic,
+// 	vector<Distribution> interarrival, vector<Distribution> service, vector<Distribution> expiration) :
+// 	name(name),
+// 	priority(priority),
+// 	isAffectedByTraffic(isAffectedByTraffic),
+// 	interarrival(interarrival),
+// 	service(service),
+// 	expiration(expiration),
+// 	lastArrival(0)
+// {}
 
 //	Inspectors
 
@@ -110,7 +112,21 @@ Task TaskType::genTask(int phase)
 	float serviceTime = genServiceTime(phase);
 	float expirationTime = genExpirationTime(phase, arrivalTime, serviceTime);
 	lastArrival = arrivalTime;
-	return Task(*this, priority[phase], arrivalTime, serviceTime, expirationTime);
+	DateTime arrivalDate = getAbsTime(arrivalTime);
+	DateTime expirationDate = getAbsTime(expirationTime);
+	// cout << "Start " << startDate << endl;
+	// cout << "Arrival " << arrivalDate << endl;
+	// cout << "Expiration " << expirationDate << endl;
+	return Task(*this, priority[phase], arrivalDate, serviceTime, expirationDate);
+}
+
+DateTime TaskType::getAbsTime(float relativeTime)
+{
+	DateTime startDate = team.shift.getStart();	//TODO
+	if (isinf(relativeTime))
+		return DateTime(MAX_TIME);
+	else
+		return startDate + util::minToSec(relativeTime);
 }
 
 /****************************************************************************

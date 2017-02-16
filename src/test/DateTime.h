@@ -34,7 +34,7 @@ class DateTime
     //  Constructor
 
 		inline DateTime(string dateTime = "01-10 9:00");
-		DateTime(time_t time) : time(time) {}
+		DateTime(time_t time) : time(time) {ASSERT(time >= 0, "Time cannot be negative " << time);}
 
 	//	Inspectors
 
@@ -49,29 +49,40 @@ class DateTime
 
 	//	Operators
 
-		DateTime& operator+=(const time_t& time) {this->time += time; return *this;}
-		DateTime& operator-=(const time_t& time) {this->time -= time;
+		bool operator<(const time_t& t) {return time < t;}
+		bool operator>(const time_t& t) {return time > t;}
+		bool operator<=(const time_t& t) {return time <= t;}
+		bool operator>=(const time_t& t) {return time >= t;}
+		bool operator==(const time_t& t) {return time == t;}
+		bool operator!=(const time_t& t) {return time != t;}
+		DateTime& operator+=(const time_t& t) {time += t; return *this;}
+		DateTime& operator-=(const time_t& t) {time -= t;
 			ASSERT(time >= 0, "Time cannot be negative."); return *this;}
 
 	//	Other member functions
 
 		time_t secondsAfter(const DateTime& date) const {return time - date.time;}
+		bool equals(const DateTime& date) const {return time == date.time;}
 		bool before(const DateTime& date) const {return time < date.time;}
 		void output(ostream& out) const {out << getDateTimeString();}
 
 //	Data members
 
-	public:
+	private:
 		time_t time;
 };
 
 //	Operators
 
 inline ostream& operator<<(ostream& out, const DateTime& d) {d.output(out); return out;}
-inline bool operator<(const DateTime& d1, const DateTime& d2) {return d1.before(d2);}
-inline bool operator>(const DateTime& d1, const DateTime& d2) {return !d1.before(d2);}
+inline bool operator<(const DateTime& d1, const DateTime& d2) {return d1.before(d2) && !d1.equals(d2);}
+inline bool operator>(const DateTime& d1, const DateTime& d2) {return !d1.before(d2 )&& !d1.equals(d2);}
+inline bool operator<=(const DateTime& d1, const DateTime& d2) {return !(d1 > d2);}
+inline bool operator>=(const DateTime& d1, const DateTime& d2) {return !(d1 < d2);}
+inline bool operator==(const DateTime& d1, const DateTime& d2) {return d1.equals(d2);}
+inline bool operator!=(const DateTime& d1, const DateTime& d2) {return !d1.equals(d2);}
 inline time_t operator-(const DateTime& d1, const DateTime& d2) {return d1.secondsAfter(d2);}
-inline DateTime operator+(const DateTime& d, const time_t& seconds) {return DateTime(d.time + seconds);}
+inline DateTime operator+(const DateTime& d, const time_t& seconds) {return DateTime(d.getRawTime() + seconds);}
 
 /****************************************************************************
 *																			*
