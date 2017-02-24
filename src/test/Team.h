@@ -86,7 +86,7 @@ class Team
 		list<Task> arrivingTasks;
 		vector<Phase> phases;
         int phase;
-        strint status;
+        string status;
 		// Team supervisor;
 };
 
