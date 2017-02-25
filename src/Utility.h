@@ -72,9 +72,12 @@ namespace util
 //  Data members
 
 // //extern
-    extern float seed;// = rand();
-    extern default_random_engine randNumGen;//(seed);
-    extern vector<float> TRAFFIC;// = {1,1,1};
+    // extern float seed;// = rand();
+    // extern default_random_engine randNumGen;//(seed);
+    // extern vector<float> TRAFFIC;// = {1,1,1};
+    float seed = rand();
+    default_random_engine randNumGen(seed);
+    vector<float> TRAFFIC = {1,1,1};
 }
 
 //  Operators

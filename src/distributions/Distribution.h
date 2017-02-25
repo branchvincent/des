@@ -13,8 +13,6 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
-#include <random>
 
 using namespace std;
 
@@ -32,38 +30,33 @@ class Distribution
 
 	//	Constructor
 
-		Distribution();
-		Distribution(string type, vector<float> p);
-		Distribution(string type, float p);
-		Distribution(string type, float p1, float p2);
+		Distribution() {}
+		// Distribution(float p) : parameters{p} {}
+		// Distribution(float p1, float p2) : parameters{p1, p2} {}
+
+	//	Destructor
+
+		virtual ~Distribution() {}
 
 	//	Inspectors
 
-		const string& getType() const {return type;}
-		const vector<float>& getParameters() const {return parameters;}
+		// vector<float> getParameters() const {return parameters;}
 
 	//	Other member functions
 
-		float rand();
-		void output(ostream& out) const;
-
-//	Private member functions
-
-	private:
-		void construct();
+		virtual float rand() = 0;
+        virtual void output(ostream& out) const = 0;
 
 //	Data members
 
-	private:
-		string type;
-		vector<float> parameters;
-		exponential_distribution<float> exp_distribution;
-		lognormal_distribution<float> log_distribution;
-		uniform_real_distribution<float> uni_distribution;
+	// private:
+		// vector<float> parameters;
 };
 
-//	Operators
-
-ostream& operator<<(ostream& out, const Distribution& d);
+// void Distribution::output(ostream& out) const
+// {
+// 	out << "Type: " << type << ", ";
+// 	out << "Parameters: " << parameters;
+// }
 
 #endif
