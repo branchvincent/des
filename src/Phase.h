@@ -41,7 +41,7 @@ class Phase
 
 	//	Inspectors
 
-
+		
 	//	Mutators
 
 
@@ -56,7 +56,7 @@ class Phase
 
 //	Data members
 
-	private:
+	public:
 		Team& team;
         DateTime start;
 		DateTime stop;

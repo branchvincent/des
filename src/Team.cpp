@@ -68,6 +68,18 @@ Team::Team(const ptree& xmlData, Shift shift) : shift(shift)
 	cout << "Shift " << shift << endl;
 	phases.push_back(Phase(*this, shift.getStart(), shift.getStop(), 0));
 
+//	Get events
+
+	// cout << "PHASE SIZE =" << phases.size() << endl;
+
+	// startPhase(0);
+
+	for (Task& t : phases[0].arrivingTasks)
+	{
+		events.push_back(Event("arrival",t.getArrival(),t));
+	}
+	// cout << "EVENTS " << events.size() << endl;
+
 // 	for (int i = 0; i < num_tasks; i++)
 // 	{
 // 		TaskType task(xmlData.get_child("tasks.task" + to_string(i)));
@@ -135,6 +147,7 @@ optional<Event> Team::getNextEvent()
 	return optional<Event>();
 }
 
+list<Event> Team::getEvents() {return events;}
 
 /****************************************************************************
 *																			*

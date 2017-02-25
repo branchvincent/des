@@ -4,7 +4,7 @@
     <start>2:00</start>
     <stop>17:00</stop>
     <traffic>m,m,m,m,m,m,m,m,m</traffic>
-    <replications num="100"/>
+    <replications>100</replications>
 </parameters>
 
 <interarrival type="exponential">
@@ -14,65 +14,66 @@
 </interarrival>
 
 <!-- <teams> -->
-<team>
-    <name>Train</name>
-    <agents>
-        <agent>
-            <name>engineer</name>
-            <tasks>0,1</tasks>
-        </agent>
-        <agent>
-            <name>conductor</name>
-            <tasks>0</tasks>
-        </agent>
-        <agent>
-            <name>positive train control</name>
-            <tasks>1</tasks>
-        </agent>
-        <agent>
-            <name>cruise control</name>
-            <tasks>0</tasks>
-        </agent>
-    </agents>
-    <tasks>
-        <task>
-            <name>My Task</name>
-            <priority>4, 3, 4</priority>
-            <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
-            <interarrival type="exponential" byPhase="true">
-                <phase>10</phase>
-                <phase>0.1</phase>
-                <phase>0.1</phase>
-            </interarrival>
-            <service type="lognormal">0,2</service>
-            <expiration type="uniform" byPhase="true">
-                <phase>0,2</phase>
-                <phase>0,2</phase>
-                <phase>0,2</phase>
-            </expiration>
-            <description>My description.</description>
-        </task>
-        <task>
-            <name>My Task</name>
-            <priority>4, 3, 4</priority>
-            <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
-            <interarrival type="exponential" byPhase="true">
-                <phase>0</phase>
-                <phase>0</phase>
-                <phase>0</phase>
-            </interarrival>
-            <service type="lognormal">0,2
-            </service>
-            <expiration type="uniform" byPhase="true">
-                <phase>0,2</phase>
-                <phase>0,2</phase>
-                <phase>0,2</phase>
-            </expiration>
-            <description>My description.</description>
-        </task>
-    </tasks>
-</team>
-<!-- </teams> -->
+<teams>
+    <team>
+        <name>Train</name>
+        <agents>
+            <agent>
+                <name>engineer</name>
+                <tasks>0,1</tasks>
+            </agent>
+            <agent>
+                <name>conductor</name>
+                <tasks>0</tasks>
+            </agent>
+            <agent>
+                <name>positive train control</name>
+                <tasks>1</tasks>
+            </agent>
+            <agent>
+                <name>cruise control</name>
+                <tasks>0</tasks>
+            </agent>
+        </agents>
+        <tasks>
+            <task>
+                <name>My Task</name>
+                <priority>4, 3, 4</priority>
+                <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
+                <interarrival type="exponential" byPhase="true">
+                    <phase>10</phase>
+                    <phase>0.1</phase>
+                    <phase>0.1</phase>
+                </interarrival>
+                <service type="lognormal">0,2</service>
+                <expiration type="uniform" byPhase="true">
+                    <phase>0,2</phase>
+                    <phase>0,2</phase>
+                    <phase>0,2</phase>
+                </expiration>
+                <description>My description.</description>
+            </task>
+            <task>
+                <name>My Task</name>
+                <priority>4, 3, 4</priority>
+                <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
+                <interarrival type="exponential" byPhase="true">
+                    <phase>0</phase>
+                    <phase>0</phase>
+                    <phase>0</phase>
+                </interarrival>
+                <service type="lognormal">0,2
+                </service>
+                <expiration type="uniform" byPhase="true">
+                    <phase>0,2</phase>
+                    <phase>0,2</phase>
+                    <phase>0,2</phase>
+                </expiration>
+                <description>My description.</description>
+            </task>
+        </tasks>
+    </team>
+</teams>
 
 <task>
     <name>My Task</name>

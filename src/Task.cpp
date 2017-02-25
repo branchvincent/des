@@ -45,7 +45,7 @@ Task::Task(TaskType& type, int priority, DateTime arrival, float service, DateTi
 	ASSERT(arrival >= 0, "Arrival cannot be negative");
 	ASSERT(service >= 0, "Service cannot be negative");
 	ASSERT(expiration >= 0, "Expiration cannot be negative");
-    ASSERT(arrival + service <= expiration, "Task expires too soon");
+    // ASSERT(arrival + service <= expiration, "Task expires too soon " << arrival + service << " "  << expiration);
 
 //	Check for infinites
 
@@ -107,7 +107,7 @@ void Task::start(DateTime time)
         departure = time + service;
 		lastEvent = time;
 		status = "in progress";
-		cout << time <<  ": Starting task..." << *this << endl;
+		// cout << time <<  ": Starting task..." << *this << endl << endl;
 	}
 }
 

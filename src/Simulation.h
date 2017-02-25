@@ -17,6 +17,8 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include "Flags.h"
 #include "Parameters.h"
+#include "Event.h"
+#include "Team.h"
 // #include <vector>
 // #include <list>
 // #include <time.h>
@@ -78,10 +80,10 @@ class Simulation
 		// vector<BatchedTeam> batches;
 		Parameters parameters;
 		Flags flags;
-		// list<Event> events;
+		list<Event> events;
 // //      Params pms;				// run parameters
 // //		Operator dispatch;		// dispactcher
-//         vector<Team> teams;	// trains
+        vector<Team> teams;	// trains
 // 		vector<int> endTimes;   // phase end times
 // 		list<Task> taskList;	// task list
 // 		float currTime;
@@ -117,6 +119,19 @@ Simulation::Simulation(string file, Flags flags = Flags()) : parameters(file), f
 		cout << parameters << endl;
 		cout << flags << endl;
 	}
+
+//	Fill teams
+
+	ptree params;
+	read_xml(file, params);
+
+	for (const auto& team : params.get_child("teams"))
+	{
+		if (team.first == "team")
+		{
+			teams.push_back(Team(team.second));
+		}
+	}
 }
 // //	Check duration of simulation
 //
@@ -134,6 +149,22 @@ Simulation::Simulation(string file, Flags flags = Flags()) : parameters(file), f
 
 void Simulation::run()
 {
+//	Get events
+
+	// vector<Event> temp;
+	for (Team& ti : teams)
+	{
+		// temp.push_back(ti.getEvents());
+		events.merge(ti.getEvents());
+	}
+
+//	Process events
+
+	for (Event& e : events)
+	{
+		e.process();
+	}
+
 }
 
 /****************************************************************************

@@ -64,6 +64,7 @@ class Team
 
         void startPhase(int phase);
 		optional<Event> getNextEvent();
+        list<Event> getEvents();
 	//
     //     void arrive(Task* task);
 	// 	void depart(Task* task);
@@ -87,6 +88,7 @@ class Team
 		vector<Phase> phases;
         int phase;
         string status;
+        list<Event> events;
 		// Team supervisor;
 };
 

@@ -11,6 +11,7 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
+#include <sys/stat.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -47,6 +48,12 @@ namespace util
 {
 //	Public member functions
 
+    inline bool exists(const string& file)
+    {
+        struct stat buffer;
+        return stat(file.c_str(), &buffer) == 0;
+    }
+
     template <class T> vector<T> toVector(string data, char delimiter = ',');
 
     inline string toLower(string s)
@@ -72,12 +79,12 @@ namespace util
 //  Data members
 
 // //extern
-    // extern float seed;// = rand();
-    // extern default_random_engine randNumGen;//(seed);
-    // extern vector<float> TRAFFIC;// = {1,1,1};
-    float seed = rand();
-    default_random_engine randNumGen(seed);
-    vector<float> TRAFFIC = {1,1,1};
+    extern float seed;// = rand();
+    extern default_random_engine randNumGen;//(seed);
+    extern vector<float> TRAFFIC;// = {1,1,1};
+    // float seed = rand();
+    // default_random_engine randNumGen(seed);
+    // vector<float> TRAFFIC = {1,1,1};
 }
 
 //  Operators

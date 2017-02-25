@@ -39,13 +39,13 @@ Phase::Phase(Team& team, DateTime start, DateTime stop, int num) : team(team)
 		DateTime arrival;
 
 	//	Add tasks that arrive in time
-		cout << arrival << " " << stop << endl;
+		// cout << arrival << " " << stop << endl;
 
-		while (arrival <= stop)
+		while (arrival < stop)
 		{
 			temp.push_back(taskType.genTask(num));	// add current
 			arrival = temp.back().getArrival();
-			cout << "Here " << temp.size() << endl;
+			// cout << "Arrival at " << arrival << endl;
 		}
 	}
 

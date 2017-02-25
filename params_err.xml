@@ -4,9 +4,28 @@
     <replications>100</replications>
 </parameters>
 
+<!-- Batch of teams -->
+<batches>
+    <batch name="Train 1">
+        <team num="17" type="Train"></team>
+        <shift start="01-01 9:00" stop="01-01 17:00"></shift>
+        <traffic>m,m,m,m,m,m,m,m,m</traffic>
+    </batch>
+    <batch name="Train 2">
+        <team num="28" type="Train"></team>
+        <shift start="01-01 14:00" stop="01-02 02:00"></shift>
+        <traffic>m,m,m,m,m,m,m,m,m</traffic>
+        <!-- traffic = relative workload level -->
+    </batch>
+    <batch name="Dispatcher 1">
+        <team num="1" type="Dispatch"></team>
+        <shift start="01-01 9:00" stop="01-01 17:00"></shift>
+    </batch>
+</batches>
+
+<!-- Teams -->
 <teams>
     <team name="Train">
-        <name>
         <phases num="3">30, 90, -30</phases>
         <!-- Agents -->
         <agents>
@@ -38,7 +57,7 @@
                     <subtask team="Train" id="1"></subtask>
                     <subtask team="Dispatch" id="0"></subtask>
                     <subtask team="Train" id="1"></subtask>
-                </subtasks>
+                <subtasks>
             </task>
             <task id="1" type="dependent">
                 <name>My Task</name>
@@ -81,8 +100,8 @@
                     <phase>0,2</phase>
                 </expiration>
                 <interaction>
-                    <subtask team="Dispatch" id=""></subtask>
-                </interaction>
+                    <subtask team="Dispatch" id=""><subtask/>
+                <interaction>
             </task>
             <task id="1">
                 <name>My Task</name>
