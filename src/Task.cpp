@@ -15,6 +15,7 @@
 #include "Event.h"
 #include "DateTime.h"
 #include "Utility.h"
+#include "../lib/EasyLogging.h"
 
 using namespace std;
 
@@ -102,7 +103,8 @@ void Task::start(DateTime time)
 	}
 	else
 	{
-		ASSERT(status == "premature" && time >= arrival, "Task cannot be started before arrival");
+        LOG(INFO) << time << ": Task starting";
+		// ASSERT(status == "premature" && time >= arrival, "Task cannot be started before arrival");
 		wait += time - arrival;
         departure = time + service;
 		lastEvent = time;

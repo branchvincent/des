@@ -19,6 +19,7 @@
 #include "Parameters.h"
 #include "Event.h"
 #include "Team.h"
+#include "../lib/EasyLogging.h"
 // #include <vector>
 // #include <list>
 // #include <time.h>
@@ -63,6 +64,7 @@ class Simulation
 //  Private member functions
 
     private:
+		void run(int rep);
         // void runRep();
         // void runPhase(int phase);
         // void genTasks(int type, int phase, int trainNum);
@@ -149,6 +151,20 @@ Simulation::Simulation(string file, Flags flags = Flags()) : parameters(file), f
 
 void Simulation::run()
 {
+	LOG(INFO) << "Simulation started";
+
+	for (int i = 0; i < parameters.numReps; i++)
+	{
+		run(i);
+	}
+
+	LOG(INFO) << "Simulation completed";
+}
+
+void Simulation::run(int rep)
+{
+	LOG(INFO) << "Rep " << rep+1 << " of " << parameters.numReps << " started";
+
 //	Get events
 
 	// vector<Event> temp;
@@ -163,8 +179,10 @@ void Simulation::run()
 	for (Event& e : events)
 	{
 		e.process();
+		// LOG(INFO) << "Event " << e << " processed";
 	}
 
+	LOG(INFO) << "Rep " << rep + 1 << " of " << parameters.numReps << " completed";
 }
 
 /****************************************************************************

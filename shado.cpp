@@ -12,18 +12,20 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
-#include <boost/log/included/trivial.hpp>
+#include "lib/EasyLoggingInc.h"
 #include "src/Simulation.h"
 #include "src/ArgParser.h"
 #include "src/Timer.h"
 #include "src/Utility.h"
+INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
 
 Flags getFlags(int argc, const char* argv[]);
 string getAbsolutePath(string relativePath);
+void initLogger(int argc, const char** argv);
 
-string PATH = "params_OLD.xml";
+string PATH = "in/params_test.xml";
 float util::seed = rand();
 default_random_engine util::randNumGen = default_random_engine(util::seed);
 vector<float> util::TRAFFIC = {1,1,1};
@@ -36,20 +38,18 @@ vector<float> util::TRAFFIC = {1,1,1};
 
 int main(int argc, const char* argv[])
 {
-    BOOST_LOG_TRIVIAL(trace) << "Starting sim...";
 //  Read in parameter file
 
    Timer t;
+   initLogger(argc, argv);
    Flags flags = getFlags(argc, argv);
-   // string file = getAbsolutePath(argv[1]);
-   string file = getAbsolutePath(PATH);
+   string file = getAbsolutePath(PATH); //(argv[1]);
 
 //  Intialize and run simulation
 
    Simulation sim(file, flags);
    sim.run();
-   // if (flags.isOn("verbose"))
-   cout << "Runtime: " << t.elapsed() << " s" << endl;
+   LOG(INFO) << "Runtime: " << t.elapsed() << " s";
 
 	return 0;
 }
@@ -83,4 +83,13 @@ string getAbsolutePath(string relativePath)
    const char* absolutePath = realpath(relativePath.c_str(), NULL);
    ASSERT(absolutePath != NULL, "Cannot read " << relativePath);
    return absolutePath;
+}
+
+void initLogger(int argc, const char** argv)
+{
+    el::Configurations conf("lib/EasyLogging.conf");
+    el::Loggers::reconfigureAllLoggers(conf);
+    el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
+    // conf.setToDefault();
+    START_EASYLOGGINGPP(argc, argv);
 }

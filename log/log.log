@@ -1,0 +1,70 @@
+2017-02-26 02:34:59 [Simulation.h-run:154] INFO : Simulation started
+2017-02-26 02:34:59 [Simulation.h-run:166] INFO : Rep 1 of 2 started
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 09:23:43: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 09:34:47: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 10:29:19: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 10:53:08: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 11:37:14: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 12:02:40: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 13:40:09: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 14:00:40: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 14:30:12: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 15:14:45: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 16:01:35: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 16:28:58: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 16:38:50: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 18:06:14: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 09:47:15: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 10:47:41: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 11:35:08: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 12:34:42: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 15:07:29: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 15:44:08: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 18:34:55: Task starting
+2017-02-26 02:34:59 [Simulation.h-run:185] INFO : Rep 1 of 2 completed
+2017-02-26 02:34:59 [Simulation.h-run:166] INFO : Rep 2 of 2 started
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 09:23:43: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 09:23:43: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 09:34:47: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 09:34:47: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 10:29:19: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 10:29:19: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 10:53:08: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 10:53:08: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 11:37:14: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 11:37:14: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 12:02:40: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 12:02:40: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 13:40:09: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 13:40:09: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 14:00:40: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 14:00:40: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 14:30:12: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 14:30:12: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 15:14:45: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 15:14:45: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 16:01:35: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 16:01:35: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 16:28:58: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 16:28:58: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 16:38:50: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 16:38:50: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 18:06:14: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 09:47:15: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 10:47:41: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 11:35:08: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 12:34:42: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 15:07:29: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 15:44:08: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 18:06:14: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 09:47:15: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 10:47:41: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 11:35:08: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 12:34:42: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 15:07:29: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 15:44:08: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 18:34:55: Task starting
+2017-02-26 02:34:59 [Task.cpp-start:106] INFO : Jan-01-2017, 18:34:55: Task starting
+2017-02-26 02:34:59 [Simulation.h-run:185] INFO : Rep 2 of 2 completed
+2017-02-26 02:34:59 [Simulation.h-run:161] INFO : Simulation completed
+2017-02-26 02:34:59 [shado.cpp-main:52] INFO : Runtime: 0.006337 s

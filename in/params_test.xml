@@ -4,7 +4,7 @@
     <start>2:00</start>
     <stop>17:00</stop>
     <traffic>m,m,m,m,m,m,m,m,m</traffic>
-    <replications>100</replications>
+    <replications>2</replications>
 </parameters>
 
 <interarrival type="exponential">
@@ -41,7 +41,7 @@
                 <priority>4, 3, 4</priority>
                 <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
                 <interarrival type="exponential" byPhase="true">
-                    <phase>10</phase>
+                    <phase>0.02</phase>
                     <phase>0.1</phase>
                     <phase>0.1</phase>
                 </interarrival>
@@ -58,7 +58,7 @@
                 <priority>4, 3, 4</priority>
                 <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
                 <interarrival type="exponential" byPhase="true">
-                    <phase>0</phase>
+                    <phase>0.02</phase>
                     <phase>0</phase>
                     <phase>0</phase>
                 </interarrival>

@@ -39,7 +39,6 @@ class Event
 
 	//	Inspectors
 
-
 	//	Other member functions
 
 		void process();

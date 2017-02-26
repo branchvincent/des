@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <string>
-#include "../libs/EZOptionParser.h"
+#include "../lib/EZOptionParser.h"
 #include "Flags.h"
 
 using namespace std;
