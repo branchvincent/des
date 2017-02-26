@@ -66,7 +66,7 @@ Team::Team(const ptree& xmlData, Shift shift) : shift(shift)
 
 //	Get shift
 
-	cout << "Shift " << shift << endl;
+	// cout << "Shift " << shift << endl;
 	phases.push_back(Phase(*this, shift.getStart(), shift.getStop(), 0));
 
 //	Get events

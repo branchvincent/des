@@ -53,7 +53,7 @@ Phase::Phase(Team& team, DateTime start, DateTime stop, int num) : team(team)
 
 	arrivingTasks.merge(temp);
 
-	cout << "ArrivingTasks = " << arrivingTasks.size() << endl;
+	// cout << "ArrivingTasks = " << arrivingTasks.size() << endl;
 }
 
 // void Phase::run()

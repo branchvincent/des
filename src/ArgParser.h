@@ -152,8 +152,8 @@ bool ArgParser::isValid()
 {
 //	Check for required argument
 
-	cout << "FirstArgs = " << p.firstArgs.size() << endl;
-	cout << "LastArgs = " << p.lastArgs.size() << endl;
+	// cout << "FirstArgs = " << p.firstArgs.size() << endl;
+	// cout << "LastArgs = " << p.lastArgs.size() << endl;
 
 	// if (p.firstArgs.size() + p.lastArgs.size() < 2)
 	// {

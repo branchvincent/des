@@ -37,7 +37,7 @@
         </agents>
         <tasks>
             <task>
-                <name>My Task</name>
+                <name>My Task 1</name>
                 <priority>4, 3, 4</priority>
                 <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
                 <interarrival type="exponential" byPhase="true">
@@ -54,7 +54,7 @@
                 <description>My description.</description>
             </task>
             <task>
-                <name>My Task</name>
+                <name>My Task 2</name>
                 <priority>4, 3, 4</priority>
                 <isAffectedByTraffic>0, 1, 0</isAffectedByTraffic>
                 <interarrival type="exponential" byPhase="true">

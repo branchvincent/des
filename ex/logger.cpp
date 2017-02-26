@@ -1,14 +1,14 @@
 
 //  Logger
 #define ELPP_NO_DEFAULT_LOG_FILE
-#include "libs/easylogging++.h"
+#include "../lib/easylogging.h"
 INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
 
 void initLogger(int argc, char** argv)
 {
-    el::Configurations conf("libs/EasyLogging++.conf");
+    el::Configurations conf("../lib/EasyLogging.conf");
     el::Loggers::reconfigureAllLoggers(conf);
     el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
     // conf.setToDefault();

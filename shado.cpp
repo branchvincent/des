@@ -9,10 +9,11 @@
 *																			*
 ****************************************************************************/
 
+#define ELPP_NO_DEFAULT_LOG_FILE
 #include <iostream>
 #include <string>
 #include <stdlib.h>
-#include "lib/EasyLoggingInc.h"
+#include "lib/EasyLogging.h"
 #include "src/Simulation.h"
 #include "src/ArgParser.h"
 #include "src/Timer.h"
