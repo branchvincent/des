@@ -4,7 +4,7 @@
 // #include "Agent.h"
 // #include "TaskType.h"
 // #include "DateTime.h"
-#include "Team.h"
+#include "../src/Team.h"
 // #include "test/Task.h"
 // #include "Distribution.h"
 // #include "test/Distribution.h"
@@ -27,7 +27,7 @@ vector<float> util::TRAFFIC = {1,1,1};
 int main()
 {
     ptree data;
-    read_xml("/Users/Branch/Documents/Research/fra/shado/params_ex.xml", data);
+    read_xml("/Users/Branch/Documents/Research/fra/shado/in/params_ex.xml", data);
     // cout << data.get<int>("parameters.replications.<xmlattr>.num");
 
    // Distribution t;

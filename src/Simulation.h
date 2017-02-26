@@ -67,6 +67,7 @@ class Simulation
 		Parameters parameters;		// simulation parameters
 		vector<Team> teams;			// trains
 		list<Event> events;			// event list
+		// Stats stats;				// TODO: statistics
 };
 
 //	Operators
@@ -92,11 +93,11 @@ Simulation::Simulation(string file, Flags flags = Flags()) : flags(flags), param
     else
         srand(0);
 
-	if (flags.isOn("verbose"))
-	{
-		cout << parameters << endl;
-		cout << flags << endl;
-	}
+	// if (flags.isOn("verbose"))
+	// {
+	// 	cout << parameters << endl;
+	// 	cout << flags << endl;
+	// }
 
 	// if (flags.isOn("pbar"))
 	bar = ez::EZProgressBar(parameters.numReps);
