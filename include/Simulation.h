@@ -13,8 +13,6 @@
 
 #include <iostream>
 #include <string>
-// #include <boost/property_tree/ptree.hpp>
-// #include <boost/property_tree/xml_parser.hpp>
 #include "Flags.h"
 #include "Parameters.h"
 #include "Task.h"
@@ -26,11 +24,11 @@
 #include "../lib/EZProgressBar.h"
 
 using namespace std;
-// using boost::property_tree::ptree;
 
 // Helper functions and definitions
 
-// bool cmpTaskArrs(Task t1, Task t2) {return t1.arrivesSooner(t2);}
+// bool cmpTaskArrs(Task* t1, Task* t2) {return t1->arrivesBefore(*t2);}
+bool cmpEvents(Event* t1, Event* t2) {return (*t1) < (*t2);}
 
 /****************************************************************************
 *																			*
@@ -87,9 +85,12 @@ ostream& operator<<(ostream& out, const Simulation& s) {s.output(out); return ou
 ****************************************************************************/
 
 Simulation::Simulation(string file, Flags flags = Flags()) : flags(flags), parameters(file)
+	// teams{Team(), Team(Shift("01-01 12:00", "01-02 3:00"))}
 {
 //	TODO: Perform assertions (i.e. duration of simulation and traffic)
 
+	LOG(INFO) << "Initializing simulation";
+	parameters.numReps = 3;
 //  Initialize srand
 
 	//TODO: change this
@@ -105,7 +106,7 @@ Simulation::Simulation(string file, Flags flags = Flags()) : flags(flags), param
     //     util::seed = time(0);
     // else
     //     util::seed = 0;
-	LOG(INFO) << "Seed = " << util::seed;
+	// LOG(INFO) << "Seed = " << util::seed;
 	util::randNumGen = default_random_engine(util::seed);
 
 	// if (flags.isOn("verbose"))
@@ -119,8 +120,8 @@ Simulation::Simulation(string file, Flags flags = Flags()) : flags(flags), param
 
 //	Fill teams
 
-
 	teams.push_back(Team());
+	teams.push_back(Team(Shift("01-01 12:00", "01-02 3:00")));
 	// ptree params;
 	// read_xml(file, params);
 	//
@@ -176,6 +177,7 @@ void Simulation::run(int rep)
 	{
 		events.merge(ti.getEvents());
 	}
+	events.sort(cmpEvents);
 
 //	Process events
 
@@ -184,10 +186,14 @@ void Simulation::run(int rep)
 	// 	e->process();
 	// }
 
+	Event* e;
+
 	while (!events.empty())
 	{
-		events.front()->process(events);
+		e = events.front();
+		e->process(events);
 		events.pop_front();
+		// LOG(DEBUG) << "Event size = " << events.size();
 	}
 
 //	TODO: Might need to clear agents for next rep

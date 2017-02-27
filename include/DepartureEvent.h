@@ -42,10 +42,10 @@ class DepartureEvent : public TeamEvent
 
 	//	Other member functions
 
-		void process(list<Event*> events);
+		void process(list<Event*>& events);
 		void output(ostream& out) const;
 
-	private:
+	public:
 		Task* task;
 };
 

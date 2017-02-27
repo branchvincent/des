@@ -11,15 +11,16 @@
 
 // #define ELPP_NO_DEFAULT_LOG_FILE
 // #define ELPP_THREAD_SAFE
+// #define ELPP_DISABLE_LOGS
 #include <iostream>
 #include <string>
 #include <stdlib.h>
 #include <random>
-#include "../lib/EasyLogging.h"
 #include "Simulation.h"
 #include "ArgParser.h"
 #include "Timer.h"
 #include "Utility.h"
+#include "../lib/EasyLogging.h"
 INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
@@ -52,7 +53,7 @@ int main(int argc, const char* argv[])
 //  Intialize and run simulation
 
     Simulation sim(file, flags);
-    sim.run();
+//    sim.run();
     LOG(INFO) << "Runtime: " << t.elapsed() << " s";
 
 	return 0;

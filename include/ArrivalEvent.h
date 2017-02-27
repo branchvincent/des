@@ -43,12 +43,12 @@ class ArrivalEvent : public TeamEvent
 	//	Other member functions
 
 		Agent* chooseAgent(vector<Agent*> subteam);
-		void process(list<Event*> events);
+		void process(list<Event*>& events);
 		void output(ostream& out) const;
 
 //	Private data members
 
-	private:
+	public:
 		Task* task;
 };
 

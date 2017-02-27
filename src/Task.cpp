@@ -20,7 +20,7 @@
 
 using namespace std;
 
-//  Statuses = premature, waiting, in progress, complete
+enum Status {PREMATURE, WAITING, IN_PROGRESS, COMPLETE};
 
 /****************************************************************************
 *																			*
@@ -117,14 +117,12 @@ void Task::start(DateTime time)
 	}
 	else
 	{
-        LOG(INFO) << "Task starting at " << time;
+        LOG(INFO) << time << ": Task " << this << " starting"; //" (ETA " << time+service << ")";
 		// ASSERT(status == "premature" && time >= arrival, "Task cannot be started before arrival");
 		wait += time - arrival;
         departure = time + service;
 		lastEvent = time;
 		status = "in progress";
-        // team->
-		// cout << time <<  ": Starting task..." << *this << endl << endl;
 	}
 }
 
@@ -138,7 +136,7 @@ void Task::start(DateTime time)
 
 void Task::pause(DateTime time)
 {
-    LOG(INFO) << "Task pausing at " << time;
+    LOG(INFO) << time << ": Task pausing";
 	ASSERT(status == "in progress", "Task not in progress cannot be paused");
 	service -= time - lastEvent;
 	ASSERT(service > 0, "Paused task has finished");
@@ -157,13 +155,12 @@ void Task::pause(DateTime time)
 
 void Task::resume(DateTime time)
 {
-    LOG(INFO) << "Task resuming at " << time;
+    LOG(INFO) << time << ": Task resuming";
 	ASSERT(status == "waiting", "Task not waiting cannot be resumed");
 	wait += time - lastEvent;
     departure = time + service;
 	lastEvent = time;
 	status = "in progress";
-	cout << time << ": Resuming task..." << *this << endl;
 }
 
 /****************************************************************************
@@ -176,10 +173,11 @@ void Task::resume(DateTime time)
 
 void Task::finish(DateTime time)
 {
-    LOG(INFO) << "Task finishing at " << time;
-	ASSERT(status == "in progress", "Task not in progress cannot be finished");
+    // LOG(INFO) << time << ": Task finishing";
+	LOG_IF(status != "in progress", WARNING) << "Task not in progress cannot be finished: status = " << status;
 	service -= time - lastEvent;
-	ASSERT(service == 0, "Task has not finished " << service);
+//	ASSERT(service == 0, "Task has not finished " << service);
+	LOG_IF(service >= 1, WARNING) << "Task has not finished: " << service << " left";
 	lastEvent = time;
 	status = "complete";
 }
@@ -194,7 +192,7 @@ void Task::finish(DateTime time)
 
 void Task::expire(DateTime time)
 {
-    LOG(INFO) << "Task expiring at " << time;
+    LOG(INFO) << time << ": Task expiring";
 	ASSERT(time == expiration, "Task has not expired yet");
 	ASSERT(status == "in progress" or status == "waiting", "Task not in progress nor waiting cannot expire");
 

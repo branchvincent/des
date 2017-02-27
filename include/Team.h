@@ -51,7 +51,7 @@ class Team
 	//	Constructor
 
 		// Team(const ptree& xmlData, Shift shift = Shift());
-		Team();
+		Team(Shift shift = Shift());
 		Team(string name, vector<Agent> agents, vector<TaskType> taskTypes);
 
 	// 	Inspector
@@ -67,7 +67,7 @@ class Team
         // void startPhase(int phase);
         // optional<Event> getNextEvent();
         list<Event*> getEvents();
-        void addTask(Task* task);
+        // void addTask(Task* task);
 
         // void arrive(Task* task);
         // void depart(Task* task);
@@ -80,7 +80,7 @@ class Team
         void reset();
         void output(ostream& out) const;
 		Agent* chooseAgent(vector<Agent*> subteam);
-		
+
 //  Private member functions
 
     private:

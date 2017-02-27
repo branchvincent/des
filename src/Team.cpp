@@ -40,8 +40,8 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Team::Team()
-	: name("DefaultTeam"), agents{Agent()}, taskTypes{TaskType()}, shift()
+Team::Team(Shift shift)
+	: name("DefaultTeam"), agents{Agent()}, taskTypes{TaskType(),TaskType()}, shift(shift)
 {
 	LOG(INFO) << "Initializing team: " << name << " with " << agents.size()
 		<< " agents and " << taskTypes.size() << " task types";
@@ -136,13 +136,13 @@ Team::Team(string name, vector<Agent> agents, vector<TaskType> taskTypes)
 
 list<Event*> Team::getEvents() {return events;}
 
-void Team::addTask(Task* task)
-{
-	TaskType* type = task->taskType; //agents;
-	vector<Agent*> subteam = type->agents;
-	Agent* agent = chooseAgent(subteam);
-	agent->addTask(task);
-}
+// void Team::addTask(Task* task)
+// {
+// 	TaskType* type = task->taskType; //agents;
+// 	vector<Agent*> subteam = type->agents;
+// 	Agent* agent = chooseAgent(subteam);
+// 	agent->addTask(task);
+// }
 
 // vector<Agent&> Team::getAgentSubset(TaskType type)
 // {
@@ -207,6 +207,7 @@ void Team::initArrivingTasks()
 			task = taskType.genTask();
 		}
 	}
+	arrivingTasks.sort();
 }
 
 void Team::initEvents()

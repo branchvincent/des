@@ -35,7 +35,7 @@ TaskType::TaskType() :
 	priority(2),
 	isAffectedByTraffic(true),
 	interarrival(Distribution()),
-	service(Distribution()),
+	service(Distribution("uniform", 600, 6000)),
 	expiration(Distribution()),
 	lastArrival(0)
 {}

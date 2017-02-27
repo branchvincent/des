@@ -39,7 +39,7 @@ ArrivalEvent::ArrivalEvent(DateTime time, Team* team, Task* task) : TeamEvent(ti
 *																			*
 ****************************************************************************/
 
-void ArrivalEvent::process(list<Event*> events)
+void ArrivalEvent::process(list<Event*>& events)
 {
 	if (task == NULL)
 	{
@@ -49,10 +49,10 @@ void ArrivalEvent::process(list<Event*> events)
 	// task->start(time);
 	// team->addTask(task);
 
-	LOG(INFO) << "Processing arrival at " << time;
+	LOG(INFO) << time << ": Team " << team << "=> Task " << task << " arriving";
 	vector<Agent*> subteam = task->taskType->agents;
 	Agent* agent = chooseAgent(subteam);
-	task->addAgent(agent);
+	task->setAgent(agent);
 
 	if (agent->isIdle())
 	{
@@ -61,13 +61,14 @@ void ArrivalEvent::process(list<Event*> events)
 
 		list<Event*>::iterator it = events.begin();
 		DepartureEvent d = DepartureEvent(task->departure, team, task);
-		while (**it < d) it++;
-		events.insert(--it, new DepartureEvent(task->departure, team, task));
+		while (it != events.end() and **it <= d) it++;
+		events.insert(it, new DepartureEvent(task->departure, team, task));
+		// LOG(DEBUG) << "Inserting departure at " << task->departure;
 	}
 	else
 	{
 		agent->queue.push(task);
-		LOG(INFO) << "Agent " << agent->name << " enqueued task";
+		// LOG(INFO) << "Agent " << agent->name << " enqueued task";
 	}
 }
 

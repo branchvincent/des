@@ -17,8 +17,6 @@
 
 using namespace std;
 
-// class Task;
-// class Agent;
 
 /****************************************************************************
 *																			*
@@ -34,21 +32,22 @@ class Event
 
     //  Constructor
 
-		Event(DateTime time); //, Task& task), Agent& agent);
-
+		Event(DateTime time) : time(time) {}
+	
 	//	Inspectors
 
-		const DateTime& getTime() const;
+		const DateTime& getTime() const {return time;}
 
 	//	Other member functions
 
-		virtual void process(list<Event*> events) = 0;
-		bool before(const Event& event) const;
+		virtual void process(list<Event*>& events) = 0;
+		bool before(const Event& event) const {return time < event.time;};
+		bool equals(const Event& event) const {return time == event.time;}
 		virtual void output(ostream& out) const = 0;
 
 //	Data members
 
-	protected:
+	public:
         DateTime time;
 		// Task& task;
 		// Agent& agent;
@@ -57,7 +56,11 @@ class Event
 //	Operators
 
 // ostream& operator<<(ostream& out, const Event& e);
-bool operator<(const Event& e1, const Event& e2);
-bool operator>(const Event& e1, const Event& e2);
+inline bool operator==(const Event& e1, const Event& e2) {return e1.equals(e2);}
+inline bool operator!=(const Event& e1, const Event& e2) {return !(e1 == e2);}
+inline bool operator<(const Event& e1, const Event& e2) {return e1.before(e2);}
+inline bool operator>(const Event& e1, const Event& e2) {return e2 < e1;}
+inline bool operator<=(const Event& e1, const Event& e2) {return !(e1 > e2);}
+inline bool operator>=(const Event& e1, const Event& e2) {return !(e1 < e2);}
 
 #endif

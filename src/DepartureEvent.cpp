@@ -13,7 +13,7 @@
 #include "DepartureEvent.h"
 #include "Task.h"
 #include "../lib/EasyLogging.h"
-// #include "Agent.h"
+#include "Agent.h"
 // #include "Utility.h"
 
 using namespace std;
@@ -37,7 +37,7 @@ DepartureEvent::DepartureEvent(DateTime time, Team* team, Task* task) : TeamEven
 *																			*
 ****************************************************************************/
 
-void DepartureEvent::process(list<Event*> events)
+void DepartureEvent::process(list<Event*>& events)
 {
 	if (task == NULL)
 	{
@@ -45,14 +45,28 @@ void DepartureEvent::process(list<Event*> events)
 		return;
 	}
 
+	LOG(INFO) << time << ": Team " << team << "=> Task " << task << " departing";
 	task->finish(time);
 	Agent* agent = task->agent;
 	agent->currTask = NULL;
 
-	list<Event*>::iterator it = events.begin();
-	DepartureEvent d = Event(task->departure, team, task);
-	while (**it < d) it++;
-	events.insert(--it, new DepartureEvent(task->departure, team, task));
+	if (!agent->queue.empty())
+	{
+		agent->currTask = agent->queue.top();
+		agent->queue.pop();
+		Task* newTask = agent->currTask;
+		newTask->start(time);
+
+		list<Event*>::iterator it = events.begin();
+		DepartureEvent d = DepartureEvent(newTask->departure, team, newTask);
+		while (it != events.end() and **it <= d) it++;
+		events.insert(it, new DepartureEvent(newTask->departure, team, newTask));
+		// LOG(DEBUG) << "Inserting departure at " << newTask->departure;
+	}
+	// list<Event*>::iterator it = events.begin();
+	// DepartureEvent d = DepartureEvent(task->departure, team, task);
+	// while (**it < d) it++;
+	// events.insert(--it, new DepartureEvent(task->departure, team, task));
 }
 
 /****************************************************************************

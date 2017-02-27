@@ -68,7 +68,7 @@ class Agent
 	//	Mutators
 
 		void setTeam(Team* t) {team = t;}
-		void addTask(Task* task);
+		// void addTask(Task* task);
 		// void arrive(Task& task, float time);
 		// void interrupt(float time);
 		// void depart(Task& task, float time);

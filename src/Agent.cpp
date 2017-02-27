@@ -69,19 +69,19 @@ Agent::Agent(string name, vector<TaskType> taskTypes) : team(NULL), name(name), 
 // 	return optional<Event>();
 // }
 
-void Agent::addTask(Task* task)
-{
-	if (currTask == NULL)
-	{
-		currTask = task;
-		LOG(INFO) << "Agent " << name << " starting on task";
-	}
-	else
-	{
-		queue.push(task);
-		LOG(INFO) << "Agent " << name << " enqueued task";
-	}
-}
+// void Agent::addTask(Task* task)
+// {
+// 	if (currTask == NULL)
+// 	{
+// 		currTask = task;
+// 		LOG(INFO) << "Agent " << name << " starting on task";
+// 	}
+// 	else
+// 	{
+// 		queue.push(task);
+// 		LOG(INFO) << "Agent " << name << " enqueued task";
+// 	}
+// }
 
 /****************************************************************************
 *																			*

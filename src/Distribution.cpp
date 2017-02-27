@@ -21,7 +21,7 @@ vector<string> valid_distributions = {"exponential", "lognormal", "uniform"};
 
 //	Constuctors
 
-Distribution::Distribution() : type("exponential"), parameters{0.01} {construct();}
+Distribution::Distribution() : type("exponential"), parameters{0.1} {construct();}
 Distribution::Distribution(string type, vector<float> p) : type(type), parameters(p) {construct();}
 Distribution::Distribution(string type, float p) : type(type), parameters{p} {construct();}
 Distribution::Distribution(string type, float p1, float p2) : type(type), parameters{p1, p2} {construct();}

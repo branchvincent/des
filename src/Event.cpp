@@ -25,12 +25,13 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Event::Event(DateTime time) : time(time) //, task(task), agent(agent)
-{}
+//Event::Event(DateTime time) : time(time) //, task(task), agent(agent)
+//{}
 
-const DateTime& Event::getTime() const {return time;}
+// const DateTime& Event::getTime() const {return time;}
 
-bool Event::before(const Event& event) const {return time < event.time;}
+// bool Event::before(const Event& event) const {return time < event.time;}
+// bool Event::equal(const Event& event) const {}
 
 /****************************************************************************
 *																			*
@@ -50,5 +51,5 @@ bool Event::before(const Event& event) const {return time < event.time;}
 //	Operators
 
 // ostream& operator<<(ostream& out, const Event& e) {e.output(out); return out;}
-bool operator<(const Event& e1, const Event& e2) {return e1.before(e2);}
-bool operator>(const Event& e1, const Event& e2) {return !e1.before(e2);}
+// bool operator<(const Event& e1, const Event& e2) {return e1.before(e2);}
+// bool operator>(const Event& e1, const Event& e2) {return !e1.before(e2);}
