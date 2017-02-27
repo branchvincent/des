@@ -13,14 +13,14 @@
 
 #include <iostream>
 #include <string>
-// #include <boost/optional.hpp>
 #include "DateTime.h"
 
 using namespace std;
-// using boost::optional;
 
+class Team;
 class TaskType;
 class Event;
+class Agent;
 
 /****************************************************************************
 *																			*
@@ -32,7 +32,8 @@ class Task
 {
 //	Friends
 
-	// friend class TaskType;
+	friend class TaskType;
+	friend class Team;
 	// friend class Agent;
 
 //	Public member functions
@@ -41,9 +42,10 @@ class Task
 
 	//	Constructor
 
+		//TODO: add name
 		// Task(TaskType& type, int priority, DateTime arrival, float service, DateTime expiration);
 		Task();
-		Task(int priority, DateTime arrival, float service, DateTime expiration);
+		Task(int priority, DateTime arrival, float service, DateTime expiration, TaskType* taskType);
 
 	//	Inspectors
 
@@ -53,7 +55,6 @@ class Task
 		const DateTime& getDeparture() const {return departure;}
 		const DateTime& getExpiration() const {return expiration;}
 		const float& getWaitTime() const {return wait;}
-		// optional<Event> getEvent();
 
 	//	Mutators
 
@@ -65,14 +66,17 @@ class Task
 
 	//	Other member functions
 
+		void setAgent(Agent* a) {agent = a;}
 		void output(ostream& out) const;
 		bool higherPriority(const Task& task) const;
 		bool arrivesBefore(const Task& task) const;
 
 //	Data members
 
-	private:
-		// TaskType& type;			// type
+	public:
+		TaskType* taskType;		// type of task
+		Agent* agent;			// current agent
+		// Team* team;				// team
 		int priority;			// priority level
 		DateTime arrival;		// arrival time (sec)
 		float service; 			// service time (sec)

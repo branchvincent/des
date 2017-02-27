@@ -22,6 +22,7 @@ using namespace std;
 // using boost::property_tree::ptree;
 
 // class Distribution;
+class Agent;
 class Team;
 class Task;
 class DateTime;
@@ -38,6 +39,7 @@ class TaskType
 
 	friend class Agent;
 	friend class Task;
+	friend class Team;
 
 //	Public member functions
 
@@ -48,7 +50,7 @@ class TaskType
 		TaskType();
 		// TaskType(Team& team, const ptree& xmlData);
 		TaskType(string name, int priority, bool isAffectedByTraffic,
-			Distribution interarrival, Distribution service, Distribution expiration);
+			Distribution interarrival, Distribution service, Distribution expiration, Team* team);
 		// TaskType(string name, vector<int> priority, vector<bool> isAffectedByTraffic,
 		// 	vector<Distribution> interarrival, vector<Distribution> service,
 		// 	vector<Distribution> expiration);
@@ -62,6 +64,8 @@ class TaskType
 		// vector<Distribution> getService() const;
 		// vector<Distribution> getExpiration() const;
 
+		void addAgent(Agent* agent);
+		void setTeam(Team* t) {team = t;}
 		// int getPriority(int phase) const;
 		// bool getIsAffectedByTraffic(int phase) const;
 		// float randInterarrival(int phase);
@@ -79,6 +83,7 @@ class TaskType
 
 	//	Other member functions
 
+		void reset();
 		Task genTask();
         void output(ostream& out) const;
 		// void copy(const TaskType& t);
@@ -94,8 +99,9 @@ class TaskType
 
 //	Data members
 
-	private:
-		// Team& team;
+	public:
+		Team* team;
+		vector<Agent*> agents;
 		string name;
 		int priority;
 		bool isAffectedByTraffic;

@@ -42,7 +42,7 @@ class Event
 
 	//	Other member functions
 
-		virtual void process() = 0;
+		virtual void process(list<Event*> events) = 0;
 		bool before(const Event& event) const;
 		virtual void output(ostream& out) const = 0;
 

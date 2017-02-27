@@ -40,37 +40,36 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
+Team::Team()
+	: name("DefaultTeam"), agents{Agent()}, taskTypes{TaskType()}, shift()
+{
+	LOG(INFO) << "Initializing team: " << name << " with " << agents.size()
+		<< " agents and " << taskTypes.size() << " task types";
+	LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
+
+//	Initialize task arrivals
+
+	for (Agent& agent : agents) agent.setTeam(this);
+	for (TaskType& taskType : taskTypes)
+	{
+		taskType.setTeam(this);
+		taskType.addAgent(&agents[0]);
+	}
+	initArrivingTasks();
+	initEvents();
+}
+
 Team::Team(string name, vector<Agent> agents, vector<TaskType> taskTypes)
 	: name(name), agents(agents), taskTypes(taskTypes), shift()
 {
-	// LOG(INFO) << "Initializing team: " << name << " with " << agents.size()
-		// << " agents and " << taskTypes.size() << " task types";
-//	LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
-//	Set task arrivals
+	LOG(INFO) << "Initializing team: " << name << " with " << agents.size()
+		<< " agents and " << taskTypes.size() << " task types";
+	LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
 
-	// list<Task> temp;
+//	Initialize task arrivals
 
-	for (TaskType& taskType : taskTypes)
-	{
-		DateTime arrival = shift.getStart();
-
-		while (arrival < shift.getStop())
-		{
-			arrivingTasks.push_back(taskType.genTask());	// add current
-			arrival = arrivingTasks.back().getArrival();
-		}
-	}
-
-	//	Merge lists
-
-	// arrivingTasks.merge(temp);
-
-// 	Get events
-
-	for (Task& t : arrivingTasks)
-	{
-		events.push_back(new ArrivalEvent(t.getArrival(), &t));
-	}
+	initArrivingTasks();
+	initEvents();
 }
 
 // TODO: need to reset events after each rep
@@ -136,6 +135,89 @@ Team::Team(string name, vector<Agent> agents, vector<TaskType> taskTypes)
 // }
 
 list<Event*> Team::getEvents() {return events;}
+
+void Team::addTask(Task* task)
+{
+	TaskType* type = task->taskType; //agents;
+	vector<Agent*> subteam = type->agents;
+	Agent* agent = chooseAgent(subteam);
+	agent->addTask(task);
+}
+
+// vector<Agent&> Team::getAgentSubset(TaskType type)
+// {
+// 	vector<Agent&> subset;
+//
+// 	for (Agent& agent : agents)
+// 	{
+// 		if (util::containts(agent.taskTypes, type))
+// 		{
+// 			subset.push_back(agent);
+// 		}
+// 	}
+// 	return subset;
+// }
+
+Agent* Team::chooseAgent(vector<Agent*> subteam)
+{
+	int index = 0;
+
+	for (int i = 1; i < subteam.size(); i++)
+	{
+		if (subteam[i]->queue.size() < subteam[index]->queue.size())
+			index = i;
+	}
+	return subteam[index];
+}
+
+
+
+void Team::reset()
+{
+//	Reset
+
+	for (TaskType& taskType : taskTypes)
+	{
+		taskType.reset();
+	}
+	arrivingTasks.clear();
+	events.clear();
+
+//	Reinitialize task arrivals
+
+	initArrivingTasks();
+	initEvents();
+}
+
+void Team::initArrivingTasks()
+{
+//	TODO: merge
+//	TODO: incorporate shift start
+
+	DateTime start = shift.getStart();
+	DateTime stop = shift.getStop();
+
+	for (TaskType& taskType : taskTypes)
+	{
+		Task task = taskType.genTask();
+
+		while (task.getArrival() < stop)
+		{
+			arrivingTasks.push_back(task);
+			task = taskType.genTask();
+		}
+	}
+}
+
+void Team::initEvents()
+{
+// 	Get events
+
+	for (Task& t : arrivingTasks)
+	{
+		events.push_back(new ArrivalEvent(t.getArrival(), this, &t));
+	}
+}
 
 /****************************************************************************
 *																			*

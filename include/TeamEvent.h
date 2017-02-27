@@ -1,34 +1,33 @@
 /****************************************************************************
 *																			*
-*	File:		DepartureEvent.h										    *
+*	File:		TeamEvent.h											        *
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
-*	Purpose:	This file defines the DepartureEvent class.	   				*
+*	Purpose:	This file defines the TeamEvent class.	   					*
 *																			*
 ****************************************************************************/
 
-#ifndef DEPARTUREEVENT_H
-#define DEPARTUREEVENT_H
+#ifndef TEAMEVENT_H
+#define TEAMEVENT_H
 
 #include <iostream>
 #include <string>
-#include "TeamEvent.h"
-// #include "../DateTime.h"
-#include "Task.h"
+#include "Event.h"
+//#include "Team.h"
 
 using namespace std;
 
-// class Task;
+ class Team;
 // class Agent;
 
 /****************************************************************************
 *																			*
-*	Definition of DepartureEvent class		     						    *
+*	Definition of TeamEvent class	     						            *
 *																			*
 ****************************************************************************/
 
-class DepartureEvent : public TeamEvent
+class TeamEvent : public Event
 {
 //	Public member functions
 
@@ -36,21 +35,24 @@ class DepartureEvent : public TeamEvent
 
     //  Constructor
 
-		DepartureEvent(DateTime time, Team* team, Task* task); //, Agent& agent);
+		TeamEvent(DateTime time, Team* team); //, Agent& agent);
 
 	//	Inspectors
 
+		Team* getTeam() const;
+
 	//	Other member functions
 
-		void process(list<Event*> events);
-		void output(ostream& out) const;
+		// virtual void output(ostream& out) const = 0;
 
-	private:
-		Task* task;
+//	Data members
+
+	protected:
+		Team* team;
 };
 
 //	Operators
 
-ostream& operator<<(ostream& out, const DepartureEvent& e);
+// ostream& operator<<(ostream& out, const Event& e);
 
 #endif

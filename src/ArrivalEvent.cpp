@@ -12,6 +12,8 @@
 #include <string>
 #include "ArrivalEvent.h"
 #include "Task.h"
+#include "Team.h"
+#include "DepartureEvent.h"
 #include "../lib/EasyLogging.h"
 // #include "Agent.h"
 // #include "Utility.h"
@@ -26,7 +28,7 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-ArrivalEvent::ArrivalEvent(DateTime time, Task* task) : TaskEvent(time, task)
+ArrivalEvent::ArrivalEvent(DateTime time, Team* team, Task* task) : TeamEvent(time, team), task(task)
 {}
 
 /****************************************************************************
@@ -37,15 +39,48 @@ ArrivalEvent::ArrivalEvent(DateTime time, Task* task) : TaskEvent(time, task)
 *																			*
 ****************************************************************************/
 
-void ArrivalEvent::process()
+void ArrivalEvent::process(list<Event*> events)
 {
-	if (task != NULL)
+	if (task == NULL)
 	{
-		task->start(time);
-		// LOG(INFO) << "Processing task arrival";
+		LOG(ERROR) << "Tried to process null task";
+		return;
 	}
-	// else
-	// 	LOG(WARNING) << "Tried to process null task";
+	// task->start(time);
+	// team->addTask(task);
+
+	LOG(INFO) << "Processing arrival at " << time;
+	vector<Agent*> subteam = task->taskType->agents;
+	Agent* agent = chooseAgent(subteam);
+	task->addAgent(agent);
+
+	if (agent->isIdle())
+	{
+		agent->currTask = task;
+		task->start(time);
+
+		list<Event*>::iterator it = events.begin();
+		DepartureEvent d = DepartureEvent(task->departure, team, task);
+		while (**it < d) it++;
+		events.insert(--it, new DepartureEvent(task->departure, team, task));
+	}
+	else
+	{
+		agent->queue.push(task);
+		LOG(INFO) << "Agent " << agent->name << " enqueued task";
+	}
+}
+
+Agent* ArrivalEvent::chooseAgent(vector<Agent*> subteam)
+{
+	int index = 0;
+
+	for (int i = 1; i < subteam.size(); i++)
+	{
+		if (subteam[i]->queue.size() < subteam[index]->queue.size())
+			index = i;
+	}
+	return subteam[index];
 }
 
 /****************************************************************************

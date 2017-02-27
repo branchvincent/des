@@ -41,7 +41,7 @@ class Agent
 {
 //	Friend class
 
-	// friend class Team;
+	friend class Team;
 
 //	Public member functions
 
@@ -57,9 +57,9 @@ class Agent
 	//	Inspectors
 
 		// const string& getName() const {return name;}
-		// const bool isIdle() const {return currTask == NULL;}
-		// const bool isBusy() const {return !isIdle();}
-		// const int getQueueSize() const {return (int)queue.size();}
+		bool isIdle() const {return currTask == NULL;}
+		bool isBusy() const {return !isIdle();}
+		// int getQueueSize() const {return queue.size();}
 		// const Task& getCurrTask() const {return currTask;}
 		// const float& getDepTime() const;
 		// const bool& needToIntrp(priority_queue<Task>& queue);
@@ -67,6 +67,8 @@ class Agent
 
 	//	Mutators
 
+		void setTeam(Team* t) {team = t;}
+		void addTask(Task* task);
 		// void arrive(Task& task, float time);
 		// void interrupt(float time);
 		// void depart(Task& task, float time);
@@ -92,12 +94,12 @@ class Agent
 
 //	Data members
 
-	private:
-		// Team& team;
+	public:
+		Team* team;
         string name;
 		vector<TaskType> taskTypes;		// types of tasks
-		priority_queue<Task> queue; 	// task queue
-		// Task* currTask;             	// current task
+		priority_queue<Task*> queue; 	// task queue
+		Task* currTask;             	// current task
 		// Statistics& sharedStats;		// shared stats
        // Statistics stats;          	 	// local stats
 };

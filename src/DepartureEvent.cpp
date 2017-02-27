@@ -12,6 +12,7 @@
 #include <string>
 #include "DepartureEvent.h"
 #include "Task.h"
+#include "../lib/EasyLogging.h"
 // #include "Agent.h"
 // #include "Utility.h"
 
@@ -25,7 +26,7 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-DepartureEvent::DepartureEvent(DateTime time, Task* task) : TaskEvent(time, task)
+DepartureEvent::DepartureEvent(DateTime time, Team* team, Task* task) : TeamEvent(time, team), task(task)
 {}
 
 /****************************************************************************
@@ -36,10 +37,22 @@ DepartureEvent::DepartureEvent(DateTime time, Task* task) : TaskEvent(time, task
 *																			*
 ****************************************************************************/
 
-void DepartureEvent::process()
+void DepartureEvent::process(list<Event*> events)
 {
-	if (task != NULL)
-		task->finish(time);
+	if (task == NULL)
+	{
+		LOG(ERROR) << "Tried to process null task";
+		return;
+	}
+
+	task->finish(time);
+	Agent* agent = task->agent;
+	agent->currTask = NULL;
+
+	list<Event*>::iterator it = events.begin();
+	DepartureEvent d = Event(task->departure, team, task);
+	while (**it < d) it++;
+	events.insert(--it, new DepartureEvent(task->departure, team, task));
 }
 
 /****************************************************************************

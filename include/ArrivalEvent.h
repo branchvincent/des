@@ -13,13 +13,14 @@
 
 #include <iostream>
 #include <string>
-#include "TaskEvent.h"
+#include "TeamEvent.h"
+#include "Task.h"
 // #include "../DateTime.h"
 
 using namespace std;
 
 // class Task;
-// class Agent;
+class Agent;
 
 /****************************************************************************
 *																			*
@@ -27,7 +28,7 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-class ArrivalEvent : public TaskEvent
+class ArrivalEvent : public TeamEvent
 {
 //	Public member functions
 
@@ -35,14 +36,20 @@ class ArrivalEvent : public TaskEvent
 
     //  Constructor
 
-		ArrivalEvent(DateTime time, Task* task); //, Agent& agent);
+		ArrivalEvent(DateTime time, Team* team, Task* task); //, Agent& agent);
 
 	//	Inspectors
 
 	//	Other member functions
 
-		void process();
+		Agent* chooseAgent(vector<Agent*> subteam);
+		void process(list<Event*> events);
 		void output(ostream& out) const;
+
+//	Private data members
+
+	private:
+		Task* task;
 };
 
 //	Operators

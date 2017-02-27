@@ -61,15 +61,15 @@ class Simulation
 
     private:
 		void run(int rep);
+		void reset();
 
 //	Data members
 
-	private:
+	public:
 		Flags flags;				// command line flags
 		ez::EZProgressBar bar;		// progress bar
 		Parameters parameters;		// simulation parameters
 		vector<Team> teams;			// trains
-		Task task;
 		list<Event*> events;		// event list
 		// Stats stats;				// TODO: statistics
 };
@@ -92,7 +92,8 @@ Simulation::Simulation(string file, Flags flags = Flags()) : flags(flags), param
 
 //  Initialize srand
 
-    if (flags.isOn("rand"))
+	//TODO: change this
+    if (!flags.isOn("rand"))
         srand((unsigned int) time(0));
     else
         srand(0);
@@ -117,6 +118,7 @@ Simulation::Simulation(string file, Flags flags = Flags()) : flags(flags), param
 	// bar = ez::EZProgressBar(parameters.numReps);
 
 //	Fill teams
+
 
 	teams.push_back(Team());
 	// ptree params;
@@ -150,6 +152,7 @@ void Simulation::run()
 	for (int i = 0; i < parameters.numReps; i++, ++bar)
 	{
 		run(i);
+		reset();
 	}
 
 	LOG(INFO) << "Simulation completed";
@@ -171,21 +174,34 @@ void Simulation::run(int rep)
 
 	for (Team& ti : teams)
 	{
-		events = ti.getEvents();
-		// events.merge(ti.getEvents());
+		events.merge(ti.getEvents());
 	}
 
 //	Process events
 
-	for (Event* e : events)
+	// for (Event* e : events)
+	// {
+	// 	e->process();
+	// }
+
+	while (!events.empty())
 	{
-		e->process();
-		LOG(INFO) << "Event " << e->getTime() << " processed";
+		events.front()->process(events);
+		events.pop_front();
 	}
 
 //	TODO: Might need to clear agents for next rep
 
 	LOG(INFO) << "Rep " << rep + 1 << " of " << parameters.numReps << " completed";
+}
+
+void Simulation::reset()
+{
+	for (Team& team : teams)
+	{
+		team.reset();
+	}
+	events.clear();
 }
 
 /****************************************************************************

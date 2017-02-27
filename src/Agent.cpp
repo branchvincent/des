@@ -14,6 +14,7 @@
 #include "Team.h"
 #include "Event.h"
 #include "Shift.h"
+#include "../lib/EasyLogging.h"
 
 using namespace std;
 
@@ -25,10 +26,10 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Agent::Agent() : name("DefaultAgent"), taskTypes{TaskType()}
+Agent::Agent() : team(NULL), name("DefaultAgent"), taskTypes{TaskType()}, currTask(NULL)
 {}
 
-Agent::Agent(string name, vector<TaskType> taskTypes) : name(name), taskTypes(taskTypes)
+Agent::Agent(string name, vector<TaskType> taskTypes) : team(NULL), name(name), taskTypes(taskTypes), currTask(NULL)
 {}
 
 // Agent(string name, vector<TaskTypes> taskTypes) : //, Statistics& sts) :
@@ -67,6 +68,20 @@ Agent::Agent(string name, vector<TaskType> taskTypes) : name(name), taskTypes(ta
 //     }
 // 	return optional<Event>();
 // }
+
+void Agent::addTask(Task* task)
+{
+	if (currTask == NULL)
+	{
+		currTask = task;
+		LOG(INFO) << "Agent " << name << " starting on task";
+	}
+	else
+	{
+		queue.push(task);
+		LOG(INFO) << "Agent " << name << " enqueued task";
+	}
+}
 
 /****************************************************************************
 *																			*

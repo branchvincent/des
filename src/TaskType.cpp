@@ -30,6 +30,7 @@ using namespace std;
 ****************************************************************************/
 
 TaskType::TaskType() :
+	team(NULL),
 	name("DefaultTaskType"),
 	priority(2),
 	isAffectedByTraffic(true),
@@ -41,7 +42,8 @@ TaskType::TaskType() :
 
 
 TaskType::TaskType(string name, int priority, bool isAffectedByTraffic,
-	Distribution interarrival, Distribution service, Distribution expiration) :
+	Distribution interarrival, Distribution service, Distribution expiration, Team* team) :
+	team(team),
 	name(name),
 	priority(priority),
 	isAffectedByTraffic(isAffectedByTraffic),
@@ -134,7 +136,17 @@ Task TaskType::genTask()
 	// cout << "Start " << startDate << endl;
 	// cout << "Arrival " << arrivalDate << endl;
 	// cout << "Expiration " << expirationDate << endl;
-	return Task(priority, arrivalDate, serviceTime, expirationDate);
+	return Task(priority, arrivalDate, serviceTime, expirationDate, this);
+}
+
+void TaskType::addAgent(Agent* agent)
+{
+	agents.push_back(agent);
+}
+
+void TaskType::reset()
+{
+	lastArrival = 0;
 }
 
 DateTime TaskType::getAbsTime(float relativeTime)

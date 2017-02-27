@@ -15,7 +15,8 @@
 #include "Event.h"
 #include "DateTime.h"
 #include "Utility.h"
-// #include "../lib/EasyLogging.h"
+#include "Team.h"
+#include "../lib/EasyLogging.h"
 
 using namespace std;
 
@@ -29,7 +30,7 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Task::Task() : priority(0), arrival(DateTime()), service(1),
+Task::Task() : taskType(NULL), agent(NULL), priority(0), arrival(DateTime()), service(1),
     departure(DateTime()),
     expiration(DateTime()),
     wait(0),
@@ -37,7 +38,9 @@ Task::Task() : priority(0), arrival(DateTime()), service(1),
     status("premature")
 {}
 
-Task::Task(int priority, DateTime arrival, float service, DateTime expiration) :
+Task::Task(int priority, DateTime arrival, float service, DateTime expiration, TaskType* taskType) :
+    taskType(taskType),
+    agent(NULL),
     priority(priority),
     arrival(arrival),
     service(service),
@@ -114,12 +117,13 @@ void Task::start(DateTime time)
 	}
 	else
 	{
-        // LOG(INFO) << time << ": Task starting";
+        LOG(INFO) << "Task starting at " << time;
 		// ASSERT(status == "premature" && time >= arrival, "Task cannot be started before arrival");
 		wait += time - arrival;
         departure = time + service;
 		lastEvent = time;
 		status = "in progress";
+        // team->
 		// cout << time <<  ": Starting task..." << *this << endl << endl;
 	}
 }
@@ -134,13 +138,13 @@ void Task::start(DateTime time)
 
 void Task::pause(DateTime time)
 {
+    LOG(INFO) << "Task pausing at " << time;
 	ASSERT(status == "in progress", "Task not in progress cannot be paused");
 	service -= time - lastEvent;
 	ASSERT(service > 0, "Paused task has finished");
     departure = expiration;
 	lastEvent = time;
 	status = "waiting";
-	cout << time << ": Pausing task..." << *this << endl;
 }
 
 /****************************************************************************
@@ -153,6 +157,7 @@ void Task::pause(DateTime time)
 
 void Task::resume(DateTime time)
 {
+    LOG(INFO) << "Task resuming at " << time;
 	ASSERT(status == "waiting", "Task not waiting cannot be resumed");
 	wait += time - lastEvent;
     departure = time + service;
@@ -171,12 +176,12 @@ void Task::resume(DateTime time)
 
 void Task::finish(DateTime time)
 {
+    LOG(INFO) << "Task finishing at " << time;
 	ASSERT(status == "in progress", "Task not in progress cannot be finished");
 	service -= time - lastEvent;
 	ASSERT(service == 0, "Task has not finished " << service);
 	lastEvent = time;
 	status = "complete";
-	cout << time << ": Finishing task..." << *this << endl;
 }
 
 /****************************************************************************
@@ -189,6 +194,7 @@ void Task::finish(DateTime time)
 
 void Task::expire(DateTime time)
 {
+    LOG(INFO) << "Task expiring at " << time;
 	ASSERT(time == expiration, "Task has not expired yet");
 	ASSERT(status == "in progress" or status == "waiting", "Task not in progress nor waiting cannot expire");
 
@@ -199,7 +205,6 @@ void Task::expire(DateTime time)
 
 	ASSERT(service > 0, "Task has actually finished");
     status = "complete";
-	cout << time << ": Expiring task..." << *this << endl;
 }
 
 /****************************************************************************
