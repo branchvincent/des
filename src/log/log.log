@@ -1,0 +1,18 @@
+2017-02-27 02:01:53 [main.cpp-main:49] INFO : HERE
+2017-02-27 02:01:53 [Simulation.h-run:142] INFO : Simulation started
+2017-02-27 02:01:53 [Simulation.h-run:165] INFO : Rep 1 of 2 started
+2017-02-27 02:01:53 [Simulation.h-run:180] INFO : Event Jan-01-2017, 09:00:00 processed
+2017-02-27 02:01:53 [Simulation.h-run:180] INFO : Event Jan-01-2017, 12:42:12 processed
+2017-02-27 02:01:53 [Simulation.h-run:180] INFO : Event Jan-01-2017, 13:54:33 processed
+2017-02-27 02:01:53 [Simulation.h-run:180] INFO : Event Jan-01-2017, 16:10:37 processed
+2017-02-27 02:01:53 [Simulation.h-run:180] INFO : Event Jan-01-2017, 17:37:54 processed
+2017-02-27 02:01:53 [Simulation.h-run:185] INFO : Rep 1 of 2 completed
+2017-02-27 02:01:53 [Simulation.h-run:165] INFO : Rep 2 of 2 started
+2017-02-27 02:01:53 [Simulation.h-run:180] INFO : Event Jan-01-2017, 09:00:00 processed
+2017-02-27 02:01:53 [Simulation.h-run:180] INFO : Event Jan-01-2017, 12:42:12 processed
+2017-02-27 02:01:53 [Simulation.h-run:180] INFO : Event Jan-01-2017, 13:54:33 processed
+2017-02-27 02:01:53 [Simulation.h-run:180] INFO : Event Jan-01-2017, 16:10:37 processed
+2017-02-27 02:01:53 [Simulation.h-run:180] INFO : Event Jan-01-2017, 17:37:54 processed
+2017-02-27 02:01:53 [Simulation.h-run:185] INFO : Rep 2 of 2 completed
+2017-02-27 02:01:53 [Simulation.h-run:152] INFO : Simulation completed
+2017-02-27 02:01:53 [main.cpp-main:57] INFO : Runtime: 0.00323 s

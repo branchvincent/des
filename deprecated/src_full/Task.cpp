@@ -15,7 +15,7 @@
 #include "Event.h"
 #include "DateTime.h"
 #include "Utility.h"
-// #include "../lib/EasyLogging.h"
+#include "../lib/EasyLogging.h"
 
 using namespace std;
 
@@ -29,52 +29,41 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Task::Task() : priority(0), arrival(DateTime()), service(1),
-    departure(DateTime()),
-    expiration(DateTime()),
-    wait(0),
-    lastEvent(arrival),
-    status("premature")
-{}
-
-Task::Task(int priority, DateTime arrival, float service, DateTime expiration) :
+Task::Task(TaskType& type, int priority, DateTime arrival, float service, DateTime expiration) :
+    type(type),
     priority(priority),
     arrival(arrival),
     service(service),
-    departure(expiration),
-    expiration(expiration),
+	departure(expiration),
+	expiration(expiration),
 	wait(0),
     lastEvent(arrival),
 	status("premature")
-{}
+{
+//	Check for negatives
 
-// Task::Task(TaskType& type, int priority, DateTime arrival, float service, DateTime expiration) :
-//     type(type),
-//     priority(priority),
-//     arrival(arrival),
-//     service(service),
-// 	departure(expiration),
-// 	expiration(expiration),
-// 	wait(0),
-//     lastEvent(arrival),
-// 	status("premature")
-// {
-// //	Check for negatives
-//
-// 	ASSERT(priority >= 0, "Priority cannot be negative");
-// 	ASSERT(arrival >= 0, "Arrival cannot be negative");
-// 	ASSERT(service >= 0, "Service cannot be negative");
-// 	ASSERT(expiration >= 0, "Expiration cannot be negative");
-//     ASSERT(arrival + service <= expiration, "Task expires too soon " << arrival + service << " "  << expiration);
-//
-// //	Check for infinites
-//
-// 	ASSERT(priority < INFINITY, "Priority cannot be infinite");
-// 	ASSERT(arrival < INFINITY, "Arrival cannot be infinite");
-// 	ASSERT(service < INFINITY, "Service cannot be infinite");
-// 	ASSERT(expiration < INFINITY, "Expiration cannot be infinite");
-// 	ASSERT(arrival + service <= expiration, "Task expires too soon");
-// }
+	ASSERT(priority >= 0, "Priority cannot be negative");
+	ASSERT(arrival >= 0, "Arrival cannot be negative");
+	ASSERT(service >= 0, "Service cannot be negative");
+	ASSERT(expiration >= 0, "Expiration cannot be negative");
+    // ASSERT(arrival + service <= expiration, "Task expires too soon " << arrival + service << " "  << expiration);
+
+//	Check for infinites
+
+	// ASSERT(priority < INFINITY, "Priority cannot be infinite");
+	// ASSERT(arrival < INFINITY, "Arrival cannot be infinite");
+	// ASSERT(service < INFINITY, "Service cannot be infinite");
+	// ASSERT(expiration < INFINITY, "Expiration cannot be infinite");
+	// ASSERT(arrival + service <= expiration, "Task expires too soon");
+}
+
+//  Inspectors
+
+// const TaskType& Task::getType();int Task::getPriority() const {return priority;}
+// float Task::getArrival() const {return arrival;}
+// float Task::getDepartue() const {return departure;}
+// float Task::getExpiration() const {return expiration;}
+// float Task::getWaitTime() const {return wait;}
 
 /****************************************************************************
 *																			*
@@ -84,19 +73,19 @@ Task::Task(int priority, DateTime arrival, float service, DateTime expiration) :
 *																			*
 ****************************************************************************/
 
-// optional<Event> Task::getEvent()
-// {
-//     if (status == "premature")
-//         return Event("arrival", arrival, *this);
-// 	else if (status == "in progress")
-//     {
-//         if (departure < expiration)
-//             return Event("departure", departure, *this);
-//         else
-//             return Event("expiration", expiration, *this);
-//     }
-//     return optional<Event>();
-// }
+optional<Event> Task::getEvent()
+{
+    if (status == "premature")
+        return Event("arrival", arrival, *this);
+	else if (status == "in progress")
+    {
+        if (departure < expiration)
+            return Event("departure", departure, *this);
+        else
+            return Event("expiration", expiration, *this);
+    }
+    return optional<Event>();
+}
 
 /****************************************************************************
 *																			*
@@ -114,7 +103,7 @@ void Task::start(DateTime time)
 	}
 	else
 	{
-        // LOG(INFO) << time << ": Task starting";
+        LOG(INFO) << time << ": Task starting";
 		// ASSERT(status == "premature" && time >= arrival, "Task cannot be started before arrival");
 		wait += time - arrival;
         departure = time + service;

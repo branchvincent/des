@@ -25,48 +25,33 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Agent::Agent() : name("DefaultAgent"), taskTypes{TaskType()}
-{}
+Agent::Agent(Team& team, const ptree& xmlData) : team(team), taskTypes(), queue(), currTask(NULL)
+{
+	name = xmlData.get<string>("name");
+	// shift = Shift(util::toVector<string>(xmlData.get<string>("shift")));
 
-Agent::Agent(string name, vector<TaskType> taskTypes) : name(name), taskTypes(taskTypes)
-{}
+	for (const auto& i : util::toVector<int>(xmlData.get<string>("tasks")))
+	{
+		util::checkIndex(team.taskTypes, i);
+		taskTypes.push_back(team.taskTypes[i]);
+	}
+}
 
-// Agent(string name, vector<TaskTypes> taskTypes) : //, Statistics& sts) :
-//    name(name),
-//    taskTypes(taskTypes),
-//    currTask(),
-//    taskQueue(), //&cmpPrty),
-//    // sharedStats(sts),
-//    // stats()
-// {}
-
-// Agent::Agent(Team& team, const ptree& xmlData) : team(team), taskTypes(), queue(), currTask(NULL)
-// {
-// 	name = xmlData.get<string>("name");
-// 	// shift = Shift(util::toVector<string>(xmlData.get<string>("shift")));
-//
-// 	for (const auto& i : util::toVector<int>(xmlData.get<string>("tasks")))
-// 	{
-// 		util::checkIndex(team.taskTypes, i);
-// 		taskTypes.push_back(team.taskTypes[i]);
-// 	}
-// }
-
-// optional<Event> Agent::getNextEvent() const
-// {
-//     if (currTask)
-//     {
-// 		optional<Event> nextEvent = currTask->getEvent();
-// 		// for (const Task& task : queue)
-// 		// {
-// 		// 	if (task.getNextEvent() < nextTask)
-// 		// 		nextTask = task.getNextEvent();
-// 		// }
-// 		if (nextEvent)
-//         	return nextEvent;
-//     }
-// 	return optional<Event>();
-// }
+optional<Event> Agent::getNextEvent() const
+{
+    if (currTask)
+    {
+		optional<Event> nextEvent = currTask->getEvent();
+		// for (const Task& task : queue)
+		// {
+		// 	if (task.getNextEvent() < nextTask)
+		// 		nextTask = task.getNextEvent();
+		// }
+		if (nextEvent)
+        	return nextEvent;
+    }
+	return optional<Event>();
+}
 
 /****************************************************************************
 *																			*
@@ -83,14 +68,31 @@ void Agent::output(ostream& out) const
 	out << "Tasks: " << taskTypes;
 }
 
-/****************************************************************************
-*																			*
-*	Function:	getNextEvent												*
-*																			*
-*	Purpose:	To get the time of the next event							*
-*																			*
-****************************************************************************/
 
+// /****************************************************************************
+// *																			*
+// *	Function:	Agent														*
+// *																			*
+// *	Purpose:	To construct an agent										*
+// *																			*
+// ****************************************************************************/
+// Agent(string name, vector<TaskTypes> taskTypes) : //, Statistics& sts) :
+//    name(name),
+//    taskTypes(taskTypes),
+//    currTask(),
+//    taskQueue(), //&cmpPrty),
+//    // sharedStats(sts),
+//    // stats()
+// {}
+//
+// /****************************************************************************
+// *																			*
+// *	Function:	getNextEvent												*
+// *																			*
+// *	Purpose:	To get the time of the next event							*
+// *																			*
+// ****************************************************************************/
+//
 // float Agent::getNextEvent()
 // {
 // 	if (busy)
@@ -98,15 +100,15 @@ void Agent::output(ostream& out) const
 // 	else
 // 		return INFINITY;
 // }
-
-/****************************************************************************
-*																			*
-*	Function:	procArr                                                     *
-*																			*
-*	Purpose:	To enqueue the specified task								*
-*																			*
-****************************************************************************/
-
+//
+// // /****************************************************************************
+// // *																			*
+// // *	Function:	procArr                                                     *
+// // *																			*
+// // *	Purpose:	To enqueue the specified task								*
+// // *																			*
+// // ****************************************************************************/
+// //
 // void Agent::arrival(Task& task, float time)
 // {
 // //	Enqueue task
@@ -139,15 +141,15 @@ void Agent::output(ostream& out) const
 //
 // 	return;
 // }
-
-/****************************************************************************
-*																			*
-*	Function:	processIntrp												*
-*																			*
-*	Purpose:	To process an interruption of the current task              *
-*																			*
-****************************************************************************/
-
+//
+// /****************************************************************************
+// *																			*
+// *	Function:	processIntrp												*
+// *																			*
+// *	Purpose:	To process an interruption of the current task              *
+// *																			*
+// ****************************************************************************/
+//
 // void Agent::interrupt(float currTime)
 // {
 // //  Check that the Agent is busy
@@ -172,15 +174,15 @@ void Agent::output(ostream& out) const
 //
 //     return;
 // }
-
-/****************************************************************************
-*																			*
-*	Function:	procDep                                                     *
-*																			*
-*	Purpose:	To process a task depature								 	*
-*																			*
-****************************************************************************/
-
+//
+// /****************************************************************************
+// *																			*
+// *	Function:	procDep                                                     *
+// *																			*
+// *	Purpose:	To process a task depature								 	*
+// *																			*
+// ****************************************************************************/
+//
 // void Agent::depart(Task& task)
 // {
 // //	Get task attributes
@@ -205,16 +207,16 @@ void Agent::output(ostream& out) const
 //
 //     return;
 // }
-
-/****************************************************************************
-*																			*
-*	Function:	needToIntrp                                                 *
-*																			*
-*	Purpose:	To determine if the current task needs to be interrupted by *
-*               by the specified task                                       *
-*																			*
-****************************************************************************/
-
+//
+// /****************************************************************************
+// *																			*
+// *	Function:	needToIntrp                                                 *
+// *																			*
+// *	Purpose:	To determine if the current task needs to be interrupted by *
+// *               by the specified task                                       *
+// *																			*
+// ****************************************************************************/
+//
 // bool Agent::needToInterrupt()
 // {
 //     if (busy and queue.size() >= 1)
@@ -222,15 +224,16 @@ void Agent::output(ostream& out) const
 //     else
 //         return false;
 // }
-
-/****************************************************************************
-*																			*
-*	Function:	reset														*
-*																			*
-*	Purpose:	To reset the Agent                                       	*
-*																			*
-****************************************************************************/
-
+//
+// //
+// /****************************************************************************
+// *																			*
+// *	Function:	reset														*
+// *																			*
+// *	Purpose:	To reset the Agent                                       	*
+// *																			*
+// ****************************************************************************/
+//
 // void Agent::reset()
 // {
 // 	busy = false;
@@ -258,17 +261,18 @@ void Agent::output(ostream& out) const
 //    }
 //
 //    cout << "}" << endl;
-// }
-/****************************************************************************
-*																			*
-*	Function:	servNextTask												*
-*																			*
-*	Purpose:	To service the next task in the queue, if applicable		*
-*																			*
-****************************************************************************/
-
-// TODO: Bug here?
-
+//}
+// //
+// /****************************************************************************
+// *																			*
+// *	Function:	servNextTask												*
+// *																			*
+// *	Purpose:	To service the next task in the queue, if applicable		*
+// *																			*
+// ****************************************************************************/
+//
+// // Bug here?
+//
 // void Agent::servNextTask(float currTime)
 // {
 // //  Check that a task can be serviced
@@ -317,15 +321,15 @@ void Agent::output(ostream& out) const
 //
 // 	return;
 // }
-
-/****************************************************************************
-*																			*
-*	Function:	currTaskExp                                                 *
-*																			*
-*	Purpose:	To check if the current task has expired                    *
-*																			*
-****************************************************************************/
-
+//
+// /****************************************************************************
+// *																			*
+// *	Function:	currTaskExp                                                 *
+// *																			*
+// *	Purpose:	To check if the current task has expired                    *
+// *																			*
+// ****************************************************************************/
+//
 // bool Agent::currTaskExp()
 // {
 // //  Get task attributes
@@ -348,15 +352,15 @@ void Agent::output(ostream& out) const
 //     else
 //         return false;
 // }
-
-/****************************************************************************
-*																			*
-*	Function:	procExp                                                     *
-*																			*
-*	Purpose:	To process a task expiration                                *
-*																			*
-****************************************************************************/
-
+//
+// /****************************************************************************
+// *																			*
+// *	Function:	procExp                                                     *
+// *																			*
+// *	Purpose:	To process a task expiration                                *
+// *																			*
+// ****************************************************************************/
+//
 // void Agent::procExp(float currTime)
 // {
 //     if (DEBUG_ON) cout << "\t\t Task expired at " << currTime << endl;
@@ -375,22 +379,20 @@ void Agent::output(ostream& out) const
 //
 //     return;
 // }
-
-/****************************************************************************
-*																			*
-*	Function:	updateUtil													*
-*																			*
-*	Purpose:	To update the utilization									*
-*																			*
-****************************************************************************/
-
-//  TODO:
-// 	Fix wait time
-//  change to updatestat and seed each array here (or implement in stats class)
+//
+// /****************************************************************************
+// *																			*
+// *	Function:	updateUtil													*
+// *																			*
+// *	Purpose:	To update the utilization									*
+// *																			*
+// ****************************************************************************/
+//
+// //  Fix wait time
+// //  change to updatestat and seed each array here (or implement in stats class)
+//
 // void Agent::updateUtil(Task* task, float currTime)
 // {
-// //	TODO: Move to stats
-//
 // //	Get task attributes
 //
 //     float begTime = task->getBegTime();
@@ -438,18 +440,33 @@ void Agent::output(ostream& out) const
 //
 // 	return;
 // }
-
-/****************************************************************************
-*																			*
-*	Function:	output                                                      *
-*																			*
-*	Purpose:	To output...                                                *
-*																			*
-****************************************************************************/
-
+//
+// /****************************************************************************
+// *																			*
+// *	Function:	output                                                      *
+// *																			*
+// *	Purpose:	To output...                                                *
+// *																			*
+// ****************************************************************************/
+//
 // void Agent::output()
 // {
-// //  TODO: Output stats
+// //  Output stats
+//
+// 	// string file_name = name;
+// 	// transform(file_name.begin(), file_name.end(), file_name.begin(), ::tolower);
+// 	// replace(file_name.begin(), file_name.end(), ' ', '_');
+//     // string file = OUTPUT_PATH + "/stats_" + file_name + to_string(trainNum) + ".csv";
+//     // ofstream fout(file);
+//     // if (!fout)
+//     // {
+//     //     cerr << "Error: Cannot open " << file << ". Exiting..." << endl;
+//     //     exit(1);
+//     // }
+// 	//
+//     // fout << stats;
+//
+//     return;
 // }
 
 //	Operators

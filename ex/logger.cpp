@@ -1,14 +1,15 @@
 
 //  Logger
-#define ELPP_NO_DEFAULT_LOG_FILE
+// #define ELPP_NO_DEFAULT_LOG_FILE
 #include "../lib/easylogging.h"
+#include "MyClass.h"
 INITIALIZE_EASYLOGGINGPP
 
-using namespace std;
+// using namespace std;
 
 void initLogger(int argc, char** argv)
 {
-    el::Configurations conf("../lib/EasyLogging.conf");
+    el::Configurations conf("../config/logger.conf");
     el::Loggers::reconfigureAllLoggers(conf);
     el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
     // conf.setToDefault();
@@ -18,16 +19,17 @@ void initLogger(int argc, char** argv)
 int main(int argc, char** argv)
 {
     initLogger(argc, argv);
+    LOG(TRACE) << "This is trace";
+    MyClass();
     // el::Loggers::setVerboseLevel(0);
     // el::Loggers::setLoggingLevel(el::Level::Info);
-    LOG(TRACE) << "This is trace";
-    LOG(DEBUG) << "This is debug";
-    LOG(INFO) << "This is info";
-    LOG(WARNING) << "This is warning";
-    LOG(ERROR) << "This is error";
-    // LOG_IF(false, FATAL) << "This is fatal";
-    for (int i = 0; i <= 9; i++)
-        VLOG(i) << "This is verbose " << i;
+    // LOG(DEBUG) << "This is debug";
+    // LOG(INFO) << "This is info";
+    // LOG(WARNING) << "This is warning";
+    // LOG(ERROR) << "This is error";
+    // // LOG_IF(false, FATAL) << "This is fatal";
+    // for (int i = 0; i <= 9; i++)
+    //     VLOG(i) << "This is verbose " << i;
 
     return 0;
 }

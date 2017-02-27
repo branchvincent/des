@@ -1,36 +1,46 @@
 /****************************************************************************
 *																			*
-*	File:		Event.cpp												    *
+*	File:		DepartureEvent.cpp											*
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
-*	Purpose:	This file defines the Event class.	   					    *
+*	Purpose:	This file defines the DepartureEvent class.	   				*
 *																			*
 ****************************************************************************/
 
 #include <iostream>
 #include <string>
-#include "Event.h"
-// #include "Task.h"
+#include "DepartureEvent.h"
+#include "Task.h"
 // #include "Agent.h"
-#include "Utility.h"
+// #include "Utility.h"
 
 using namespace std;
 
 /****************************************************************************
 *																			*
-*	Function:	Event       												*
+*	Function:	DepartureEvent       										*
 *																			*
 *	Purpose:	To construct an event                                       *
 *																			*
 ****************************************************************************/
 
-Event::Event(DateTime time) : time(time) //, task(task), agent(agent)
+DepartureEvent::DepartureEvent(DateTime time, Task* task) : TaskEvent(time, task)
 {}
 
-const DateTime& Event::getTime() const {return time;}
+/****************************************************************************
+*																			*
+*	Function:	process       												*
+*																			*
+*	Purpose:	To process an event                                       	*
+*																			*
+****************************************************************************/
 
-bool Event::before(const Event& event) const {return time < event.time;}
+void DepartureEvent::process()
+{
+	if (task != NULL)
+		task->finish(time);
+}
 
 /****************************************************************************
 *																			*
@@ -40,15 +50,14 @@ bool Event::before(const Event& event) const {return time < event.time;}
 *																			*
 ****************************************************************************/
 
-// void Event::output(ostream& out) const
-// {
-// 	out << "Time: " << time << endl;
-// 	// out << "Agent: " << agent << endl;
-// }
-
+void DepartureEvent::output(ostream& out) const
+{
+	out << "Departing at " << time;
+	// out << "Type: " << type << endl;
+	// out << "Time: " << time << endl;
+	// out << "Agent: " << agent << endl;
+}
 
 //	Operators
 
-// ostream& operator<<(ostream& out, const Event& e) {e.output(out); return out;}
-bool operator<(const Event& e1, const Event& e2) {return e1.before(e2);}
-bool operator>(const Event& e1, const Event& e2) {return !e1.before(e2);}
+ostream& operator<<(ostream& out, const DepartureEvent& e) {e.output(out); return out;}

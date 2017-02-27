@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <string>
-// #include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include "TaskType.h"
 #include "Task.h"
 #include "Team.h"
@@ -19,7 +19,7 @@
 #include "Utility.h"
 
 using namespace std;
-// using boost::property_tree::ptree;
+using boost::property_tree::ptree;
 
 /****************************************************************************
 *																			*
@@ -29,27 +29,15 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-TaskType::TaskType() :
-	name("DefaultTaskType"),
-	priority(2),
-	isAffectedByTraffic(true),
-	interarrival(Distribution()),
-	service(Distribution()),
-	expiration(Distribution()),
-	lastArrival(0)
-{}
-
-
-TaskType::TaskType(string name, int priority, bool isAffectedByTraffic,
-	Distribution interarrival, Distribution service, Distribution expiration) :
-	name(name),
-	priority(priority),
-	isAffectedByTraffic(isAffectedByTraffic),
-	interarrival(interarrival),
-	service(service),
-	expiration(expiration),
-	lastArrival(0)
-{}
+// TaskType::TaskType() :
+// 	name(""),
+// 	priority(-1),
+// 	isAffectedByTraffic{},
+// 	interarrival{},
+// 	service{},
+// 	expiration{},
+// 	lastArrival(-1)
+// {}
 
 /****************************************************************************
 *																			*
@@ -59,15 +47,15 @@ TaskType::TaskType(string name, int priority, bool isAffectedByTraffic,
 *																			*
 ****************************************************************************/
 
-// TaskType::TaskType(Team& team, const ptree& xmlData) : team(team), lastArrival(0)
-// {
-// 	name = xmlData.get<string>("name");
-// 	priority = util::toVector<int>(xmlData.get<string>("priority"));
-// 	isAffectedByTraffic = util::toVector<bool>(xmlData.get<string>("isAffectedByTraffic"));
-// 	readDistributionFromXML(interarrival, xmlData.get_child("interarrival"));
-// 	readDistributionFromXML(service, xmlData.get_child("service"));
-// 	readDistributionFromXML(expiration, xmlData.get_child("expiration"));
-// }
+TaskType::TaskType(Team& team, const ptree& xmlData) : team(team), lastArrival(0)
+{
+	name = xmlData.get<string>("name");
+	priority = util::toVector<int>(xmlData.get<string>("priority"));
+	isAffectedByTraffic = util::toVector<bool>(xmlData.get<string>("isAffectedByTraffic"));
+	readDistributionFromXML(interarrival, xmlData.get_child("interarrival"));
+	readDistributionFromXML(service, xmlData.get_child("service"));
+	readDistributionFromXML(expiration, xmlData.get_child("expiration"));
+}
 
 /****************************************************************************
 *																			*
@@ -90,30 +78,26 @@ TaskType::TaskType(string name, int priority, bool isAffectedByTraffic,
 
 //	Inspectors
 
-// const string& TaskType::getName() const {return name;}
-// vector<int> TaskType::getPriority() const {return priority;}
-// vector<bool> TaskType::getIsAffectedByTraffic() const {return isAffectedByTraffic;}
-// vector<Distribution> TaskType::getInterarrival() const {return interarrival;}
-// vector<Distribution> TaskType::getService() const {return service;}
-// vector<Distribution> TaskType::getExpiration() const {return expiration;}
+const string& TaskType::getName() const {return name;}
+vector<int> TaskType::getPriority() const {return priority;}
+vector<bool> TaskType::getIsAffectedByTraffic() const {return isAffectedByTraffic;}
+vector<Distribution> TaskType::getInterarrival() const {return interarrival;}
+vector<Distribution> TaskType::getService() const {return service;}
+vector<Distribution> TaskType::getExpiration() const {return expiration;}
 
 //	Mutators
 
-// int TaskType::getPriority(int phase) const
-// 	{util::checkIndex(priority, phase); return priority[phase];}
-// bool TaskType::getIsAffectedByTraffic(int phase) const
-// 	{util::checkIndex(isAffectedByTraffic, phase); return isAffectedByTraffic[phase];}
-// float TaskType::randInterarrival(int phase)
-// 	{util::checkIndex(interarrival, phase); return interarrival[phase].rand();}
-// float TaskType::randService(int phase)
-// 	{util::checkIndex(service, phase); return service[phase].rand();}
-// float TaskType::randExpiration(int phase)
-// 	{util::checkIndex(expiration, phase); return expiration[phase].rand();}
+int TaskType::getPriority(int phase) const
+	{util::checkIndex(priority, phase); return priority[phase];}
+bool TaskType::getIsAffectedByTraffic(int phase) const
+	{util::checkIndex(isAffectedByTraffic, phase); return isAffectedByTraffic[phase];}
+float TaskType::randInterarrival(int phase)
+	{util::checkIndex(interarrival, phase); return interarrival[phase].rand();}
+float TaskType::randService(int phase)
+	{util::checkIndex(service, phase); return service[phase].rand();}
+float TaskType::randExpiration(int phase)
+	{util::checkIndex(expiration, phase); return expiration[phase].rand();}
 // TaskType& TaskType::operator=(const TaskType& t) {if (this != &t) copy(t); return *this;}
-
-float TaskType::randInterarrival() {return interarrival.rand();}
-float TaskType::randService() {return service.rand();}
-float TaskType::randExpiration() {return expiration.rand();}
 
 /****************************************************************************
 *																			*
@@ -123,23 +107,23 @@ float TaskType::randExpiration() {return expiration.rand();}
 *																			*
 ****************************************************************************/
 
-Task TaskType::genTask()
+Task TaskType::genTask(int phase)
 {
-	float arrivalTime = genArrivalTime();
-	float serviceTime = genServiceTime();
-	float expirationTime = genExpirationTime(arrivalTime, serviceTime);
+	float arrivalTime = genArrivalTime(phase);
+	float serviceTime = genServiceTime(phase);
+	float expirationTime = genExpirationTime(phase, arrivalTime, serviceTime);
 	lastArrival = arrivalTime;
 	DateTime arrivalDate = getAbsTime(arrivalTime);
 	DateTime expirationDate = getAbsTime(expirationTime);
 	// cout << "Start " << startDate << endl;
 	// cout << "Arrival " << arrivalDate << endl;
 	// cout << "Expiration " << expirationDate << endl;
-	return Task(priority, arrivalDate, serviceTime, expirationDate);
+	return Task(*this, priority[phase], arrivalDate, serviceTime, expirationDate);
 }
 
 DateTime TaskType::getAbsTime(float relativeTime)
 {
-	DateTime startDate = Shift().getStart(); //team.shift.getStart();	TODO
+	DateTime startDate = team.shift.getStart();	//TODO
 	if (isinf(relativeTime))
 		return DateTime(MAX_TIME);
 	else
@@ -154,50 +138,50 @@ DateTime TaskType::getAbsTime(float relativeTime)
 *																			*
 ****************************************************************************/
 
-float TaskType::genArrivalTime()
+float TaskType::genArrivalTime(int phase)
 {
 //	Generate random interarrival time
 
-	float interarrivalTime = interarrival.rand();
+	float interarrivalTime = interarrival[phase].rand();
 
 //  Adjust for arrival time for traffic, if applicable
 
     float arrivalTime = lastArrival + interarrivalTime;
 
-    // if (isAffectedByTraffic and !isinf(arrivalTime))
-    // {
-    //     float budget = interarrivalTime;
-    //     float currTime = lastArrival;
-    //     int currHour = currTime/60;
-	//
-	// 	assert(currHour >= 0 && currHour < util::TRAFFIC.size());		// TODO
-    //     float trafficLevel = util::TRAFFIC[currHour];
-    //     float timeToAdj = (currHour + 1) * 60 - currTime;
-    //     float adjTime = timeToAdj * trafficLevel;
-	//
-    // //  If time is left in budget, proceed
-	//
-    //     while (budget > adjTime)
-    //     {
-    //     //  Decrement budget
-	//
-    //         budget -= adjTime;
-	//
-    //     //	Calculate new values
-	//
-    //         currTime += timeToAdj;
-    //         currHour++;
-	//
-    //         if (currHour >= util::TRAFFIC.size())
-	// 			trafficLevel = 1;
-	// 		else
-    //         	trafficLevel = util::TRAFFIC[currHour];
-    //         timeToAdj = (currHour + 1) * 60 - currTime;
-    //         adjTime = timeToAdj * trafficLevel;
-    //     }
-	//
-    //     arrivalTime = currTime + budget/trafficLevel;
-    // }
+    if (isAffectedByTraffic[phase] and !isinf(arrivalTime))
+    {
+        float budget = interarrivalTime;
+        float currTime = lastArrival;
+        int currHour = currTime/60;
+
+		assert(currHour >= 0 && currHour < util::TRAFFIC.size());		// TODO
+        float trafficLevel = util::TRAFFIC[currHour];
+        float timeToAdj = (currHour + 1) * 60 - currTime;
+        float adjTime = timeToAdj * trafficLevel;
+
+    //  If time is left in budget, proceed
+
+        while (budget > adjTime)
+        {
+        //  Decrement budget
+
+            budget -= adjTime;
+
+        //	Calculate new values
+
+            currTime += timeToAdj;
+            currHour++;
+
+            if (currHour >= util::TRAFFIC.size())
+				trafficLevel = 1;
+			else
+            	trafficLevel = util::TRAFFIC[currHour];
+            timeToAdj = (currHour + 1) * 60 - currTime;
+            adjTime = timeToAdj * trafficLevel;
+        }
+
+        arrivalTime = currTime + budget/trafficLevel;
+    }
 
 	return arrivalTime;
 }
@@ -210,9 +194,9 @@ float TaskType::genArrivalTime()
 *																			*
 ****************************************************************************/
 
-float TaskType::genServiceTime()
+float TaskType::genServiceTime(int phase)
 {
-    float serviceTime = randService();
+    float serviceTime = randService(phase);
     // while (isinf(serviceTime))				// TODO
 	// 	serviceTime = randService(phase);
     return serviceTime;
@@ -226,9 +210,9 @@ float TaskType::genServiceTime()
 *																			*
 ****************************************************************************/
 
-float TaskType::genExpirationTime(float arrivalTime, float serviceTime)
+float TaskType::genExpirationTime(int phase, float arrivalTime, float serviceTime)
 {
-	float relativeExpTime = randExpiration();
+	float relativeExpTime = randExpiration(phase);
 	// while (relativeExpTime <= serviceTime)		// TODO
 	// 	relativeExpTime = randExpiration(phase);
 	return arrivalTime + serviceTime + relativeExpTime;
@@ -242,30 +226,30 @@ float TaskType::genExpirationTime(float arrivalTime, float serviceTime)
 *																			*
 ****************************************************************************/
 
-// void TaskType::readDistributionFromXML(vector<Distribution>& dists, const ptree& xmlData)
-// {
-// 	string type = util::toLower(xmlData.get<string>("<xmlattr>.type"));
-// 	bool byPhase = xmlData.get<bool>("<xmlattr>.byPhase", false);
-//
-// 	if (byPhase)
-// 	{
-// 		for (const auto& phase : xmlData)
-// 		{
-// 			if (phase.first == "phase")
-// 			{
-// 				vector<float> parameters = util::toVector<float>(phase.second.get<string>(""));
-// 				dists.push_back(Distribution(type, parameters));
-// 			}
-// 		}
-// 	}
-// 	else
-// 	{
-// 		vector<float> parameters = util::toVector<float>(xmlData.get<string>(""));
-// 		dists.push_back(Distribution(type, parameters));
-// 	}
-//
-// 	return;
-// }
+void TaskType::readDistributionFromXML(vector<Distribution>& dists, const ptree& xmlData)
+{
+	string type = util::toLower(xmlData.get<string>("<xmlattr>.type"));
+	bool byPhase = xmlData.get<bool>("<xmlattr>.byPhase", false);
+
+	if (byPhase)
+	{
+		for (const auto& phase : xmlData)
+		{
+			if (phase.first == "phase")
+			{
+				vector<float> parameters = util::toVector<float>(phase.second.get<string>(""));
+				dists.push_back(Distribution(type, parameters));
+			}
+		}
+	}
+	else
+	{
+		vector<float> parameters = util::toVector<float>(xmlData.get<string>(""));
+		dists.push_back(Distribution(type, parameters));
+	}
+
+	return;
+}
 
 /****************************************************************************
 *																			*
