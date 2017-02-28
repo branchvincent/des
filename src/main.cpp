@@ -95,6 +95,7 @@ void initLogger(int argc, const char** argv)
     // el::Configurations conf("lib/EasyLogging.conf");
 	el::Configurations conf("/Users/Branch/Documents/Research/fra/shado/config/logger.conf");
     el::Loggers::reconfigureAllLoggers(conf);
+	el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
     // el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
     // conf.setToDefault();
     START_EASYLOGGINGPP(argc, argv);
