@@ -1,8 +1,18 @@
 # SHADO
 Simulation of Humans and Automation in Dispatch Operations
 
+## Introduction
 This program runs a discrete event simulation with various tasks specified by the user.
 
-Unix Compilation Command
+## Getting Started
+Execute compile.sh script.
 
-See compile.sh script
+Note: You may have to change the script's permissions to execute it.
+
+## Configuration
+
+TODO: explain parameters
+
+## Data Output
+
+TODO: explain output Data
