@@ -30,7 +30,7 @@ string getAbsolutePath(string relativePath);
 void initLogger(int argc, const char** argv);
 
 // srand((unsigned int) time(0));
-string PATH = "/Users/Branch/Documents/Research/fra/shado/config/params_sample.xml";
+//string PATH = "/Users/Branch/Documents/Research/fra/shado/config/params_sample.xml";
 float util::seed = rand();
 default_random_engine util::randNumGen = default_random_engine(util::seed);
 // vector<float> util::TRAFFIC = {1,1,1};
@@ -48,7 +48,8 @@ int main(int argc, const char* argv[])
 	Timer t;
 	initLogger(argc, argv);
     Flags flags = getFlags(argc, argv);
-    string file = PATH; //getAbsolutePath(argv[1]);
+//    string file = PATH;
+	string file = getAbsolutePath(argv[1]);
 
 //  Intialize and run simulation
 
@@ -93,7 +94,8 @@ string getAbsolutePath(string relativePath)
 void initLogger(int argc, const char** argv)
 {
     // el::Configurations conf("deps/EasyLogging.conf");
-	el::Configurations conf("/Users/Branch/Documents/Research/fra/shado/config/logger.conf");
+//	el::Configurations conf("/Users/Branch/Documents/Research/fra/shado/config/logger.conf");
+	el::Configurations conf("config/logger.conf");
     el::Loggers::reconfigureAllLoggers(conf);
 	el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
     // el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);

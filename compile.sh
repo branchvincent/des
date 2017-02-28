@@ -4,7 +4,7 @@
 
 COMPILER=g++
 SRC_FILES="src/*.cpp"
-BIN_PATH="bin/shado"
+BIN_PATH="shado"
 INC_PATH="include/"
 LIB=""
 FLAGS="-I$INC_PATH -std=c++11 -o$BIN_PATH"

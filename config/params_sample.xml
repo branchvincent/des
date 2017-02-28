@@ -18,15 +18,15 @@
             <task name="Task1" id="0">
                 <priority>4</priority>
                 <isAffectedByTraffic>0</isAffectedByTraffic>
-                <interarrival type="exponential" lambda="10"/>
-                <service type="lognormal" mean="0" stddev="2"/>
+                <interarrival type="exponential" lambda="0.01"/>
+                <service type="lognormal" mean="10" stddev="0"/>
                 <expiration type="uniform" min="0" max="2"/>
             </task>
             <task name="Task2" id="1">
                 <priority>4</priority>
                 <isAffectedByTraffic>0</isAffectedByTraffic>
-                <interarrival type="exponential" lambda="10"/>
-                <service type="lognormal" mean="0" stddev="2"/>
+                <interarrival type="exponential" lambda="0.01"/>
+                <service type="lognormal" mean="10" stddev="0"/>
                 <expiration type="uniform" min="0" max="2"/>
             </task>
         </tasks>
