@@ -20,7 +20,7 @@
 #include "ArgParser.h"
 #include "Timer.h"
 #include "Utility.h"
-#include "../lib/EasyLogging.h"
+#include "../deps/EasyLogging.h"
 INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
@@ -92,7 +92,7 @@ string getAbsolutePath(string relativePath)
 
 void initLogger(int argc, const char** argv)
 {
-    // el::Configurations conf("lib/EasyLogging.conf");
+    // el::Configurations conf("deps/EasyLogging.conf");
 	el::Configurations conf("/Users/Branch/Documents/Research/fra/shado/config/logger.conf");
     el::Loggers::reconfigureAllLoggers(conf);
 	el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);

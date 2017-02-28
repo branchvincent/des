@@ -15,7 +15,7 @@
 #include "Team.h"
 #include "Shift.h"
 #include "ArrivalEvent.h"
-#include "../lib/EasyLogging.h"
+#include "../deps/EasyLogging.h"
 
 using namespace std;
 // using boost::property_tree::ptree;

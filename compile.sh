@@ -1,4 +1,16 @@
-# g++ test.cpp -std=c++11 TaskType.cpp Task.cpp Event.cpp Distribution.cpp
-g++ shado.cpp -std=c++11 src/Team.cpp src/Agent.cpp src/TaskType.cpp src/Task.cpp src/Distribution.cpp src/events/ArrivalEvent.cpp src/events/TaskEvent.cpp src/events/Event.cpp src/events/DepartureEvent.cpp
-# src/Phase.cpp
-# ./a.out params.xml
+#!/bin/bash
+
+# Compiles binary
+
+COMPILER=g++
+SRC_FILES="src/*.cpp"
+BIN_PATH="bin/shado"
+INC_PATH="include/"
+LIB=""
+FLAGS="-I$INC_PATH -std=c++11 -o$BIN_PATH"
+
+echo "Compiling shado to $BIN_PATH..."
+COMPILE_LINE="$COMPILER $FLAGS $SRC_FILES"
+echo -e "\t$COMPILE_LINE"
+$($COMPILE_LINE)
+echo "Done"

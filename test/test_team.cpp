@@ -1,12 +1,15 @@
 #include <iostream>
 #include <string>
-#include "Event.h"
-#include "../src/events/DepartureEvent.h"
+#include "../src/Team.h"
 #include "../src/events/ArrivalEvent.h"
-#include <vector>
+
 #define ELPP_NO_DEFAULT_LOG_FILE
-#include "../lib/EasyLogging.h"
+#include "../deps/EasyLogging.h"
 INITIALIZE_EASYLOGGINGPP
+
+float util::seed = rand();
+default_random_engine util::randNumGen = default_random_engine(util::seed);
+vector<float> util::TRAFFIC = {1,1,1};
 
 /****************************************************************************
 *																			*
@@ -16,17 +19,6 @@ INITIALIZE_EASYLOGGINGPP
 
 int main()
 {
-    DateTime t;
-    // ArrivalEvent* ae =
-
-    vector<Event*> events = {new ArrivalEvent(t,NULL);}
-
-    for (Event* e : events)
-    {
-        e->process();
-        // LOG(INFO) << "Event " << e << " processed";
-    }
-
-
+    Team t;
 	return 0;
 }

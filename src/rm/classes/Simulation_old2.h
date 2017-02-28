@@ -19,7 +19,7 @@
 #include "Parameters.h"
 #include "Event.h"
 #include "Team.h"
-#include "../lib/EasyLogging.h"
+#include "../deps/EasyLogging.h"
 // #include <vector>
 // #include <list>
 // #include <time.h>

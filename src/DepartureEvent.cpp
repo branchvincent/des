@@ -12,7 +12,7 @@
 #include <string>
 #include "DepartureEvent.h"
 #include "Task.h"
-#include "../lib/EasyLogging.h"
+#include "../deps/EasyLogging.h"
 #include "Agent.h"
 // #include "Utility.h"
 

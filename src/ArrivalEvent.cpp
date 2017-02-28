@@ -14,7 +14,7 @@
 #include "Task.h"
 #include "Team.h"
 #include "DepartureEvent.h"
-#include "../lib/EasyLogging.h"
+#include "../deps/EasyLogging.h"
 // #include "Agent.h"
 // #include "Utility.h"
 

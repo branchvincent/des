@@ -1,4 +1,4 @@
-#include "../lib/pugixml.h"
+#include "../deps/pugixml.h"
 #include <iostream>
 #include <string.h>
 
@@ -18,7 +18,7 @@ using namespace std;
 int main()
 {
     pugi::xml_document doc;
-    if (!doc.load_file("xgconsole.xml")) return -1;
+    if (!doc.load_file("my_xml_file.xml")) return -1;
 
     pugi::xml_node tools = doc.child("Profile").child("Tools");
 

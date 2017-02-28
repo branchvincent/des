@@ -14,7 +14,7 @@
 #include "Team.h"
 #include "Event.h"
 #include "Shift.h"
-#include "../lib/EasyLogging.h"
+#include "../deps/EasyLogging.h"
 
 using namespace std;
 

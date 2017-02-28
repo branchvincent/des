@@ -20,8 +20,8 @@
 #include "Team.h"
 // #include "Agent.h"
 // #include "TaskType.h"
-#include "../lib/EasyLogging.h"
-#include "../lib/EZProgressBar.h"
+#include "../deps/EasyLogging.h"
+#include "../deps/EZProgressBar.h"
 
 using namespace std;
 

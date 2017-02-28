@@ -1,3 +1,10 @@
-out/*
-!out/.gitkeep
+# Paths
+data/*
+log/*
+
+# Keep dirs
+!data/.gitkeep
+!log/.gitkeep
+
+# Xcode
 *.xcodeproj

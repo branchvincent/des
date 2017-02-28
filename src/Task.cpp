@@ -16,7 +16,7 @@
 #include "DateTime.h"
 #include "Utility.h"
 #include "Team.h"
-#include "../lib/EasyLogging.h"
+#include "../deps/EasyLogging.h"
 
 using namespace std;
 
