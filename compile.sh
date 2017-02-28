@@ -13,4 +13,9 @@ echo "Compiling shado to $BIN_PATH..."
 COMPILE_LINE="$COMPILER $FLAGS $SRC_FILES"
 echo -e "\t$COMPILE_LINE"
 $($COMPILE_LINE)
-echo "Done"
+
+if $($COMPILE_LINE); then
+    echo "Success"
+else
+    echo "Failed"
+fi

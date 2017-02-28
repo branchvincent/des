@@ -108,11 +108,6 @@ class TaskType
 		Distribution interarrival;
 		Distribution service;
 		Distribution expiration;
-		// vector<int> priority;
-		// vector<bool> isAffectedByTraffic;
-		// vector<Distribution> interarrival;
-		// vector<Distribution> service;
-		// vector<Distribution> expiration;
 		float lastArrival;
 };
 

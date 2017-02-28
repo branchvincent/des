@@ -30,7 +30,6 @@ string getAbsolutePath(string relativePath);
 void initLogger(int argc, const char** argv);
 
 // srand((unsigned int) time(0));
-//string PATH = "/Users/Branch/Documents/Research/fra/shado/config/params_sample.xml";
 float util::seed = rand();
 default_random_engine util::randNumGen = default_random_engine(util::seed);
 // vector<float> util::TRAFFIC = {1,1,1};
@@ -48,13 +47,12 @@ int main(int argc, const char* argv[])
 	Timer t;
 	initLogger(argc, argv);
     Flags flags = getFlags(argc, argv);
-//    string file = PATH;
 	string file = getAbsolutePath(argv[1]);
 
 //  Intialize and run simulation
 
     Simulation sim(file, flags);
-    sim.run();
+    // sim.run();
     LOG(INFO) << "Runtime: " << t.elapsed() << " s";
 
 	return 0;

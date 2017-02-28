@@ -185,11 +185,6 @@ void Simulation::run(int rep)
 
 //	Process events
 
-	// for (Event* e : events)
-	// {
-	// 	e->process();
-	// }
-
 	Event* e;
 
 	while (!events.empty())
@@ -197,7 +192,6 @@ void Simulation::run(int rep)
 		e = events.front();
 		e->process(events);
 		events.pop_front();
-		// LOG(DEBUG) << "Event size = " << events.size();
 	}
 
 //	TODO: Might need to clear agents for next rep
