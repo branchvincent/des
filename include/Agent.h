@@ -16,17 +16,16 @@
 #include <queue>
 #include <algorithm>
 #include <list>
-// #include <boost/property_tree/ptree.hpp>
-// #include <boost/optional.hpp>
 #include "Task.h"
 // #include "Shift.h"
 #include "TaskType.h"
 // #include "Utility.h"
 // #include "Statistics.h"
+#include "../deps/pugixml.h"
 
 using namespace std;
-// using boost::property_tree::ptree;
-// using boost::optional;
+using pugi::xml_document;
+using pugi::xml_node;
 
 class Event;
 class Team;
@@ -52,7 +51,8 @@ class Agent
 		// Agent(Team& team, const ptree& xmlData);
 		// Agent(Team& team, const ptree& xmlData);
 		Agent();
-       	Agent(string name, vector<TaskType> taskTypes);
+		Agent(xml_node& data, vector<TaskType*> taskTypes);
+       	Agent(string name, vector<TaskType*> taskTypes);
 
 	//	Inspectors
 
@@ -97,7 +97,7 @@ class Agent
 	public:
 		Team* team;
         string name;
-		vector<TaskType> taskTypes;		// types of tasks
+		vector<TaskType*> taskTypes;		// types of tasks
 		priority_queue<Task*> queue; 	// task queue
 		Task* currTask;             	// current task
 		// Statistics& sharedStats;		// shared stats

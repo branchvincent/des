@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <parameters>
     <output_path>/Users/Branch/Documents/Research/fra/show/out</output_path>
-    <replications>100</replications>
+    <replications>1</replications>
 </parameters>
 
 <teams>

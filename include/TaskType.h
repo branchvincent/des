@@ -14,12 +14,12 @@
 #include <iostream>
 #include <string>
 #include <vector>
-// #include <boost/property_tree/ptree.hpp>
 #include "Distribution.h"
+#include "../deps/pugixml.h"
 // #include "DateTime.h"
 
 using namespace std;
-// using boost::property_tree::ptree;
+using pugi::xml_node;
 
 // class Distribution;
 class Agent;
@@ -48,7 +48,7 @@ class TaskType
 	//	Constructors
 
 		TaskType();
-		// TaskType(Team& team, const ptree& xmlData);
+		TaskType(xml_node& data);
 		TaskType(string name, int priority, bool isAffectedByTraffic,
 			Distribution interarrival, Distribution service, Distribution expiration, Team* team);
 		// TaskType(string name, vector<int> priority, vector<bool> isAffectedByTraffic,
@@ -95,7 +95,7 @@ class TaskType
 		float genArrivalTime();
 		float genServiceTime();
 		float genExpirationTime(float arrivalTime, float serviceTime);
-		// void readDistributionFromXML(vector<Distribution>& dists, const ptree& xmlData);
+		void readDistributionFromXML(Distribution& dist, xml_node& data);
 
 //	Data members
 

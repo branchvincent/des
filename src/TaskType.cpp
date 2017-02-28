@@ -10,16 +10,16 @@
 
 #include <iostream>
 #include <string>
-// #include <boost/property_tree/ptree.hpp>
 #include "TaskType.h"
 #include "Task.h"
 #include "Team.h"
 #include "DateTime.h"
 #include "Distribution.h"
 #include "Utility.h"
+#include "../deps/pugixml.h"
 
 using namespace std;
-// using boost::property_tree::ptree;
+using pugi::xml_node;
 
 /****************************************************************************
 *																			*
@@ -28,6 +28,29 @@ using namespace std;
 *	Purpose:	To construct a task type									*
 *																			*
 ****************************************************************************/
+
+TaskType::TaskType(xml_node& data) : team(NULL), lastArrival(0)
+{
+	name = data.attribute("name").value();
+	priority = atoi(data.child_value("priority"));
+	isAffectedByTraffic = atoi(data.child_value("traffic"));
+
+	for (xml_node& child : data)
+	{
+		if ((string)child.name() == "interarrival")
+		{
+			readDistributionFromXML(interarrival, child);
+		}
+		if ((string)child.name() == "service")
+		{
+			readDistributionFromXML(service, child);
+		}
+		else if ((string)child.name() == "expiration")
+		{
+			readDistributionFromXML(expiration, child);
+		}
+	}
+}
 
 TaskType::TaskType() :
 	team(NULL),
@@ -254,30 +277,49 @@ float TaskType::genExpirationTime(float arrivalTime, float serviceTime)
 *																			*
 ****************************************************************************/
 
-// void TaskType::readDistributionFromXML(vector<Distribution>& dists, const ptree& xmlData)
-// {
-// 	string type = util::toLower(xmlData.get<string>("<xmlattr>.type"));
-// 	bool byPhase = xmlData.get<bool>("<xmlattr>.byPhase", false);
-//
-// 	if (byPhase)
-// 	{
-// 		for (const auto& phase : xmlData)
-// 		{
-// 			if (phase.first == "phase")
-// 			{
-// 				vector<float> parameters = util::toVector<float>(phase.second.get<string>(""));
-// 				dists.push_back(Distribution(type, parameters));
-// 			}
-// 		}
-// 	}
-// 	else
-// 	{
-// 		vector<float> parameters = util::toVector<float>(xmlData.get<string>(""));
-// 		dists.push_back(Distribution(type, parameters));
-// 	}
-//
-// 	return;
-// }
+void TaskType::readDistributionFromXML(Distribution& dist, xml_node& data)
+{
+	string type = util::toLower(data.attribute("type").value());
+	vector<float> params;
+
+	if (type == "exponential")
+	{
+		params.push_back(data.attribute("lambda").as_float());
+	}
+	else if (type == "lognormal")
+	{
+		params.push_back(data.attribute("mean").as_float());
+		params.push_back(data.attribute("stddev").as_float());
+	}
+	else if (type == "uniform")
+	{
+		params.push_back(data.attribute("min").as_float());
+		params.push_back(data.attribute("max").as_float());
+	}
+
+	dist = Distribution(type, params);
+
+	// bool byPhase = xmlData.get<bool>("<xmlattr>.byPhase", false);
+
+	// if (byPhase)
+	// {
+	// 	for (const auto& phase : xmlData)
+	// 	{
+	// 		if (phase.first == "phase")
+	// 		{
+	// 			vector<float> parameters = util::toVector<float>(phase.second.get<string>(""));
+	// 			dists.push_back(Distribution(type, parameters));
+	// 		}
+	// 	}
+	// }
+	// else
+	// {
+	// 	vector<float> parameters = util::toVector<float>(xmlData.get<string>(""));
+	// 	dists.push_back(Distribution(type, parameters));
+	// }
+
+	return;
+}
 
 /****************************************************************************
 *																			*

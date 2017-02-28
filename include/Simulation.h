@@ -16,14 +16,15 @@
 #include "Flags.h"
 #include "Parameters.h"
 #include "Task.h"
-// #include "events/Event.h"
+// #include "Event.h"
 #include "Team.h"
-// #include "Agent.h"
-// #include "TaskType.h"
 #include "../deps/EasyLogging.h"
 #include "../deps/EZProgressBar.h"
+#include "../deps/pugixml.h"
 
 using namespace std;
+using pugi::xml_document;
+using pugi::xml_node;
 
 // Helper functions and definitions
 
@@ -109,29 +110,32 @@ Simulation::Simulation(string file, Flags flags = Flags()) : flags(flags), param
 	// LOG(INFO) << "Seed = " << util::seed;
 	util::randNumGen = default_random_engine(util::seed);
 
-	// if (flags.isOn("verbose"))
-	// {
-	// 	cout << parameters << endl;
-	// 	cout << flags << endl;
-	// }
-
 	// if (flags.isOn("pbar"))
 	// bar = ez::EZProgressBar(parameters.numReps);
 
+//	Load xml
+
+	xml_document doc;
+	if (!doc.load_file(file.c_str())) cerr << "Failed to read." << endl;
+
+//	Read xml
+
+	xml_node params = doc.child("parameters");
+	parameters = Parameters(params);
+	LOG(INFO) << "Params = " << parameters;
+
+	for (xml_node& team : doc.child("teams"))
+	{
+		if ((string)team.name() == "team")
+		{
+			teams.push_back(Team(team));
+		}
+	}
+
 //	Fill teams
 
-	teams.push_back(Team());
-	teams.push_back(Team(Shift("01-01 12:00", "01-02 3:00")));
-	// ptree params;
-	// read_xml(file, params);
-	//
-	// for (const auto& team : params.get_child("teams"))
-	// {
-	// 	if (team.first == "team")
-	// 	{
-	// 		teams.push_back(Team(team.second));
-	// 	}
-	// }
+	// teams.push_back(Team());
+	// teams.push_back(Team(Shift("01-01 12:00", "01-02 3:00")));
 }
 
 /****************************************************************************

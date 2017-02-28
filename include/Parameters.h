@@ -13,13 +13,12 @@
 
 #include <iostream>
 #include <string>
-// #include <boost/property_tree/ptree.hpp>
-// #include <boost/property_tree/xml_parser.hpp>
 #include "Shift.h"
 // #include "Traffic.h"
+#include "../deps/PugiXML.h"
 
 using namespace std;
-// using boost::property_tree::ptree;
+using pugi::xml_node;
 
 /****************************************************************************
 *																			*
@@ -35,6 +34,7 @@ class Parameters
 
     //  Constructor
 
+		Parameters(xml_node& data);
 		Parameters(string file);
 
 	//	Inspectors
@@ -50,9 +50,9 @@ class Parameters
 
         string outputPath;
 		int numReps;
-		int numPhases;
+		// int numPhases;
 		int intSize;
-		Shift shift;
+		// Shift shift;
 		// Traffic traffic;
 		// vector<Team> teams;
 		// vector<Batches> batches;
@@ -70,9 +70,15 @@ ostream& operator<<(ostream& out, const Parameters& p) {p.output(out); return ou
 *																			*
 ****************************************************************************/
 
+Parameters::Parameters(xml_node& data) : intSize(600)
+{
+	outputPath = data.child_value("output_path");
+    numReps = atoi(data.child_value("replications"));
+}
+
 Parameters::Parameters(string file) :
 	numReps(2),		// TODO: 100
-	numPhases(3),
+	// numPhases(3),
 	intSize(10)
 {
 //	Read parameter file
@@ -98,7 +104,7 @@ Parameters::Parameters(string file) :
 void Parameters::output(ostream& out) const
 {
 	out << "Output path = " << outputPath << endl;
-	out << "Shift = " << shift << endl;
+	// out << "Shift = " << shift << endl;
 	out << "Replications = " << numReps << endl;
 	// out << "Traffic = " << traffic;
 }

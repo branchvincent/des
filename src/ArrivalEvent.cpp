@@ -67,13 +67,14 @@ void ArrivalEvent::process(list<Event*>& events)
 	}
 	else
 	{
+		LOG(INFO) << "Agent " << agent->name << " enqueued task";
 		agent->queue.push(task);
-		// LOG(INFO) << "Agent " << agent->name << " enqueued task";
 	}
 }
 
 Agent* ArrivalEvent::chooseAgent(vector<Agent*> subteam)
 {
+	ASSERT(subteam.size() != 0, "Team is empty");
 	int index = 0;
 
 	for (int i = 1; i < subteam.size(); i++)

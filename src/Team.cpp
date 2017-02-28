@@ -16,9 +16,10 @@
 #include "Shift.h"
 #include "ArrivalEvent.h"
 #include "../deps/EasyLogging.h"
+#include "../deps/pugixml.h"
 
 using namespace std;
-// using boost::property_tree::ptree;
+using pugi::xml_node;
 
 // enum Status {before, working, after};
 
@@ -39,6 +40,58 @@ using namespace std;
 *	Purpose:	To construct a new team										*
 *																			*
 ****************************************************************************/
+
+Team::Team(xml_node& data) : shift()
+{
+	string name = data.attribute("name").value();
+
+	for (xml_node& child : data.child("tasks"))
+	{
+		if ((string)child.name() == "task")
+		{
+			taskTypes.push_back(TaskType(child));
+		}
+	}
+
+	//TODO: fix types
+	for (xml_node& child : data.child("agents"))
+	{
+		if ((string)child.name() == "agent")
+		{
+			string temp = child.attribute("task_ids").value();
+			vector<int> ids = util::toVector<int>(temp);
+			vector<TaskType*> subset;
+			for (int i = 0; i < taskTypes.size(); i++)
+			{
+				if (util::contains(ids, i))
+				{
+					subset.push_back(&taskTypes[i]);
+				}
+			}
+			agents.push_back(Agent(child, subset));
+
+			// for (TaskType* type : subset)
+			// {
+			// 	type->addAgent(&(agents.back()));
+			// }
+		}
+	}
+
+//	Initialize task arrivals
+
+	for (Agent& agent : agents) agent.setTeam(this);
+	for (TaskType& taskType : taskTypes)
+	{
+		taskType.setTeam(this);
+		taskType.addAgent(&agents[0]);	//TODO: fix
+	}
+	initArrivingTasks();
+	initEvents();
+
+	LOG(INFO) << "Initializing team: " << name << " with " << agents.size()
+		<< " agents and " << taskTypes.size() << " task types";
+	LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
+}
 
 Team::Team(Shift shift)
 	: name("DefaultTeam"), agents{Agent()}, taskTypes{TaskType(),TaskType()}, shift(shift)

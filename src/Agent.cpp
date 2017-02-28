@@ -14,9 +14,12 @@
 #include "Team.h"
 #include "Event.h"
 #include "Shift.h"
+#include "Utility.h"
 #include "../deps/EasyLogging.h"
+#include "../deps/pugixml.h"
 
 using namespace std;
+using pugi::xml_node;
 
 /****************************************************************************
 *																			*
@@ -26,10 +29,29 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-Agent::Agent() : team(NULL), name("DefaultAgent"), taskTypes{TaskType()}, currTask(NULL)
+Agent::Agent(xml_node& data, vector<TaskType*> taskTypes) : team(NULL), currTask(NULL) //taskTypes(taskTypes),
+{
+	name = data.attribute("name").value();
+	vector<int> task_ids = util::toVector<int>(data.attribute("task_ids").value());
+
+	xml_node tasktypes = data.parent().parent().child("tasks");
+	for (xml_node& type : tasktypes)
+	{
+		if ((string)type.name() == "task")
+		{
+			int id = atoi(type.attribute("id").value());
+			if (util::contains(task_ids, id))
+			{
+				taskTypes.push_back(new TaskType(type));
+			}
+		}
+	}
+}
+
+Agent::Agent() : team(NULL), name("DefaultAgent"), taskTypes{new TaskType()}, currTask(NULL)
 {}
 
-Agent::Agent(string name, vector<TaskType> taskTypes) : team(NULL), name(name), taskTypes(taskTypes), currTask(NULL)
+Agent::Agent(string name, vector<TaskType*> taskTypes) : team(NULL), name(name), taskTypes(taskTypes), currTask(NULL)
 {}
 
 // Agent(string name, vector<TaskTypes> taskTypes) : //, Statistics& sts) :

@@ -20,11 +20,12 @@
 #include "TaskType.h"
 #include "Shift.h"
 #include "ArrivalEvent.h"
+#include "../deps/pugixml.h"
 // #include "Phase.h"
 
 using namespace std;
-// using boost::property_tree::ptree;
-// using boost::optional;
+using pugi::xml_document;
+using pugi::xml_node;
 
 //class Agent;
 //class TaskType;
@@ -50,7 +51,8 @@ class Team
 
 	//	Constructor
 
-		// Team(const ptree& xmlData, Shift shift = Shift());
+		//TODO: const xml_node
+		Team(xml_node& data);
 		Team(Shift shift = Shift());
 		Team(string name, vector<Agent> agents, vector<TaskType> taskTypes);
 
