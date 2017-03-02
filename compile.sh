@@ -7,7 +7,7 @@ SRC_FILES="src/*.cpp"
 BIN_PATH="shado"
 INC_PATH="include/"
 LIB=""
-FLAGS="-I$INC_PATH -std=c++11 -o$BIN_PATH"
+FLAGS="-I$INC_PATH -Ideps/ -std=c++11 -o$BIN_PATH"
 
 echo "Compiling shado to $BIN_PATH..."
 COMPILE_LINE="$COMPILER $FLAGS $SRC_FILES"

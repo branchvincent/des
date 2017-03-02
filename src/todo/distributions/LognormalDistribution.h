@@ -16,7 +16,7 @@
 #include <vector>
 #include <random>
 #include <cmath>
-#include "Distribution.h"
+#include "distribution.h"
 #include "../Utility.h"
 
 using namespace std;

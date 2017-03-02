@@ -12,11 +12,11 @@
 #include <string>
 #include <algorithm>
 #include <list>
-#include "Team.h"
-#include "Shift.h"
-#include "ArrivalEvent.h"
-#include "../deps/EasyLogging.h"
-#include "../deps/pugixml.h"
+#include "team.h"
+#include "shift.h"
+#include "arrivalevent.h"
+#include "easylogging++.h"
+#include "pugixml.h"
 
 using namespace std;
 using pugi::xml_node;

@@ -15,7 +15,7 @@
 #include <random>
 #include <sstream>
 #include <algorithm>
-#include "Utility.h"
+#include "utility.h"
 
 using namespace std;
 

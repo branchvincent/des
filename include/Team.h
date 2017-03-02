@@ -16,11 +16,11 @@
 // #include <boost/property_tree/ptree.hpp>
 // #include <boost/property_tree/xml_parser.hpp>
 // #include <boost/optional.hpp>
-#include "Agent.h"
-#include "TaskType.h"
-#include "Shift.h"
-#include "ArrivalEvent.h"
-#include "../deps/pugixml.h"
+#include "agent.h"
+#include "tasktype.h"
+#include "shift.h"
+#include "arrivalevent.h"
+#include "pugixml.h"
 // #include "Phase.h"
 
 using namespace std;

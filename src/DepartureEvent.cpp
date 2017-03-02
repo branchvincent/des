@@ -11,10 +11,10 @@
 #include <iostream>
 #include <string>
 #include "DepartureEvent.h"
-#include "Task.h"
-#include "../deps/EasyLogging.h"
-#include "Agent.h"
-// #include "Utility.h"
+#include "task.h"
+#include "easylogging++.h"
+#include "agent.h"
+// #include "utility.h"
 
 using namespace std;
 

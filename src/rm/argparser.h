@@ -13,8 +13,8 @@
 
 #include <iostream>
 #include <string>
-#include "../deps/EZOptionParser.h"
-#include "Flags.h"
+#include "ezoptionparser.h"
+#include "flags.h"
 
 using namespace std;
 using namespace ez;

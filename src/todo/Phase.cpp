@@ -13,8 +13,8 @@
 #include <queue>
 #include <algorithm>
 #include "Phase.h"
-#include "Team.h"
-#include "Task.h"
+#include "team.h"
+#include "task.h"
 
 using namespace std;
 

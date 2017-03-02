@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <string>
-#include "TeamEvent.h"
+#include "teamevent.h"
 
 using namespace std;
 

@@ -14,7 +14,7 @@
 #include <iostream>
 #include <string>
 #include <random>
-#include "Distribution.h"
+#include "distribution.h"
 #include "../Utility.h"
 
 using namespace std;

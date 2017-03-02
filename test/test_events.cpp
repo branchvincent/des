@@ -1,11 +1,11 @@
 #include <iostream>
 #include <string>
-#include "Event.h"
+#include "event.h"
 #include "../src/events/DepartureEvent.h"
 #include "../src/events/ArrivalEvent.h"
 #include <vector>
 #define ELPP_NO_DEFAULT_LOG_FILE
-#include "../deps/EasyLogging.h"
+#include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 
 /****************************************************************************

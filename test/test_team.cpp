@@ -4,7 +4,7 @@
 #include "../src/events/ArrivalEvent.h"
 
 #define ELPP_NO_DEFAULT_LOG_FILE
-#include "../deps/EasyLogging.h"
+#include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 
 float util::seed = rand();

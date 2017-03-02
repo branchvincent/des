@@ -28,9 +28,9 @@ v2.0.1 20111006 rsz Added default constructor value.
 namespace ez {
 // One-line refreshing progress bar inspired by wget that shows ETA (time remaining).
 // 90% [##################################################     ] ETA 12d 23h 56s
-class EZProgressBar {
+class ezProgressBar {
 public:
-	EZProgressBar(unsigned int _n=0) : n(_n), pct(0), cur(0), width(80) {}
+	ezProgressBar(unsigned int _n=0) : n(_n), pct(0), cur(0), width(80) {}
 	void reset() { pct = 0; cur = 0; }
 	void start() {
 		#ifdef WIN32

@@ -21,7 +21,7 @@
 #include <time.h>
 #include <algorithm>
 #include "Train.h"
-#include "Task.h"
+#include "task.h"
 #include "params/Parameters.h"
 #include <stdio.h>
 

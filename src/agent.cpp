@@ -10,13 +10,13 @@
 
 #include <iostream>
 #include <string>
-#include "Agent.h"
-#include "Team.h"
-#include "Event.h"
-#include "Shift.h"
-#include "Utility.h"
-#include "../deps/EasyLogging.h"
-#include "../deps/pugixml.h"
+#include "agent.h"
+#include "team.h"
+#include "event.h"
+#include "shift.h"
+#include "utility.h"
+#include "easylogging++.h"
+#include "pugixml.h"
 
 using namespace std;
 using pugi::xml_node;

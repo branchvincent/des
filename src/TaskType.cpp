@@ -10,13 +10,13 @@
 
 #include <iostream>
 #include <string>
-#include "TaskType.h"
-#include "Task.h"
-#include "Team.h"
-#include "DateTime.h"
-#include "Distribution.h"
-#include "Utility.h"
-#include "../deps/pugixml.h"
+#include "tasktype.h"
+#include "task.h"
+#include "team.h"
+#include "datetime.h"
+#include "distribution.h"
+#include "utility.h"
+#include "pugixml.h"
 
 using namespace std;
 using pugi::xml_node;

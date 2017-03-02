@@ -13,8 +13,8 @@
 
 #include <iostream>
 #include <string>
-#include "TeamEvent.h"
-#include "Task.h"
+#include "teamevent.h"
+#include "task.h"
 // #include "../DateTime.h"
 
 using namespace std;

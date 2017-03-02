@@ -14,9 +14,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "Distribution.h"
-#include "../deps/pugixml.h"
-// #include "DateTime.h"
+#include "distribution.h"
+#include "pugixml.h"
+// #include "datetime.h"
 
 using namespace std;
 using pugi::xml_node;

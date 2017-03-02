@@ -11,10 +11,10 @@
 #include <iostream>
 #include <string>
 // #include <ctime>
-#include "Event.h"
-#include "Task.h"
-#include "Agent.h"
-#include "Utility.h"
+#include "event.h"
+#include "task.h"
+#include "agent.h"
+#include "utility.h"
 
 using namespace std;
 

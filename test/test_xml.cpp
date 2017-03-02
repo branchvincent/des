@@ -1,4 +1,4 @@
-#include "../deps/pugixml.h"
+#include "pugixml.h"
 #include <iostream>
 #include <string.h>
 

@@ -48,8 +48,8 @@ namespace util
 {
 //	Public member functions
 
-    inline bool exists(const string& file)
-    {
+    class Timer;
+    inline bool exists(string file) {//{return (access(file.c_str(), F_OK) != -1 );}
         struct stat buffer;
         return stat(file.c_str(), &buffer) == 0;
     }
@@ -61,7 +61,7 @@ namespace util
 
     inline float secToMin(const float& t) {return t/60.;}
     inline float minToSec(const float& t) {return t*60.;}
-    
+
     // inline float secToHr(const time_t& t) {return t/3600.;}
     // inline float MinToHr(const time_t& t) {return t/60.;}
     // inline float HrToMin(const time_t& t) {return t*60.;}
@@ -77,10 +77,13 @@ namespace util
     template <typename T> void checkIndex(const vector<T>& vec, int index)
         {ASSERT(index >= 0 && index < vec.size(), "Invalid array index");}
 
+
+
+
 //  Data members
 
 // //extern
-    extern float seed;// = rand();
+    extern int seed;// = rand();
     extern default_random_engine randNumGen;//(seed);
     // extern vector<float> TRAFFIC;// = {1,1,1};
     // float seed = rand();
@@ -128,6 +131,22 @@ vector<T> util::toVector(string data, char delimiter)
 
     return vec;
 }
+
+/****************************************************************************
+*																			*
+*	Definition of Timer class												*
+*																			*
+****************************************************************************/
+
+class util::Timer
+{
+    public:
+        Timer() : start_t(clock()) {}
+        void start(clock_t t) {start_t = t;}
+        float elapsed() {return float(clock() - start_t)/CLOCKS_PER_SEC;}
+    private:
+       float start_t;
+};
 
 /****************************************************************************
 *																			*

@@ -14,8 +14,8 @@
 #include <iostream>
 #include <string>
 // #include "../DateTime.h"
-#include "Event.h"
-#include "Task.h"
+#include "event.h"
+#include "task.h"
 
 using namespace std;
 

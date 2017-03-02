@@ -14,7 +14,7 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include "Utility.h"
+#include "utility.h"
 
 using namespace std;
 
@@ -26,29 +26,12 @@ using namespace std;
 
 class Flags
 {
-//	Public member functions
-
 	public:
-
-    //  Constructor
-
 		Flags(map<string,bool> flags = {});
-
-	//	Inspectors
-
         const bool& isOn(string key);
-
-	//	Mutators
-
 		void add(string flag, bool value)
 			{string key = util::toLower(flag); flags[key] = value;}
-
-    //  Other member functions
-
 		void output(ostream& out) const;
-
-//	Data members
-
 	private:
         map<string,bool> flags;
 };

@@ -16,12 +16,12 @@
 #include <queue>
 #include <algorithm>
 #include <list>
-#include "Task.h"
-// #include "Shift.h"
-#include "TaskType.h"
-// #include "Utility.h"
+#include "task.h"
+// #include "shift.h"
+#include "tasktype.h"
+// #include "utility.h"
 // #include "Statistics.h"
-#include "../deps/pugixml.h"
+#include "pugixml.h"
 
 using namespace std;
 using pugi::xml_document;

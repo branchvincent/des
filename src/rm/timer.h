@@ -24,15 +24,10 @@ using namespace std;
 
 class Timer
 {
-//	Public member functions
-
 	public:
        	Timer() : start_t(clock()) {}
-		float elapsed() {return float(clock() - start_t)/CLOCKS_PER_SEC;}
 		void start(clock_t t) {start_t = t;}
-
-//	Data members
-
+		float elapsed() {return float(clock() - start_t)/CLOCKS_PER_SEC;}
 	private:
        float start_t;
 };

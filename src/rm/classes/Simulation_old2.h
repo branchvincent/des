@@ -15,16 +15,16 @@
 #include <string>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include "Flags.h"
-#include "Parameters.h"
-#include "Event.h"
-#include "Team.h"
-#include "../deps/EasyLogging.h"
+#include "flags.h"
+#include "parameters.h"
+#include "event.h"
+#include "team.h"
+#include "easylogging++.h"
 // #include <vector>
 // #include <list>
 // #include <time.h>
 // #include <algorithm>
-// #include "Task.h"
+// #include "task.h"
 // #include <stdio.h>
 
 using namespace std;

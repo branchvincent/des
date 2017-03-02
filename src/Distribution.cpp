@@ -12,8 +12,8 @@
 #include <string>
 #include <vector>
 #include <random>
-#include "Distribution.h"
-#include "Utility.h"
+#include "distribution.h"
+#include "utility.h"
 
 using namespace std;
 

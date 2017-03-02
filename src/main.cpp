@@ -14,25 +14,15 @@
 // #define ELPP_DISABLE_LOGS
 #include <iostream>
 #include <string>
-#include <stdlib.h>
-#include <random>
-#include "Simulation.h"
-#include "ArgParser.h"
-#include "Timer.h"
-#include "Utility.h"
-#include "../deps/EasyLogging.h"
+#include "simulation.h"
+#include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
 
-Flags getFlags(int argc, const char* argv[]);
-string getAbsolutePath(string relativePath);
-void initLogger(int argc, const char** argv);
-
-// srand((unsigned int) time(0));
-float util::seed = rand();
-default_random_engine util::randNumGen = default_random_engine(util::seed);
-// vector<float> util::TRAFFIC = {1,1,1};
+void initLogger();
+int util::seed = 0;	// not yet set
+default_random_engine util::randNumGen = default_random_engine(0);
 
 /****************************************************************************
 *																			*
@@ -42,17 +32,17 @@ default_random_engine util::randNumGen = default_random_engine(util::seed);
 
 int main(int argc, const char* argv[])
 {
-//  Read in parameter file
+//  Read command line options
 
-	Timer t;
-	initLogger(argc, argv);
-    Flags flags = getFlags(argc, argv);
-	string file = getAbsolutePath(argv[1]);
+	util::Timer t;
+	initLogger();
+	OptionParser p;
+	Options opts = p.parse(argc, argv);
 
 //  Intialize and run simulation
 
-    Simulation sim(file, flags);
-    // sim.run();
+    Simulation sim(opts);
+    sim.run();
     LOG(INFO) << "Runtime: " << t.elapsed() << " s";
 
 	return 0;
@@ -60,43 +50,19 @@ int main(int argc, const char* argv[])
 
 /****************************************************************************
 *																			*
-*	Function:	getFlags    												*
+*	Function:	initLogger		 											*
 *																			*
-*	Purpose:	To get the flags from the command line                      *
-*																			*
-****************************************************************************/
-
-Flags getFlags(int argc, const char* argv[])
-{
-   ArgParser parser;
-   parser.parse(argc, argv);
-   return parser.getFlags();
-}
-
-/****************************************************************************
-*																			*
-*	Function:	getAbsolutePath 											*
-*																			*
-*	Purpose:	To get the absolute filepath from a relative filepath       *
+*	Purpose:	To initialize the logger							       	*
 *																			*
 ****************************************************************************/
 
-string getAbsolutePath(string relativePath)
+void initLogger()
 {
-   LOG_IF(!util::exists(relativePath), FATAL) << "Cannot read " << relativePath;
-   const char* absolutePath = realpath(relativePath.c_str(), NULL);
-   LOG_IF(absolutePath == NULL, FATAL) << "Cannot read " << relativePath;
-   return absolutePath;
-}
-
-void initLogger(int argc, const char** argv)
-{
-    // el::Configurations conf("deps/EasyLogging.conf");
-//	el::Configurations conf("/Users/Branch/Documents/Research/fra/shado/config/logger.conf");
+//	TODO
 	el::Configurations conf("config/logger.conf");
     el::Loggers::reconfigureAllLoggers(conf);
-	el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
+	// el::Loggers::reconfigureAllLoggers(el::ConfigurationType::Format, "%datetime %level %ip_addr : %msg");
+	// el::Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
     // el::Loggers::addFlag(el::LoggingFlag::HierarchicalLogging);
-    // conf.setToDefault();
-    START_EASYLOGGINGPP(argc, argv);
+    // START_EASYLOGGINGPP(argc, argv);
 }

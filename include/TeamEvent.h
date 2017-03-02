@@ -13,8 +13,8 @@
 
 #include <iostream>
 #include <string>
-#include "Event.h"
-//#include "Team.h"
+#include "event.h"
+//#include "team.h"
 
 using namespace std;
 

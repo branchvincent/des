@@ -15,7 +15,7 @@
 #include <string>
 #include <vector>
 #include <random>
-#include "Distribution.h"
+#include "distribution.h"
 #include "../Utility.h"
 
 using namespace std;

@@ -15,8 +15,8 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
-#include "DateTime.h"
-#include "Utility.h"
+#include "datetime.h"
+#include "utility.h"
 
 using namespace std;
 

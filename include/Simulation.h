@@ -13,14 +13,12 @@
 
 #include <iostream>
 #include <string>
-#include "Flags.h"
-#include "Parameters.h"
-#include "Task.h"
-// #include "Event.h"
-#include "Team.h"
-#include "../deps/EasyLogging.h"
-#include "../deps/EZProgressBar.h"
-#include "../deps/pugixml.h"
+#include "task.h"
+#include "team.h"
+#include "optionparser.h"
+#include "ezprogressbar.h"
+#include "easylogging++.h"
+#include "pugixml.h"
 
 using namespace std;
 using pugi::xml_document;
@@ -28,7 +26,6 @@ using pugi::xml_node;
 
 // Helper functions and definitions
 
-// bool cmpTaskArrs(Task* t1, Task* t2) {return t1->arrivesBefore(*t2);}
 bool cmpEvents(Event* t1, Event* t2) {return (*t1) < (*t2);}
 
 /****************************************************************************
@@ -36,9 +33,6 @@ bool cmpEvents(Event* t1, Event* t2) {return (*t1) < (*t2);}
 *	Definition of Simulation class											*
 *																			*
 ****************************************************************************/
-
-//  Notes
-//  - Add utilization count for tasks cut off at end of phase (processAllDepts)
 
 class Simulation
 {
@@ -48,7 +42,7 @@ class Simulation
 
 	//	Constructors
 
-        Simulation(string file, Flags flags);
+		Simulation(Options opts);
 		// ~Simulation() {del *;}
 
 	//	Other member functions
@@ -64,10 +58,10 @@ class Simulation
 
 //	Data members
 
-	public:
-		Flags flags;				// command line flags
-		ez::EZProgressBar bar;		// progress bar
-		Parameters parameters;		// simulation parameters
+	private:
+		Options opts;				// command line options
+		ez::ezProgressBar bar;		// progress bar
+		// Parameters parameters;		// simulation parameters
 		vector<Team> teams;			// trains
 		list<Event*> events;		// event list
 		// Stats stats;				// TODO: statistics
@@ -85,52 +79,31 @@ ostream& operator<<(ostream& out, const Simulation& s) {s.output(out); return ou
 *																			*
 ****************************************************************************/
 
-Simulation::Simulation(string file, Flags flags = Flags()) : flags(flags), parameters(file)
-	// teams{Team(), Team(Shift("01-01 12:00", "01-02 3:00"))}
+Simulation::Simulation(Options opts) : opts(opts)
 {
 //	TODO: Perform assertions (i.e. duration of simulation and traffic)
 
 	LOG(INFO) << "Initializing simulation";
-	parameters.numReps = 3;
-//  Initialize srand
+	bar = ez::ezProgressBar(opts.reps);
 
-	//TODO: change this
-    if (!flags.isOn("rand"))
-        srand((unsigned int) time(0));
-    else
-        srand(0);
-	util::seed = rand();
-
-	LOG(INFO) << "Flags = " << flags;
-
-	// if (flags.isOn("rand"))
-    //     util::seed = time(0);
-    // else
-    //     util::seed = 0;
-	// LOG(INFO) << "Seed = " << util::seed;
-	util::randNumGen = default_random_engine(util::seed);
-
-	// if (flags.isOn("pbar"))
-	// bar = ez::EZProgressBar(parameters.numReps);
-
-//	Load xml
-
-	xml_document doc;
-	if (!doc.load_file(file.c_str())) cerr << "Failed to read." << endl;
-
-//	Read xml
-
-	xml_node params = doc.child("parameters");
-	parameters = Parameters(params);
-	LOG(INFO) << "Params = " << parameters;
-
-	for (xml_node& team : doc.child("teams"))
-	{
-		if ((string)team.name() == "team")
-		{
-			teams.push_back(Team(team));
-		}
-	}
+// // 	Load xml
+//
+// 	xml_document doc;
+// 	if (!doc.load_file(file.c_str())) cerr << "Failed to read." << endl;
+//
+// //	Read xml
+//
+// 	xml_node params = doc.child("parameters");
+// 	parameters = Parameters(params);
+// 	LOG(INFO) << "Params = " << parameters;
+//
+// 	for (xml_node& team : doc.child("teams"))
+// 	{
+// 		if ((string)team.name() == "team")
+// 		{
+// 			teams.push_back(Team(team));
+// 		}
+// 	}
 
 //	Fill teams
 
@@ -154,9 +127,9 @@ void Simulation::run()
 //	Run each replication
 
 	bar.start();
-	for (int i = 0; i < parameters.numReps; i++, ++bar)
+	for (int i = 0; i < opts.reps; i++, ++bar)
 	{
-		run(i);
+		// run(i);
 		reset();
 	}
 
@@ -173,7 +146,7 @@ void Simulation::run()
 
 void Simulation::run(int rep)
 {
-	LOG(INFO) << "Rep " << rep + 1 << " of " << parameters.numReps << " started";
+	LOG(INFO) << "Rep " << rep + 1 << " of " << opts.reps << " started";
 
 //	Get events
 
@@ -196,8 +169,16 @@ void Simulation::run(int rep)
 
 //	TODO: Might need to clear agents for next rep
 
-	LOG(INFO) << "Rep " << rep + 1 << " of " << parameters.numReps << " completed";
+	LOG(INFO) << "Rep " << rep + 1 << " of " << opts.reps << " completed";
 }
+
+/****************************************************************************
+*																			*
+*	Function:	reset														*
+*																			*
+*	Purpose:	To reset a simulation										*
+*																			*
+****************************************************************************/
 
 void Simulation::reset()
 {
@@ -218,8 +199,8 @@ void Simulation::reset()
 
 void Simulation::output(ostream& out) const
 {
-	out << "Parameters: " << parameters << endl;
-	out << "Flags: " << flags;
+	// out << "Parameters: " << parameters << endl;
+	// out << "Flags: " << flags;
 	//	TODO: Might want to output stats
 }
 

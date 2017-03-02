@@ -13,9 +13,9 @@
 
 #include <iostream>
 #include <string>
-#include "Shift.h"
-// #include "Traffic.h"
-#include "../deps/PugiXML.h"
+#include "shift.h"
+#include "pugixml.h"
+#include "cxxopts.h"
 
 using namespace std;
 using pugi::xml_node;
@@ -35,7 +35,8 @@ class Parameters
     //  Constructor
 
 		Parameters(xml_node& data);
-		Parameters(string file);
+		Parameters(string file = "");
+		// Parameters();
 
 	//	Inspectors
 
