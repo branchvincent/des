@@ -40,174 +40,102 @@ using pugi::xml_node;
 *																			*
 ****************************************************************************/
 
-Team::Team(xml_node& data) : shift()
+Team::Team(const xml_node& data) : shift()
 {
-	string name = data.attribute("name").value();
+	LOG(DEBUG) << "Initializing team at " << this;
 
-	for (xml_node& child : data.child("tasks"))
+//	Team
+
+	string name = util::toLower(data.attribute("name").value());
+	LOG_IF(name == "", FATAL) << "XML Error: Could not read team attribute 'name'";
+
+//	Task types
+
+	for (const xml_node& type : data.child("tasks"))
 	{
-		if ((string)child.name() == "task")
+		if ((string)type.name() == "task")
 		{
-			taskTypes.push_back(TaskType(child));
+			taskTypes.emplace_back(this, type);
 		}
 	}
 
-	//TODO: fix types
-	for (xml_node& child : data.child("agents"))
-	{
-		if ((string)child.name() == "agent")
-		{
-			string temp = child.attribute("task_ids").value();
-			vector<int> ids = util::toVector<int>(temp);
-			vector<TaskType*> subset;
-			for (int i = 0; i < taskTypes.size(); i++)
-			{
-				if (util::contains(ids, i))
-				{
-					subset.push_back(&taskTypes[i]);
-				}
-			}
-			agents.push_back(Agent(child, subset));
+//	Agents
 
-			// for (TaskType* type : subset)
-			// {
-			// 	type->addAgent(&(agents.back()));
-			// }
+	for (const xml_node& agent : data.child("agents"))
+	{
+		if ((string)agent.name() == "agent")
+		{
+		 	agents.emplace_back(this, agent);
 		}
 	}
 
 //	Initialize task arrivals
 
-	for (Agent& agent : agents) agent.setTeam(this);
-	for (TaskType& taskType : taskTypes)
-	{
-		taskType.setTeam(this);
-		taskType.addAgent(&agents[0]);	//TODO: fix
-	}
 	initArrivingTasks();
 	initEvents();
 
-	LOG(INFO) << "Initializing team: " << name << " with " << agents.size()
-		<< " agents and " << taskTypes.size() << " task types";
-	LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
+	LOG(DEBUG) << "Initialized team\n" << *this << endl << "at " << this;
+	// LOG(INFO) 	<< "Initialized team " << name << " with " << agents.size()
+				// << " agents and " << taskTypes.size() << " task types";
+	// LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
 }
 
-Team::Team(Shift shift)
-	: name("DefaultTeam"), agents{Agent()}, taskTypes{TaskType(),TaskType()}, shift(shift)
-{
-	LOG(INFO) << "Initializing team: " << name << " with " << agents.size()
-		<< " agents and " << taskTypes.size() << " task types";
-	LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
-
-//	Initialize task arrivals
-
-	for (Agent& agent : agents) agent.setTeam(this);
-	for (TaskType& taskType : taskTypes)
-	{
-		taskType.setTeam(this);
-		taskType.addAgent(&agents[0]);
-	}
-	initArrivingTasks();
-	initEvents();
-}
-
-Team::Team(string name, vector<Agent> agents, vector<TaskType> taskTypes)
-	: name(name), agents(agents), taskTypes(taskTypes), shift()
-{
-	LOG(INFO) << "Initializing team: " << name << " with " << agents.size()
-		<< " agents and " << taskTypes.size() << " task types";
-	LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
-
-//	Initialize task arrivals
-
-	initArrivingTasks();
-	initEvents();
-}
-
-// TODO: need to reset events after each rep
-
-// Team::Team(const ptree& xmlData, Shift shift) : shift(shift)
+// Team::Team(Shift shift)
+// 	: name("DefaultTeam"), agents{Agent()}, taskTypes{TaskType(),TaskType()}, shift(shift)
 // {
-// 	name = xmlData.get<string>("name");
+// 	LOG(DEBUG) 	<< "Initializing team: " << name << " with " << agents.size()
+// 				<< " agents and " << taskTypes.size() << " task types";
+// 	// LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
 //
-// //	Get task types
+// //	Initialize task arrivals
 //
-// 	for (const auto& task : xmlData.get_child("tasks"))
-// 	{
-// 		if (task.first == "task")
-// 		{
-// 			taskTypes.push_back(TaskType(*this, task.second));
-// 		}
-// 	}
-//
-// //	Get agents
-//
-// 	for (const auto& agent : xmlData.get_child("agents"))
-// 	{
-// 		if (agent.first == "agent")
-// 		{
-// 			agents.push_back(Agent(*this, agent.second));
-// 		}
-// 	}
-//
-// //	Get shift
-//
-// 	phases.push_back(Phase(*this, shift.getStart(), shift.getStop(), 0));
-//
-// //	Get events
-//
-// 	for (Task& t : phases[0].arrivingTasks)
-// 	{
-// 		events.push_back(Event("arrival",t.getArrival(),t));
-// 	}
+// 	initArrivingTasks();
+// 	initEvents();
 // }
-
-// void Team::startPhase(int phase)
+//
+// Team::Team(string name, vector<Agent> agents, vector<TaskType> taskTypes)
+// 	: name(name), agents(agents), taskTypes(taskTypes), shift()
 // {
-// 	list<Task> temp;
+// 	LOG(INFO) << "Initializing team: " << name << " with " << agents.size()
+// 		<< " agents and " << taskTypes.size() << " task types";
+// 	LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
 //
-// 	for (TaskType& taskType : taskTypes)
-// 	{
-// 		DateTime arrival;
-// 		DateTime stop = arrival + 3600;
+// //	Initialize task arrivals
 //
-// 	//	Add tasks that arrive in time
-//
-// 		while (arrival <= stop)
-// 		{
-// 			temp.push_back(taskType.genTask(phase));	// add current
-// 			arrival = temp.back().getArrival();
-// 		}
-// 		temp.pop_back();
-// 	}
-//
-// //	Merge lists
-//
-// 	arrivingTasks.merge(temp);
+// 	initArrivingTasks();
+// 	initEvents();
 // }
 
 list<Event*> Team::getEvents() {return events;}
 
+void Team::validate() const
+{
+//	Tasks
+
+	for (const TaskType& type : taskTypes)
+	{
+		LOG_IF(type.team != this, FATAL) << "Team not valid: incorrect team for tasktype "
+			<< &type << ". Expected " << this << " but received " << type.team;
+		for (const Agent* agent: type.agents)
+		{
+			// LOG_IF(not util::contains(agents, agent), FATAL) << "Team not valid: incorrect agent in tasktype";
+		}
+	}
+
+//	Agents
+
+	for (const Agent& agent : agents)
+	{
+		LOG_IF(agent.team != this, FATAL) << "Team not valid: incorrect team for agent "
+			<< &agent << ". Expected " << this << " but received " << agent.team;
+	}
+}
 // void Team::addTask(Task* task)
 // {
 // 	TaskType* type = task->taskType; //agents;
 // 	vector<Agent*> subteam = type->agents;
 // 	Agent* agent = chooseAgent(subteam);
 // 	agent->addTask(task);
-// }
-
-// vector<Agent&> Team::getAgentSubset(TaskType type)
-// {
-// 	vector<Agent&> subset;
-//
-// 	for (Agent& agent : agents)
-// 	{
-// 		if (util::containts(agent.taskTypes, type))
-// 		{
-// 			subset.push_back(agent);
-// 		}
-// 	}
-// 	return subset;
 // }
 
 Agent* Team::chooseAgent(vector<Agent*> subteam)
@@ -221,7 +149,6 @@ Agent* Team::chooseAgent(vector<Agent*> subteam)
 	}
 	return subteam[index];
 }
-
 
 
 void Team::reset()
@@ -253,7 +180,7 @@ void Team::initArrivingTasks()
 	{
 		Task task = taskType.genTask();
 
-		while (task.getArrival() < stop)
+		while (task.arrival < stop)
 		{
 			arrivingTasks.push_back(task);
 			task = taskType.genTask();
@@ -268,7 +195,7 @@ void Team::initEvents()
 
 	for (Task& t : arrivingTasks)
 	{
-		events.push_back(new ArrivalEvent(t.getArrival(), this, &t));
+		events.push_back(new ArrivalEvent(t.arrival, this, &t));
 	}
 }
 
@@ -282,20 +209,20 @@ void Team::initEvents()
 
 void Team::output(ostream& out) const
 {
-	// out << "Name: " << name << endl;
-	// out << "Task types: " << taskTypes << endl;
-	// out << "Agents: ";
-	//
-	// bool first = true;
-	// for (const auto& agent : agents)
-	// {
-	// 	if (first)
-	// 	{
-	// 		out << agent.getName();
-	// 		first = false;
-	// 	}
-	// 	else out << ", " << agent.getName();
-	// }
+	out << "Team " << name << endl;
+	out << "Task types: " << taskTypes << endl;
+	out << "Agents: ";
+
+	bool first = true;
+	for (const auto& agent : agents)
+	{
+		if (first)
+		{
+			out << agent.name;
+			first = false;
+		}
+		else out << ", " << agent.name;
+	}
 }
 
 /****************************************************************************
@@ -338,7 +265,7 @@ void Team::output(ostream& out) const
 *	Purpose:	To output...                                                *
 *																			*
 ****************************************************************************/
-
+//
 // void Team::output()
 // {
 // //  TODO

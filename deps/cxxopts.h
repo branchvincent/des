@@ -1366,10 +1366,10 @@ std::string
 Options::help(const std::vector<std::string>& groups) const
 {
   String result = m_help_string + "\nUSAGE:\n  " +
-    toLocalString(m_program) + " [OPTIONS]";
+    toLocalString(m_program) + " [options]";
 
   if (m_positional.size() > 0) {
-    result += " input output";
+    result += " input [output]";
   }
 
   result += "\n\n";

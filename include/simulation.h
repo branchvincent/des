@@ -43,7 +43,7 @@ class Simulation
 	//	Constructors
 
 		Simulation(Options opts);
-		// ~Simulation() {del *;}
+//		~Simulation() {for () delete *;}
 
 	//	Other member functions
 
@@ -86,27 +86,41 @@ Simulation::Simulation(Options opts) : opts(opts)
 	LOG(INFO) << "Initializing simulation";
 	bar = ez::ezProgressBar(opts.reps);
 
-// // 	Load xml
-//
-// 	xml_document doc;
-// 	if (!doc.load_file(file.c_str())) cerr << "Failed to read." << endl;
-//
-// //	Read xml
-//
-// 	xml_node params = doc.child("parameters");
-// 	parameters = Parameters(params);
-// 	LOG(INFO) << "Params = " << parameters;
-//
-// 	for (xml_node& team : doc.child("teams"))
-// 	{
-// 		if ((string)team.name() == "team")
-// 		{
-// 			teams.push_back(Team(team));
-// 		}
-// 	}
+// 	Load xml
 
-//	Fill teams
+	xml_document doc;
+	pugi::xml_parse_result result = doc.load_file(opts.inputFile.c_str());
+ 	LOG_IF(not result, FATAL) << "Failed to read input file '" << opts.inputFile
+		<< "': " << result.description();
 
+	// if (not result)
+	// {
+	// 	std::cout << "XML [" << opts.inputFile << "] parsed with errors, attr value: [" << doc.child("node").attribute("attr").value() << "]\n";
+	// 	std::cout << "Error description: " << result.description() << "\n";
+	// 	std::cout << "Error offset: " << result.offset << " (error at [..." << (opts.inputFile + result.offset) << "]\n\n";
+	// }
+
+//	Read xml
+
+	// xml_node params = doc.child("parameters");
+	// parameters = Parameters(params);
+	// LOG(INFO) << "Params = " << parameters;
+
+	for (const xml_node& team : doc.child("teams"))
+	{
+		if ((string)team.name() == "team")
+		{
+			teams.emplace_back(team);
+		}
+	}
+
+	for (int i = 0; i < teams.size(); i++)
+		teams[i].validate();
+	//
+	// for (const Team& team : teams)
+	// {
+	// 	team.validate();
+	// }
 	// teams.push_back(Team());
 	// teams.push_back(Team(Shift("01-01 12:00", "01-02 3:00")));
 }
@@ -129,7 +143,7 @@ void Simulation::run()
 	bar.start();
 	for (int i = 0; i < opts.reps; i++, ++bar)
 	{
-		// run(i);
+		run(i);
 		reset();
 	}
 

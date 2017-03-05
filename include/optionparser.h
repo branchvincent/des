@@ -14,8 +14,9 @@
 #include <iostream>
 #include <string>
 #include "cxxopts.h"
-#include "flags.h"
+// #include "flags.h"
 #include "util.h"
+#include "easylogging++.h"
 
 using namespace std;
 
@@ -54,7 +55,7 @@ class OptionParser
 *																			*
 *	Function:	OptionParser												*
 *																			*
-*	Purpose:	To construct an argument parser								*
+*	Purpose:	To construct an option parser								*
 *																			*
 ****************************************************************************/
 
@@ -64,9 +65,9 @@ OptionParser::OptionParser() : opts("shado", "SHADO command line options\n")
 	  ("h,help", "Display usage instructions")
 	  ("i,input", "Configuration file", cxxopts::value<string>(), "FILE")
 	  ("o,output", "Output path", cxxopts::value<string>()->default_value("data/"), "PATH")
-	  ("d,debug", "Debugging mode")
-	  ("v,verbose", "Be verpose")
+	//   ("v,verbose", "Level of verposity", cxxopts::value<int>()->default_value("0"), "LEVEL")
 	  ("s,seed", "Random seed", cxxopts::value<unsigned int>()->default_value(to_string(time(0))), "S")
+	  ("d,debug", "Debugging mode")
 	  //reps
 	  //interval size
 	  ("err", "erroneous option", cxxopts::value<vector<string>>());
@@ -82,6 +83,8 @@ OptionParser::OptionParser() : opts("shado", "SHADO command line options\n")
 
 Options OptionParser::parse(int argc, const char* argv[])
 {
+	LOG(DEBUG) << "Parsing command line options";
+
 //	Parse options
 
 	try
@@ -132,19 +135,26 @@ Options OptionParser::parse(int argc, const char* argv[])
 
 	if (opts.count("debug"))
 	{
-		//TODO
-		cout << "Debug" << endl;
+		// cout << "Debug" << endl;
+		el::Loggers::setLoggingLevel(el::Level::Debug);
 	}
-	if (opts.count("verbose"))
-	{
-		//TODO
-		cout << "Verbose" << endl;
-	}
+	// if (opts.count("verbose"))
+	// {
+	// 	cout << "Verbose" << endl;
+	// }
+
+//	Set verbosity
+
+	// Loggers::setLoggingLevel(Level::Debug);
+	// map<char,int> verbose = {{'l' : el::Level::Debug}, {'m' : el::Level::}, {}}
+
+//	Set seed
 
 	srand(opts["seed"].as<unsigned int>());
 	util::seed = rand();
 	util::randNumGen = default_random_engine(util::seed);
 
+	LOG(DEBUG) << "Setting seed to " << util::seed;
 	return Options(opts["input"].as<string>(), opts["output"].as<string>());
 }
 

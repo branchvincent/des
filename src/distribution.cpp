@@ -93,8 +93,7 @@ float Distribution::rand()
 
 void Distribution::output(ostream& out) const
 {
-	out << "Type: " << type << ", ";
-	out << "Parameters: " << parameters;
+	out << type << " distribution with " << parameters;
 }
 
 //	Operators

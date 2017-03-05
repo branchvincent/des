@@ -50,11 +50,11 @@ class Task
 	//	Inspectors
 
 		// const TaskType& getType() const {return type;}
-		const int& getPriority() const {return priority;}
-		const DateTime& getArrival() const {return arrival;}
-		const DateTime& getDeparture() const {return departure;}
-		const DateTime& getExpiration() const {return expiration;}
-		const float& getWaitTime() const {return wait;}
+		// const int& getPriority() const {return priority;}
+		// const DateTime& getArrival() const {return arrival;}
+		// const DateTime& getDeparture() const {return departure;}
+		// const DateTime& getExpiration() const {return expiration;}
+		// const float& getWaitTime() const {return wait;}
 
 	//	Mutators
 

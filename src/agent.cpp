@@ -29,30 +29,42 @@ using pugi::xml_node;
 *																			*
 ****************************************************************************/
 
-Agent::Agent(xml_node& data, vector<TaskType*> taskTypes) : team(NULL), currTask(NULL) //taskTypes(taskTypes),
+Agent::Agent(Team* team, const xml_node& data) : team(team), name(""),
+	taskTypes{}, queue(), currTask(NULL)
 {
-	name = data.attribute("name").value();
-	vector<int> task_ids = util::toVector<int>(data.attribute("task_ids").value());
+	LOG(DEBUG) << "Initializing agent at " << this;
 
-	xml_node tasktypes = data.parent().parent().child("tasks");
-	for (xml_node& type : tasktypes)
+//	Name
+
+	LOG_IF(team == NULL, FATAL) << "NULL";
+	name = data.attribute("name").value();
+	LOG_IF(name == "", FATAL) << "XML Error: Could not read agent attribute 'name'";
+
+//	Task types
+
+	string temp = data.attribute("task_ids").value();
+	LOG_IF(temp == "", FATAL) << "XML Error: Could not read agent attribute 'task_ids'";
+	vector<int> ids = util::toVector<int>(temp);
+
+	int i = 0;
+	for (TaskType& type : team->taskTypes)
 	{
-		if ((string)type.name() == "task")
+		if (util::contains(ids, i++))
 		{
-			int id = atoi(type.attribute("id").value());
-			if (util::contains(task_ids, id))
-			{
-				taskTypes.push_back(new TaskType(type));
-			}
+			taskTypes.push_back(&type);
+			type.addAgent(this);
+			LOG(DEBUG) << "Adding tasktype " << &type << " to agent " << this;
 		}
 	}
+
+	LOG(DEBUG) << "Initialized agent: \n" << *this << endl;
 }
 
-Agent::Agent() : team(NULL), name("DefaultAgent"), taskTypes{new TaskType()}, currTask(NULL)
-{}
-
-Agent::Agent(string name, vector<TaskType*> taskTypes) : team(NULL), name(name), taskTypes(taskTypes), currTask(NULL)
-{}
+// Agent::Agent() : team(NULL), name("DefaultAgent"), taskTypes{new TaskType()}, currTask(NULL)
+// {}
+//
+// Agent::Agent(string name, vector<TaskType*> taskTypes) : team(NULL), name(name), taskTypes(taskTypes), currTask(NULL)
+// {}
 
 // Agent(string name, vector<TaskTypes> taskTypes) : //, Statistics& sts) :
 //    name(name),
@@ -62,34 +74,6 @@ Agent::Agent(string name, vector<TaskType*> taskTypes) : team(NULL), name(name),
 //    // sharedStats(sts),
 //    // stats()
 // {}
-
-// Agent::Agent(Team& team, const ptree& xmlData) : team(team), taskTypes(), queue(), currTask(NULL)
-// {
-// 	name = xmlData.get<string>("name");
-// 	// shift = Shift(util::toVector<string>(xmlData.get<string>("shift")));
-//
-// 	for (const auto& i : util::toVector<int>(xmlData.get<string>("tasks")))
-// 	{
-// 		util::checkIndex(team.taskTypes, i);
-// 		taskTypes.push_back(team.taskTypes[i]);
-// 	}
-// }
-
-// optional<Event> Agent::getNextEvent() const
-// {
-//     if (currTask)
-//     {
-// 		optional<Event> nextEvent = currTask->getEvent();
-// 		// for (const Task& task : queue)
-// 		// {
-// 		// 	if (task.getNextEvent() < nextTask)
-// 		// 		nextTask = task.getNextEvent();
-// 		// }
-// 		if (nextEvent)
-//         	return nextEvent;
-//     }
-// 	return optional<Event>();
-// }
 
 // void Agent::addTask(Task* task)
 // {
@@ -115,26 +99,11 @@ Agent::Agent(string name, vector<TaskType*> taskTypes) : team(NULL), name(name),
 
 void Agent::output(ostream& out) const
 {
-	out << "Name: " << name << endl;
+	out << "Agent " << name << endl;
+	out << "Team " << team << endl;
 	// out << "Shift: " << shift << endl;
 	out << "Tasks: " << taskTypes;
 }
-
-/****************************************************************************
-*																			*
-*	Function:	getNextEvent												*
-*																			*
-*	Purpose:	To get the time of the next event							*
-*																			*
-****************************************************************************/
-
-// float Agent::getNextEvent()
-// {
-// 	if (busy)
-// 		return currTask.getNextEvent();
-// 	else
-// 		return INFINITY;
-// }
 
 /****************************************************************************
 *																			*

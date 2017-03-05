@@ -30,6 +30,16 @@ using pugi::xml_node;
 class Event;
 class Team;
 
+struct CmpPrty
+{
+	bool operator()(Task* t1, Task* t2) {return t2->higherPriority(*t1);}
+};
+// typedef Agent Queue;
+
+// bool cmpPrty(Task* t1, Task* t2) {return t2->higherPriority(*t2);}
+// typedef priority_queue<Task*,vector<Task*>,decltype(&cmpPrty)> Queue;
+typedef priority_queue<Task*,vector<Task*>,CmpPrty> Queue;
+
 /****************************************************************************
 *																			*
 *	Definition of Agent class												*
@@ -48,11 +58,9 @@ class Agent
 
 	//	Constructor
 
-		// Agent(Team& team, const ptree& xmlData);
-		// Agent(Team& team, const ptree& xmlData);
-		Agent();
-		Agent(xml_node& data, vector<TaskType*> taskTypes);
-       	Agent(string name, vector<TaskType*> taskTypes);
+		// Agent();
+		Agent(Team* team, const xml_node& data);
+     //   	Agent(string name, vector<TaskType*> taskTypes);
 
 	//	Inspectors
 
@@ -67,7 +75,7 @@ class Agent
 
 	//	Mutators
 
-		void setTeam(Team* t) {team = t;}
+		// void setTeam(Team* t) {team = t;}
 		// void addTask(Task* task);
 		// void arrive(Task& task, float time);
 		// void interrupt(float time);
@@ -97,8 +105,8 @@ class Agent
 	public:
 		Team* team;
         string name;
-		vector<TaskType*> taskTypes;		// types of tasks
-		priority_queue<Task*> queue; 	// task queue
+		vector<TaskType*> taskTypes;	// types of tasks
+		Queue queue; 					// task queue
 		Task* currTask;             	// current task
 		// Statistics& sharedStats;		// shared stats
        // Statistics stats;          	 	// local stats

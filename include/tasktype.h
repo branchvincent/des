@@ -48,7 +48,7 @@ class TaskType
 	//	Constructors
 
 		TaskType();
-		TaskType(xml_node& data);
+		TaskType(Team* team, const xml_node& data);
 		TaskType(string name, int priority, bool isAffectedByTraffic,
 			Distribution interarrival, Distribution service, Distribution expiration, Team* team);
 		// TaskType(string name, vector<int> priority, vector<bool> isAffectedByTraffic,
@@ -65,7 +65,7 @@ class TaskType
 		// vector<Distribution> getExpiration() const;
 
 		void addAgent(Agent* agent);
-		void setTeam(Team* t) {team = t;}
+		// void setTeam(Team* t) {team = t;}
 		// int getPriority(int phase) const;
 		// bool getIsAffectedByTraffic(int phase) const;
 		// float randInterarrival(int phase);
@@ -95,7 +95,7 @@ class TaskType
 		float genArrivalTime();
 		float genServiceTime();
 		float genExpirationTime(float arrivalTime, float serviceTime);
-		void readDistributionFromXML(Distribution& dist, xml_node& data);
+		void readDistributionFromXML(Distribution& dist, const xml_node& data);
 
 //	Data members
 

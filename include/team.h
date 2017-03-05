@@ -13,9 +13,6 @@
 
 #include <iostream>
 #include <string>
-// #include <boost/property_tree/ptree.hpp>
-// #include <boost/property_tree/xml_parser.hpp>
-// #include <boost/optional.hpp>
 #include "agent.h"
 #include "tasktype.h"
 #include "shift.h"
@@ -51,10 +48,9 @@ class Team
 
 	//	Constructor
 
-		//TODO: const xml_node
-		Team(xml_node& data);
-		Team(Shift shift = Shift());
-		Team(string name, vector<Agent> agents, vector<TaskType> taskTypes);
+		Team(const xml_node& data);
+		// Team(Shift shift = Shift());
+		// Team(string name, vector<Agent> agents, vector<TaskType> taskTypes);
 
 	// 	Inspector
 
@@ -79,6 +75,7 @@ class Team
 
     //  Other member functions
 
+		void validate() const;
         void reset();
         void output(ostream& out) const;
 		Agent* chooseAgent(vector<Agent*> subteam);

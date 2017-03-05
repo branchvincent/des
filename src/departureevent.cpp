@@ -48,7 +48,10 @@ void DepartureEvent::process(list<Event*>& events)
 	LOG(INFO) << time << ": Team " << team << "=> Task " << task << " departing";
 	task->finish(time);
 	Agent* agent = task->agent;
+	ASSERT(agent != NULL, "NULL");
 	agent->currTask = NULL;
+	
+//	LOG(DEBUG) << agent;
 
 	if (!agent->queue.empty())
 	{

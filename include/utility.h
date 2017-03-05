@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <list>
 #include <iterator>
+#include "easylogging++.h"
 
 using namespace std;
 
@@ -46,9 +47,14 @@ using namespace std;
 
 namespace util
 {
-//	Public member functions
+//  Classes
 
     class Timer;
+
+//	Public member functions
+
+    inline void initLogger();
+
     inline bool exists(string file) {//{return (access(file.c_str(), F_OK) != -1 );}
         struct stat buffer;
         return stat(file.c_str(), &buffer) == 0;
@@ -68,33 +74,79 @@ namespace util
     // inline float HrToSec(const time_t& t) {return t*3600.;}
     // void convertInf(time_t& time) {if isinf(time) time }
 
-    template <class T> bool contains(vector<T>& vec, const T& data)
+    template <class T> bool contains(const vector<T>& vec, const T& data)
         {return find(vec.begin(), vec.end(), data) != vec.end();}
 
-    template <class T, class P> bool contains(map<T,P>& m, const T& key)
+    template <class T, class P> bool contains(const map<T,P>& m, const T& key)
         {return m.find(key) != m.end();}
 
     template <typename T> void checkIndex(const vector<T>& vec, int index)
         {ASSERT(index >= 0 && index < vec.size(), "Invalid array index");}
 
-
-
-
 //  Data members
 
-// //extern
-    extern int seed;// = rand();
-    extern default_random_engine randNumGen;//(seed);
-    // extern vector<float> TRAFFIC;// = {1,1,1};
-    // float seed = rand();
-    // default_random_engine randNumGen(seed);
-    // vector<float> TRAFFIC = {1,1,1};
+    extern int seed;
+    extern default_random_engine randNumGen;
 }
 
 //  Operators
 
 template <class T> ostream& operator<<(ostream& out, vector<T>& v);
 template <class T> ostream& operator<<(ostream& out, const vector<T>& v);
+
+/****************************************************************************
+*																			*
+*	Definition of Timer class												*
+*																			*
+****************************************************************************/
+
+class util::Timer
+{
+    public:
+        Timer() : start_t(clock()) {}
+        void start(clock_t t) {start_t = t;}
+        float elapsed() {return float(clock() - start_t)/CLOCKS_PER_SEC;}
+    private:
+       float start_t;
+};
+
+/****************************************************************************
+*																			*
+*	Function:	initLogger		 											*
+*																			*
+*	Purpose:	To initialize the logger							       	*
+*																			*
+****************************************************************************/
+
+void util::initLogger()
+{
+	using namespace el;
+	string format = "%datetime{%Y-%M-%d %H:%m:%s} %level : %msg";
+	string format_d = "%datetime{%Y-%M-%d %H:%m:%s} %level [%fbase-%func:%line] : %msg";
+//	string file = "log/shado-%datetime{%M-%d-%H.%m}.log";
+
+//	Global configurations
+
+	Configurations conf;
+	conf.setGlobally(ConfigurationType::Format, format);
+//	conf.setGlobally(ConfigurationType::Filename, file);//"log/shado.log");
+	conf.setGlobally(ConfigurationType::ToFile, "true");
+	conf.setGlobally(ConfigurationType::ToStandardOutput, "false");
+
+//	Specific configurations
+
+	conf.set(Level::Debug, ConfigurationType::Format, format_d);
+	conf.set(Level::Warning, ConfigurationType::ToStandardOutput, "true");
+	conf.set(Level::Error, ConfigurationType::ToStandardOutput, "true");
+	conf.set(Level::Fatal, ConfigurationType::ToStandardOutput, "true");
+	Loggers::reconfigureAllLoggers(conf);
+
+//	Logging level
+
+	Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
+    Loggers::addFlag(LoggingFlag::HierarchicalLogging);
+	Loggers::setLoggingLevel(Level::Fatal);
+}
 
 /****************************************************************************
 *																			*
@@ -121,32 +173,8 @@ vector<T> util::toVector(string data, char delimiter)
     while (in >> temp)
         vec.push_back(temp);
 
-    // string stemp;
-    // while (getline(in, stemp, delimiter))
-    // {
-    //     istringstream iss(stemp);
-    //     iss >> temp;
-    //     vec.push_back(temp);
-    // }
-
     return vec;
 }
-
-/****************************************************************************
-*																			*
-*	Definition of Timer class												*
-*																			*
-****************************************************************************/
-
-class util::Timer
-{
-    public:
-        Timer() : start_t(clock()) {}
-        void start(clock_t t) {start_t = t;}
-        float elapsed() {return float(clock() - start_t)/CLOCKS_PER_SEC;}
-    private:
-       float start_t;
-};
 
 /****************************************************************************
 *																			*
@@ -155,16 +183,6 @@ class util::Timer
 *	Purpose:	To output a vector                                          *
 *																			*
 ****************************************************************************/
-
-// template <class T>
-// ostream& operator<<(ostream& out, vector<T>& v)
-// {
-//     out << "[";
-//     if (v.size() > 0) out << v[0];
-//     for (int i = 1; i < v.size(); i++) out << ", " << v[i];
-//     out << "]";
-//     return out;
-// }
 
 template <class T>
 ostream& operator<<(ostream& out, const vector<T>& v)
@@ -183,25 +201,6 @@ ostream& operator<<(ostream& out, const vector<T>& v)
 *	Purpose:	To output a list                                            *
 *																			*
 ****************************************************************************/
-
-// template <class T>
-// ostream& operator<<(ostream& out, list<T>& l)
-// {
-//     out << "[";
-//
-//     bool first = true;
-//     for (const auto& li : l)
-//     {
-//         if (first)
-//         {
-//             out << li;
-//             first = false;
-//         }
-//         else out << ", " << li;
-//     }
-//     out << "]";
-//     return out;
-// }
 
 template <class T>
 ostream& operator<<(ostream& out, const list<T>& l)

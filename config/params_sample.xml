@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<parameters>
+<!-- <parameters>
     <output_path>/Users/Branch/Documents/Research/fra/show/out</output_path>
     <replications>1</replications>
-</parameters>
+</parameters> -->
 
 <teams>
     <team name="Train 1">

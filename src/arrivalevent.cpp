@@ -41,40 +41,58 @@ ArrivalEvent::ArrivalEvent(DateTime time, Team* team, Task* task) : TeamEvent(ti
 
 void ArrivalEvent::process(list<Event*>& events)
 {
-	if (task == NULL)
-	{
-		LOG(ERROR) << "Tried to process null task";
-		return;
-	}
+	LOG_IF(task == NULL, FATAL) << "Tried to process null task";
 	// task->start(time);
 	// team->addTask(task);
 
-	LOG(INFO) << time << ": Team " << team << "=> Task " << task << " arriving";
+//	Get subteam
+
+	LOG(DEBUG) << time << ": Team " << team << "=> Task " << task << " arriving of type " << task->taskType;
 	vector<Agent*> subteam = task->taskType->agents;
+	LOG(DEBUG) << "Subteam" << subteam;
+	LOG_IF(subteam.size() == 0, FATAL) << "Subteam is empty";
+
+//	Choose agent from subteam
+
 	Agent* agent = chooseAgent(subteam);
+	LOG(DEBUG) << "Chosen agent " << agent;
 	task->setAgent(agent);
+
+//	Start task or enqueue
 
 	if (agent->isIdle())
 	{
+	//	Update current task
+
 		agent->currTask = task;
 		task->start(time);
 
+	//	Insert new departure event
+		
 		list<Event*>::iterator it = events.begin();
 		DepartureEvent d = DepartureEvent(task->departure, team, task);
 		while (it != events.end() and **it <= d) it++;
 		events.insert(it, new DepartureEvent(task->departure, team, task));
-		// LOG(DEBUG) << "Inserting departure at " << task->departure;
 	}
 	else
 	{
-		LOG(INFO) << "Agent " << agent->name << " enqueued task";
-		agent->queue.push(task);
+		string name = agent->name;
+		LOG(DEBUG) << "Agent " << name << " at " << agent << " enqueued task";
+//		agent->queue.push(task);
 	}
 }
 
+/****************************************************************************
+*																			*
+*	Function:	chooseAgent    												*
+*																			*
+*	Purpose:	To choose which agent to the current task                  	*
+*																			*
+****************************************************************************/
+
 Agent* ArrivalEvent::chooseAgent(vector<Agent*> subteam)
 {
-	ASSERT(subteam.size() != 0, "Team is empty");
+	LOG_IF(subteam.size() == 0, FATAL) << "Subteam is empty";
 	int index = 0;
 
 	for (int i = 1; i < subteam.size(); i++)
@@ -82,6 +100,9 @@ Agent* ArrivalEvent::chooseAgent(vector<Agent*> subteam)
 		if (subteam[i]->queue.size() < subteam[index]->queue.size())
 			index = i;
 	}
+
+	LOG_IF(index >= subteam.size(), FATAL) << "ACCESS ERROR";
+	LOG_IF(subteam[index] == NULL, FATAL) << "Agent of subteam is null";
 	return subteam[index];
 }
 

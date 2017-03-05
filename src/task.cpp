@@ -117,7 +117,7 @@ void Task::start(DateTime time)
 	}
 	else
 	{
-        LOG(INFO) << time << ": Task " << this << " starting"; //" (ETA " << time+service << ")";
+        LOG(DEBUG) << time << ": Task " << this << " starting"; //" (ETA " << time+service << ")";
 		// ASSERT(status == "premature" && time >= arrival, "Task cannot be started before arrival");
 		wait += time - arrival;
         departure = time + service;
@@ -155,7 +155,7 @@ void Task::pause(DateTime time)
 
 void Task::resume(DateTime time)
 {
-    LOG(INFO) << time << ": Task resuming";
+    LOG(DEBUG) << time << ": Task resuming";
 	ASSERT(status == "waiting", "Task not waiting cannot be resumed");
 	wait += time - lastEvent;
     departure = time + service;
@@ -174,10 +174,10 @@ void Task::resume(DateTime time)
 void Task::finish(DateTime time)
 {
     // LOG(INFO) << time << ": Task finishing";
-	LOG_IF(status != "in progress", WARNING) << "Task not in progress cannot be finished: status = " << status;
+	LOG_IF(status != "in progress", ERROR) << "Task not in progress cannot be finished: status = " << status;
 	service -= time - lastEvent;
 //	ASSERT(service == 0, "Task has not finished " << service);
-	LOG_IF(service >= 1, WARNING) << "Task has not finished: " << service << " left";
+	LOG_IF(service >= 1, ERROR) << "Task has not finished: " << service << " left";
 	lastEvent = time;
 	status = "complete";
 }
@@ -233,13 +233,13 @@ void Task::output(ostream& out) const
 
 bool Task::higherPriority(const Task& task) const
 {
-	if (this->priority == task.getPriority())
-		return this->expiration < task.getExpiration();
+	if (this->priority == task.priority)
+		return this->expiration < task.expiration;
 	else
-		return this->priority > task.getPriority();
+		return this->priority > task.priority;
 }
 
-bool Task::arrivesBefore(const Task& task) const {return arrival < task.getArrival();}
+bool Task::arrivesBefore(const Task& task) const {return arrival < task.arrival;}
 
 //	Operators
 

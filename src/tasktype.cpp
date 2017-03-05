@@ -17,6 +17,7 @@
 #include "distribution.h"
 #include "utility.h"
 #include "pugixml.h"
+#include "easylogging++.h"
 
 using namespace std;
 using pugi::xml_node;
@@ -29,13 +30,25 @@ using pugi::xml_node;
 *																			*
 ****************************************************************************/
 
-TaskType::TaskType(xml_node& data) : team(NULL), lastArrival(0)
+TaskType::TaskType(Team* team, const xml_node& data) : team(team), agents{}, lastArrival(0)
 {
-	name = data.attribute("name").value();
-	priority = atoi(data.child_value("priority"));
-	isAffectedByTraffic = atoi(data.child_value("traffic"));
+	LOG(DEBUG) << "Initializing tasktype at " << this;
 
-	for (xml_node& child : data)
+//	Get attributes
+
+	name = data.attribute("name").value();
+	string priority_s = data.child_value("priority");
+	string traffic_s = data.child_value("isAffectedByTraffic");
+
+	LOG_IF(name == "", FATAL) << "XML Error: Could not read task attribute 'name'";
+	LOG_IF(priority_s == "", FATAL) << "XML Error: Could not read task attribute 'priority'";
+	LOG_IF(traffic_s == "", FATAL) << "XML Error: Could not read task attribute 'traffic'";
+
+	priority = atoi(priority_s.c_str());
+	isAffectedByTraffic = atoi(traffic_s.c_str());
+
+	//TODO: Fixup
+	for (const xml_node& child : data)
 	{
 		if ((string)child.name() == "interarrival")
 		{
@@ -50,6 +63,8 @@ TaskType::TaskType(xml_node& data) : team(NULL), lastArrival(0)
 			readDistributionFromXML(expiration, child);
 		}
 	}
+
+	LOG(DEBUG) << "Initialized task type\n" << *this;
 }
 
 TaskType::TaskType() :
@@ -277,7 +292,7 @@ float TaskType::genExpirationTime(float arrivalTime, float serviceTime)
 *																			*
 ****************************************************************************/
 
-void TaskType::readDistributionFromXML(Distribution& dist, xml_node& data)
+void TaskType::readDistributionFromXML(Distribution& dist, const xml_node& data)
 {
 	string type = util::toLower(data.attribute("type").value());
 	vector<float> params;
@@ -331,7 +346,7 @@ void TaskType::readDistributionFromXML(Distribution& dist, xml_node& data)
 
 void TaskType::output(ostream& out) const
 {
-	out << "Name: " << name << endl;
+	out << "Task " << name << endl;
 	out << "Priority: " << priority << endl;
 	out << "Traffic effect: " << isAffectedByTraffic << endl;
 	out << "Interarrival: " << interarrival << endl;
