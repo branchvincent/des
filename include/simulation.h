@@ -15,6 +15,7 @@
 #include <string>
 #include "task.h"
 #include "team.h"
+#include "event.h"
 #include "optionparser.h"
 #include "ezprogressbar.h"
 #include "easylogging++.h"

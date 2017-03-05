@@ -1,34 +1,37 @@
 /****************************************************************************
 *																			*
-*	File:		TaskEvent.cpp												*
+*	File:		Event.cpp												    *
 *																			*
 *	Author:		Branch Vincent												*
 *																			*
-*	Purpose:	This file defines the TaskEvent class.	   					*
+*	Purpose:	This file defines the Event class.	   					    *
 *																			*
 ****************************************************************************/
 
 #include <iostream>
 #include <string>
-#include "taskevent.h"
+#include "event.h"
 // #include "task.h"
 // #include "agent.h"
-// #include "../Utility.h"
+#include "utility.h"
 
 using namespace std;
 
 /****************************************************************************
 *																			*
-*	Function:	TaskEvent       										    *
+*	Function:	Event       												*
 *																			*
 *	Purpose:	To construct an event                                       *
 *																			*
 ****************************************************************************/
 
-TaskEvent::TaskEvent(DateTime time, Task* task) : Event(time), task(task) //, agent(agent)
-{}
+//Event::Event(DateTime time) : time(time) //, task(task), agent(agent)
+//{}
 
-// const Task& TaskEvent::getTask() const {return &task;}
+// const DateTime& Event::getTime() const {return time;}
+
+// bool Event::before(const Event& event) const {return time < event.time;}
+// bool Event::equal(const Event& event) const {}
 
 /****************************************************************************
 *																			*
@@ -43,3 +46,10 @@ TaskEvent::TaskEvent(DateTime time, Task* task) : Event(time), task(task) //, ag
 // 	out << "Time: " << time << endl;
 // 	// out << "Agent: " << agent << endl;
 // }
+
+
+//	Operators
+
+// ostream& operator<<(ostream& out, const Event& e) {e.output(out); return out;}
+// bool operator<(const Event& e1, const Event& e2) {return e1.before(e2);}
+// bool operator>(const Event& e1, const Event& e2) {return !e1.before(e2);}

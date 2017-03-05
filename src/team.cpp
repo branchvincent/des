@@ -14,7 +14,7 @@
 #include <list>
 #include "team.h"
 #include "shift.h"
-#include "arrivalevent.h"
+#include "event.h"
 #include "easylogging++.h"
 #include "pugixml.h"
 

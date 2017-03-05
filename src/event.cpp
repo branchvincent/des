@@ -11,27 +11,92 @@
 #include <iostream>
 #include <string>
 #include "event.h"
-// #include "task.h"
-// #include "agent.h"
-#include "utility.h"
+#include "team.h"
+#include "task.h"
+#include "easylogging++.h"
 
 using namespace std;
 
 /****************************************************************************
 *																			*
-*	Function:	Event       												*
-*																			*
-*	Purpose:	To construct an event                                       *
+*	Definition of ArrivalEvent class		     						    *
 *																			*
 ****************************************************************************/
 
-//Event::Event(DateTime time) : time(time) //, task(task), agent(agent)
-//{}
+/****************************************************************************
+*																			*
+*	Function:	process       												*
+*																			*
+*	Purpose:	To process an event                                       	*
+*																			*
+****************************************************************************/
 
-// const DateTime& Event::getTime() const {return time;}
+void ArrivalEvent::process(list<Event*>& events)
+{
+	LOG_IF(task == NULL, FATAL) << "Tried to process null task";
+	// task->start(time);
+	// team->addTask(task);
 
-// bool Event::before(const Event& event) const {return time < event.time;}
-// bool Event::equal(const Event& event) const {}
+//	Get subteam
+
+	LOG(DEBUG) << time << ": Team " << team << "=> Task " << task << " arriving of type " << task->taskType;
+	vector<Agent*> subteam = task->taskType->agents;
+	LOG(DEBUG) << "Subteam" << subteam;
+	LOG_IF(subteam.size() == 0, FATAL) << "Subteam is empty";
+
+//	Choose agent from subteam
+
+	Agent* agent = chooseAgent(subteam);
+	LOG(DEBUG) << "Chosen agent " << agent;
+	task->setAgent(agent);
+
+//	Start task or enqueue
+
+	if (agent->isIdle())
+	{
+	//	Update current task
+
+		agent->currTask = task;
+		task->start(time);
+
+	//	Insert new departure event
+
+		list<Event*>::iterator it = events.begin();
+		DepartureEvent d = DepartureEvent(task->departure, team, task);
+		while (it != events.end() and **it <= d) it++;
+		events.insert(it, new DepartureEvent(task->departure, team, task));
+	}
+	else
+	{
+		string name = agent->name;
+		LOG(DEBUG) << "Agent " << name << " at " << agent << " enqueued task";
+//		agent->queue.push(task);
+	}
+}
+
+/****************************************************************************
+*																			*
+*	Function:	chooseAgent    												*
+*																			*
+*	Purpose:	To choose which agent to the current task                  	*
+*																			*
+****************************************************************************/
+
+Agent* ArrivalEvent::chooseAgent(vector<Agent*> subteam)
+{
+	LOG_IF(subteam.size() == 0, FATAL) << "Subteam is empty";
+	int index = 0;
+
+	for (int i = 1; i < subteam.size(); i++)
+	{
+		if (subteam[i]->queue.size() < subteam[index]->queue.size())
+			index = i;
+	}
+
+	LOG_IF(index >= subteam.size(), FATAL) << "ACCESS ERROR";
+	LOG_IF(subteam[index] == NULL, FATAL) << "Agent of subteam is null";
+	return subteam[index];
+}
 
 /****************************************************************************
 *																			*
@@ -41,15 +106,79 @@ using namespace std;
 *																			*
 ****************************************************************************/
 
-// void Event::output(ostream& out) const
-// {
-// 	out << "Time: " << time << endl;
-// 	// out << "Agent: " << agent << endl;
-// }
+void ArrivalEvent::output(ostream& out) const
+{
+	out << "Arriving at " << time;
+	// out << "Type: " << type << endl;
+	// out << "Time: " << time << endl;
+	// out << "Agent: " << agent << endl;
+}
 
+ostream& operator<<(ostream& out, const ArrivalEvent& e) {e.output(out); return out;}
 
-//	Operators
+/****************************************************************************
+*																			*
+*	Definition of DepartureEvent class		     						    *
+*																			*
+****************************************************************************/
 
-// ostream& operator<<(ostream& out, const Event& e) {e.output(out); return out;}
-// bool operator<(const Event& e1, const Event& e2) {return e1.before(e2);}
-// bool operator>(const Event& e1, const Event& e2) {return !e1.before(e2);}
+/****************************************************************************
+*																			*
+*	Function:	process       												*
+*																			*
+*	Purpose:	To process an event                                       	*
+*																			*
+****************************************************************************/
+
+void DepartureEvent::process(list<Event*>& events)
+{
+	if (task == NULL)
+	{
+		LOG(ERROR) << "Tried to process null task";
+		return;
+	}
+
+	LOG(INFO) << time << ": Team " << team << "=> Task " << task << " departing";
+	task->finish(time);
+	Agent* agent = task->agent;
+	ASSERT(agent != NULL, "NULL");
+	agent->currTask = NULL;
+
+//	LOG(DEBUG) << agent;
+
+	if (!agent->queue.empty())
+	{
+		agent->currTask = agent->queue.top();
+		agent->queue.pop();
+		Task* newTask = agent->currTask;
+		newTask->start(time);
+
+		list<Event*>::iterator it = events.begin();
+		DepartureEvent d = DepartureEvent(newTask->departure, team, newTask);
+		while (it != events.end() and **it <= d) it++;
+		events.insert(it, new DepartureEvent(newTask->departure, team, newTask));
+		// LOG(DEBUG) << "Inserting departure at " << newTask->departure;
+	}
+	// list<Event*>::iterator it = events.begin();
+	// DepartureEvent d = DepartureEvent(task->departure, team, task);
+	// while (**it < d) it++;
+	// events.insert(--it, new DepartureEvent(task->departure, team, task));
+}
+
+/****************************************************************************
+*																			*
+*	Function:	output       												*
+*																			*
+*	Purpose:	To output an event                                       	*
+*																			*
+****************************************************************************/
+
+void DepartureEvent::output(ostream& out) const
+{
+	out << "Departing at " << time;
+	// out << "Type: " << type << endl;
+	// out << "Time: " << time << endl;
+	// out << "Agent: " << agent << endl;
+}
+
+ostream& operator<<(ostream& out, const DepartureEvent& e) {e.output(out); return out;}

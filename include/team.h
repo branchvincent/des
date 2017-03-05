@@ -16,7 +16,6 @@
 #include "agent.h"
 #include "tasktype.h"
 #include "shift.h"
-#include "arrivalevent.h"
 #include "pugixml.h"
 // #include "Phase.h"
 

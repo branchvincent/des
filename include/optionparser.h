@@ -13,7 +13,7 @@
 
 #include <iostream>
 #include <string>
-#include "util.h"
+#include "utility.h"
 #include "cxxopts.h"
 #include "easylogging++.h"
 
