@@ -17,7 +17,6 @@
 
 using namespace std;
 
-
 /****************************************************************************
 *																			*
 *	Definition of Event class		     						            *
@@ -33,7 +32,7 @@ class Event
     //  Constructor
 
 		Event(DateTime time) : time(time) {}
-	
+
 	//	Inspectors
 
 		const DateTime& getTime() const {return time;}

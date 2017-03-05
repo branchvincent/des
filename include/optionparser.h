@@ -13,9 +13,8 @@
 
 #include <iostream>
 #include <string>
-#include "cxxopts.h"
-// #include "flags.h"
 #include "util.h"
+#include "cxxopts.h"
 #include "easylogging++.h"
 
 using namespace std;
@@ -28,10 +27,10 @@ using namespace std;
 
 struct Options
 {
-	Options(string in = "", string out = "", int reps = 100) :
-		inputFile(in), outputPath(out), reps(reps), interval(10) {}
-	string inputFile;
-	string outputPath;
+	Options(string in = "", string out = "", int reps = 100, int interval = 10) :
+		in(in), out(out), reps(reps), interval(interval) {}
+	string in;
+	string out;
 	int reps;
 	int interval;
 };
@@ -48,6 +47,8 @@ class OptionParser
 		OptionParser();
 		Options parse(int argc, const char* argv[]);
 	private:
+		void validate();
+		void handle();
 		cxxopts::Options opts;
 };
 
@@ -67,8 +68,8 @@ OptionParser::OptionParser() : opts("shado", "SHADO command line options\n")
 	  ("o,output", "Output path", cxxopts::value<string>()->default_value("data/"), "PATH")
 	//   ("v,verbose", "Level of verposity", cxxopts::value<int>()->default_value("0"), "LEVEL")
 	  ("s,seed", "Random seed", cxxopts::value<unsigned int>()->default_value(to_string(time(0))), "S")
+	  ("r,reps", "Replications", cxxopts::value<int>()->default_value("100"), "N")
 	  ("d,debug", "Debugging mode")
-	  //reps
 	  //interval size
 	  ("err", "erroneous option", cxxopts::value<vector<string>>());
 }
@@ -99,6 +100,29 @@ Options OptionParser::parse(int argc, const char* argv[])
         exit(1);
     }
 
+//	Validate and handle options
+
+	validate();
+	handle();
+
+//	Return options
+
+	string in = opts["input"].as<string>();
+	string out = opts["output"].as<string>();
+	int reps = opts["reps"].as<int>();
+	return Options(in,out,reps);
+}
+
+/****************************************************************************
+*																			*
+*	Function:	validate													*
+*																			*
+*	Purpose:	To validate the parsed command line options					*
+*																			*
+****************************************************************************/
+
+void OptionParser::validate()
+{
 //	Check for help flag
 
 	if (opts.count("help"))
@@ -130,32 +154,31 @@ Options OptionParser::parse(int argc, const char* argv[])
 		cout << opts.help() << endl;
   	  	exit(1);
 	}
+}
 
-//	Handle options
+/****************************************************************************
+*																			*
+*	Function:	handle														*
+*																			*
+*	Purpose:	To handle the parsed command line options					*
+*																			*
+****************************************************************************/
+
+void OptionParser::handle()
+{
+//	Handle debug
 
 	if (opts.count("debug"))
 	{
-		// cout << "Debug" << endl;
 		el::Loggers::setLoggingLevel(el::Level::Debug);
 	}
-	// if (opts.count("verbose"))
-	// {
-	// 	cout << "Verbose" << endl;
-	// }
 
-//	Set verbosity
-
-	// Loggers::setLoggingLevel(Level::Debug);
-	// map<char,int> verbose = {{'l' : el::Level::Debug}, {'m' : el::Level::}, {}}
-
-//	Set seed
+//	Handle seed
 
 	srand(opts["seed"].as<unsigned int>());
 	util::seed = rand();
 	util::randNumGen = default_random_engine(util::seed);
-
-	LOG(DEBUG) << "Setting seed to " << util::seed;
-	return Options(opts["input"].as<string>(), opts["output"].as<string>());
+	LOG(INFO) << "Seed initialized to " << util::seed;
 }
 
 #endif

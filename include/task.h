@@ -76,7 +76,6 @@ class Task
 	public:
 		TaskType* taskType;		// type of task
 		Agent* agent;			// current agent
-		// Team* team;				// team
 		int priority;			// priority level
 		DateTime arrival;		// arrival time (sec)
 		float service; 			// service time (sec)

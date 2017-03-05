@@ -89,33 +89,23 @@ Simulation::Simulation(Options opts) : opts(opts)
 // 	Load xml
 
 	xml_document doc;
-	pugi::xml_parse_result result = doc.load_file(opts.inputFile.c_str());
- 	LOG_IF(not result, FATAL) << "Failed to read input file '" << opts.inputFile
+	pugi::xml_parse_result result = doc.load_file(opts.in.c_str());
+ 	LOG_IF(not result, FATAL) << "Failed to read input file '" << opts.in
 		<< "': " << result.description();
 
-	// if (not result)
-	// {
-	// 	std::cout << "XML [" << opts.inputFile << "] parsed with errors, attr value: [" << doc.child("node").attribute("attr").value() << "]\n";
-	// 	std::cout << "Error description: " << result.description() << "\n";
-	// 	std::cout << "Error offset: " << result.offset << " (error at [..." << (opts.inputFile + result.offset) << "]\n\n";
-	// }
-
 //	Read xml
-
-	// xml_node params = doc.child("parameters");
-	// parameters = Parameters(params);
-	// LOG(INFO) << "Params = " << parameters;
 
 	for (const xml_node& team : doc.child("teams"))
 	{
 		if ((string)team.name() == "team")
 		{
 			teams.emplace_back(team);
+			teams.back().validate();
 		}
 	}
 
-	for (int i = 0; i < teams.size(); i++)
-		teams[i].validate();
+	// for (int i = 0; i < teams.size(); i++)
+	// 	teams[i].validate();
 	//
 	// for (const Team& team : teams)
 	// {
