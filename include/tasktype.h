@@ -48,7 +48,7 @@ class TaskType
 	//	Constructors
 
 		// TaskType();
-		TaskType(const xml_node& data);
+		TaskType(Team& team, const xml_node& data);
 		// TaskType(Team* team, const xml_node& data);
 		// TaskType(string name, int priority, bool isAffectedByTraffic,
 //			Distribution interarrival, Distribution service, Distribution expiration, Team* team);
@@ -60,8 +60,8 @@ class TaskType
 
 		string& name() {return _name;}
 		int& id() {return _id;}
-		vector<Agent*>& agents() {return _agents;}
-		const vector<Agent*>& agents() const {return _agents;}
+		// vector<Agent*>& agents() {return _agents;}
+		vector<Agent> agents() const;
 		int& priority() {return _priority;}
 		bool& isAffectedByTraffic() {return _isAffectedByTraffic;}
 		Distribution& interarrival() {return _interarrival;}
@@ -79,7 +79,7 @@ class TaskType
 		//  Distribution& expiration() {return _expiration;}
 		//  float& lastArrival() {return _lastArrival;}
 
-		void addAgent(Agent* agent);
+		void addAgentId(int id);
 		// void setTeam(Team* t) {team = t;}
 		// int getPriority(int phase) const;
 		// bool getIsAffectedByTraffic(int phase) const;
@@ -116,9 +116,10 @@ class TaskType
 //	Data members
 
 	private:
+		Team& _team;
 		string _name;
 		int _id;
-		vector<Agent*> _agents;
+		vector<int> _agentIds;
 		int _priority;
 		bool _isAffectedByTraffic;
 		Distribution _interarrival;

@@ -38,7 +38,7 @@ enum Status {PREMATURE, WAITING, IN_PROGRESS, COMPLETE};
 //     status("premature")
 // {}
 
-Task::Task(int priority, DateTime arrival, float service, DateTime expiration, TaskType* type) :
+Task::Task(int priority, DateTime arrival, float service, DateTime expiration, TaskType& type) :
     _type(type),
     _agent(NULL),
     _priority(priority),

@@ -59,7 +59,7 @@ class Agent
 	//	Constructor
 
 		// Agent();
-		Agent(Team* team, const xml_node& data);
+		Agent(Team& team, const xml_node& data);
      //   	Agent(string name, vector<TaskType*> taskTypes);
 
 	//	Inspectors
@@ -70,9 +70,9 @@ class Agent
 		// Queue& queue() {return _queue;}
 		// Task* currTask() {return _currTask;}
 
-		const Team* team() const {return _team;}
+//		Team team() {return _team;}
 		string name() {return _name;}
-		vector<TaskType*> taskTypes() const {return _taskTypes;}
+		vector<TaskType> taskTypes() const;
 		Queue queue() {return _queue;}
 		Task currTask() {return *_currTask;}
 
@@ -90,6 +90,7 @@ class Agent
 		// void team(Team* team) {_team = team;}
 		// void name(string name) {_name = name;}
 		// void taskTypes(vector<TaskType*>& taskTypes) {_taskTypes = taskTypes;}
+		// const Team& team() const {return _team;}
 		void currTask(Task* currTask) {_currTask = currTask;}
 
 		// void setTeam(Team* t) {team = t;}
@@ -120,9 +121,9 @@ class Agent
 //	Data members
 
 	private:
-		Team* _team;
+		Team& _team;
         string _name;
-		vector<TaskType*> _taskTypes;	// types of tasks
+		vector<int> _taskTypeIds;	// types of tasks
 		Queue _queue; 					// task queue
 		Task* _currTask;             	// current task
 		// Statistics& sharedStats;		// shared stats

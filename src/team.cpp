@@ -54,14 +54,14 @@ Team::Team(const xml_node& data) : _name("Default"), _agents{}, _taskTypes{}, _s
 
 	for (const xml_node& type : data.child("tasks"))
 		if ((string)type.name() == "task")
-			_taskTypes.emplace_back(type);
+			_taskTypes.emplace_back(*this, type);
 	LOG_IF(_taskTypes.size() == 0, FATAL) << "Team " << _name << " has not task types";
 
 //	Agents
 
 	for (const xml_node& agent : data.child("agents"))
 		if ((string)agent.name() == "agent")
-		 	_agents.emplace_back(this, agent);
+		 	_agents.emplace_back(*this, agent);
 	LOG_IF(_agents.size() == 0, FATAL) << "Team " << _name << " has no agents";
 
 //	Initialize task arrivals
@@ -115,37 +115,16 @@ Team::Team(const xml_node& data) : _name("Default"), _agents{}, _taskTypes{}, _s
 
 void Team::validate() const
 {
-//	Convert task types to pointers
-
-	// vector<Agent*> agent_ps;
-	// agent_ps.reserve(agents.size());
-	// for (const Agent& agent : agents)
-	// 	agent_ps.push_back(&agent);
-
 //	Tasks
 
 	for (const TaskType& type : _taskTypes)
-	{
-		for (const Agent* agent: type.agents())
-		{
-			// LOG_IF(not util::contains(agent_ps, agent), FATAL) << "Team not valid: incorrect agent in tasktype";
-			// LOG_IF(not util::contains(agents, *agent), FATAL) << "Team not valid: task type's agents does not contain self";
-			agent->validate();
-		}
-	}
-
+		for (const Agent& agent: type.agents())
+			agent.validate();
 //	Agents
 
 	for (const Agent& agent : _agents)
-	{
-		LOG_IF(agent.team() != this, FATAL) << "Team not valid: incorrect team for agent "
-			<< &agent << ". Expected " << this << " but received " << agent.team();
-		for (const TaskType* type: agent.taskTypes())
-		{
-			// LOG_IF(not util::contains(taskTypes, *type), FATAL) << "Team not valid: agent's task types does not contain self";
-			type->validate();
-		}
-	}
+		for (const TaskType& type: agent.taskTypes())
+			type.validate();
 }
 // void Team::addTask(Task* task)
 // {

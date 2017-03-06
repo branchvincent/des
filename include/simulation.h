@@ -94,13 +94,8 @@ Simulation::Simulation(Options opts) : opts(opts)
 //	Read xml
 
 	for (const xml_node& team : doc.child("teams"))
-	{
 		if ((string)team.name() == "team")
-		{
 			teams.emplace_back(team);
-//			teams.back().validate();
-		}
-	}
 }
 
 /****************************************************************************
@@ -188,9 +183,7 @@ void Simulation::run(int rep)
 void Simulation::reset()
 {
 	for (Team& team : teams)
-	{
 		team.reset();
-	}
 	events.clear();
 }
 
@@ -204,8 +197,6 @@ void Simulation::reset()
 
 void Simulation::output(ostream& out) const
 {
-	// out << "Parameters: " << parameters << endl;
-	// out << "Flags: " << flags;
 	//	TODO: Might want to output stats
 }
 

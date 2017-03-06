@@ -60,6 +60,10 @@ namespace util
         return stat(file.c_str(), &buffer) == 0;
     }
 
+
+
+    template <class T> vector<T> subset(const vector<T>& set, const vector<int>& indices);
+
     template <class T> vector<T> toVector(string data, char delimiter = ',');
 
     inline string toLower(string s)
@@ -84,7 +88,7 @@ namespace util
         {return m.find(key) != m.end();}
 
     template <typename T> void checkIndex(const vector<T>& vec, int index)
-        {ASSERT(index >= 0 && index < vec.size(), "Invalid array index");}
+        {LOG_IF(index < 0 or index >= vec.size(), FATAL) << "Invalid array index";}
 
 //  Data members
 
@@ -149,6 +153,19 @@ void util::initLogger()
 	Loggers::addFlag(el::LoggingFlag::ColoredTerminalOutput);
     Loggers::addFlag(LoggingFlag::HierarchicalLogging);
 	Loggers::setLoggingLevel(Level::Fatal);
+}
+
+template <class T>
+vector<T> util::subset(const vector<T>& set, const vector<int>& indices)
+{
+    vector<T> subset;
+    subset.reserve(indices.size());
+    for (int i : indices)
+    {
+        checkIndex(set,i);
+        subset.push_back(set[i]);
+    }
+    return subset;
 }
 
 /****************************************************************************

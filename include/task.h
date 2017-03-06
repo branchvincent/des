@@ -45,7 +45,7 @@ class Task
 		//TODO: add name
 		// Task(TaskType& type, int priority, DateTime arrival, float service, DateTime expiration);
 		// Task();
-		Task(int priority, DateTime arrival, float service, DateTime expiration, TaskType* type);
+		Task(int priority, DateTime arrival, float service, DateTime expiration, TaskType& type);
 
 	//	Inspectors
 
@@ -60,8 +60,8 @@ class Task
 		// // const DateTime& lastEvent() const {return _lastEvent;}
 		// const string& status() const {return _status;}
 
-		 TaskType* type() {return _type;}
-		 const Agent* agent() const {return _agent;}
+		 TaskType& type() {return _type;}
+		//  const Agent* agent() const {return _agent;}
 		 int priority() {return _priority;}
 		 DateTime arrival() {return _arrival;}
 		 float service() {return _service;}
@@ -89,7 +89,7 @@ class Task
 //	Data members
 
 	public:
-		TaskType* _type;		// type of task
+		TaskType& _type;		// type of task
 		Agent* _agent;			// current agent
 		int _priority;			// priority level
 		DateTime _arrival;		// arrival time (sec)

@@ -33,45 +33,43 @@ using namespace std;
 
 void ArrivalEvent::process(list<Event*>& events)
 {
-// 	LOG_IF(task == NULL, FATAL) << "Tried to process null task";
-// 	// task->start(time);
-// 	// team->addTask(task);
-//
-// //	Get subteam
-//
-// 	LOG(DEBUG) << time << ": Team " << team << "=> Task " << task << " arriving of type " << task->type();
-// 	vector<Agent*> subteam = task->type()->agents();
-// 	LOG(DEBUG) << "Subteam" << subteam;
-// 	LOG_IF(subteam.size() == 0, FATAL) << "Subteam is empty";
-//
-// //	Choose agent from subteam
-//
-// 	Agent* agent = chooseAgent(subteam);
-// 	LOG(DEBUG) << "Chosen agent " << agent;
-// 	task->setAgent(agent);
-//
-// //	Start task or enqueue
-//
-// 	if (agent->isIdle())
-// 	{
-// 	//	Update current task
-//
-// 		agent->currTask(task);
-// 		task->start(time);
-//
-// 	//	Insert new departure event
-//
-// 		list<Event*>::iterator it = events.begin();
-// 		DepartureEvent d = DepartureEvent(task->departure(), team, task);
-// 		while (it != events.end() and **it <= d) it++;
-// 		events.insert(it, new DepartureEvent(task->departure(), team, task));
-// 	}
-// 	else
-// 	{
-// 		string name = agent->name();
-// 		LOG(DEBUG) << "Agent " << name << " at " << agent << " enqueued task";
-// //		agent->queue.push(task);
-// 	}
+	// task->start(time);
+	// team->addTask(task);
+
+//	Get subteam
+
+	LOG(DEBUG) << time << ": Team " << team << "=> Task " << task << " arriving of type " << task.type();
+	vector<Agent> subteam = task.type().agents();
+	LOG(DEBUG) << "Subteam" << subteam;
+	LOG_IF(subteam.size() == 0, FATAL) << "Subteam is empty";
+
+//	Choose agent from subteam
+
+	Agent& agent = chooseAgent(subteam);
+	LOG(DEBUG) << "Chosen agent " << agent;
+	task.setAgent(&agent);
+
+//	Start task or enqueue
+
+	if (agent.isIdle())
+	{
+	//	Update current task
+
+		agent.currTask(&task);
+		task.start(time);
+
+	//	Insert new departure event
+
+		list<Event*>::iterator it = events.begin();
+		DepartureEvent d = DepartureEvent(task.departure(), team, task);
+		while (it != events.end() and **it <= d) it++;
+		events.insert(it, new DepartureEvent(task.departure(), team, task));
+	}
+	else
+	{
+		LOG(DEBUG) << "Agent " << agent.name() << " at " << agent << " enqueued task";
+//		agent.queue().push(task);
+	}
 }
 
 /****************************************************************************
@@ -82,19 +80,18 @@ void ArrivalEvent::process(list<Event*>& events)
 *																			*
 ****************************************************************************/
 
-Agent* ArrivalEvent::chooseAgent(vector<Agent*> subteam)
+Agent& ArrivalEvent::chooseAgent(vector<Agent>& subteam)
 {
 	LOG_IF(subteam.size() == 0, FATAL) << "Subteam is empty";
 	int index = 0;
 
 	for (int i = 1; i < subteam.size(); i++)
 	{
-		if (subteam[i]->queue().size() < subteam[index]->queue().size())
+		if (subteam[i].queue().size() < subteam[index].queue().size())
 			index = i;
 	}
 
-	LOG_IF(index >= subteam.size(), FATAL) << "ACCESS ERROR";
-	LOG_IF(subteam[index] == NULL, FATAL) << "Agent of subteam is null";
+	util::checkIndex(subteam,index);
 	return subteam[index];
 }
 
@@ -140,7 +137,7 @@ void DepartureEvent::process(list<Event*>& events)
 // //	agent->currTask(NULL);
 //
 // //	LOG(DEBUG) << agent;
-// 
+//
 //	if (!agent->queue().empty())
 //	{
 //		agent->currTask = agent->queue.top();

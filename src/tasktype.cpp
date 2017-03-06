@@ -30,7 +30,7 @@ using pugi::xml_node;
 *																			*
 ****************************************************************************/
 
-TaskType::TaskType(const xml_node& data) : _agents{}, _lastArrival(0)
+TaskType::TaskType(Team& team, const xml_node& data) : _team(team), _agentIds{}, _lastArrival(0)
 {
 	LOG(DEBUG) << "Initializing tasktype at " << this;
 
@@ -69,6 +69,8 @@ TaskType::TaskType(const xml_node& data) : _agents{}, _lastArrival(0)
 
 	LOG(DEBUG) << "Initialized task type\n" << *this;
 }
+
+vector<Agent> TaskType::agents() const {return util::subset(_team._agents, _agentIds);}
 
 // TaskType::TaskType() :
 // 	// team(NULL),
@@ -154,12 +156,12 @@ Task TaskType::genTask()
 	 // cout << "Start " << startDate << endl;
 	 // cout << "Arrival " << arrivalDate << endl;
 	 // cout << "Expiration " << expirationDate << endl;
-	 return Task(_priority, arrivalDate, serviceTime, expirationDate, this);
+	 return Task(_priority, arrivalDate, serviceTime, expirationDate, *this);
 }
 
-void TaskType::addAgent(Agent* agent)
+void TaskType::addAgentId(int id)
 {
-	_agents.push_back(agent);
+	_agentIds.push_back(id);
 }
 
 /****************************************************************************
@@ -172,11 +174,11 @@ void TaskType::addAgent(Agent* agent)
 
 void TaskType::validate() const
 {
-	for (const Agent* agent : _agents)
-	{
-		LOG_IF(agent == NULL, FATAL) << "Task Type not valid: agent is null";
-		// LOG_IF(not util::contains(agent->taskTypes, this), FATAL) << "Task Type not valid: agent does not contain self";
-	}
+//	for (const Agent* agent : _agents)
+//	{
+//		LOG_IF(agent == NULL, FATAL) << "Task Type not valid: agent is null";
+//		// LOG_IF(not util::contains(agent->taskTypes, this), FATAL) << "Task Type not valid: agent does not contain self";
+//	}
 }
 
 void TaskType::reset()

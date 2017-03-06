@@ -64,7 +64,8 @@ class Team
 		string name() {return _name;}
 	    vector<Agent> agents()  {return _agents;}
 	    vector<TaskType> taskTypes()  {return _taskTypes;}
-	    Shift& shift() {return _shift;}
+		vector<TaskType> taskTypes(vector<int> ids) {return util::subset(_taskTypes,ids);}
+	    Shift shift() {return _shift;}
 	    list<Task> arrivingTasks() {return _arrivingTasks;}
 	    list<Event*> events() {return _events;}
 
@@ -97,7 +98,6 @@ class Team
 //  Private member functions
 
     private:
-        // vector<Agent&> getAgentSubset(TaskType type);
         void initArrivingTasks();
         void initEvents();
 
@@ -110,11 +110,9 @@ class Team
 		vector<TaskType> _taskTypes;
 		Shift _shift;
 		list<Task> _arrivingTasks;
-		// vector<Phase> phases;
-        // int phase;
-        // string status;
         list<Event*> _events;
 		// Team supervisor;
+		// string status;
 };
 
 //	Operators

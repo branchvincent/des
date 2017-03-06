@@ -55,9 +55,9 @@ inline bool operator>=(const Event& e1, const Event& e2) {return !(e1 < e2);}
 class TaskEvent : public Event
 {
 	public:
-		TaskEvent(DateTime time, Task* task) : Event(time), task(task) {}
+		TaskEvent(DateTime time, Task& task) : Event(time), task(task) {}
 	protected:
-		Task* task;
+		Task& task;
 };
 
 /****************************************************************************
@@ -69,10 +69,10 @@ class TaskEvent : public Event
 class TeamEvent : public Event
 {
 	public:
-		TeamEvent(DateTime time, Team* team) :  Event(time), team(team) {}
+		TeamEvent(DateTime time, Team& team) :  Event(time), team(team) {}
 		// Team* getTeam() const {return team;}
 	protected:
-		Team* team;
+		Team& team;
 };
 
 /****************************************************************************
@@ -84,12 +84,12 @@ class TeamEvent : public Event
 class ArrivalEvent : public TeamEvent
 {
 	public:
-		ArrivalEvent(DateTime time, Team* team, Task* task) : TeamEvent(time, team), task(task) {}
-		Agent* chooseAgent(vector<Agent*> subteam);
+		ArrivalEvent(DateTime time, Team& team, Task& task) : TeamEvent(time, team), task(task) {}
+		Agent& chooseAgent(vector<Agent>& subteam);
 		void process(list<Event*>& events);
 		void output(ostream& out) const;
 	public:
-		Task* task;
+		Task& task;
 };
 
 ostream& operator<<(ostream& out, const ArrivalEvent& e);
@@ -103,11 +103,11 @@ ostream& operator<<(ostream& out, const ArrivalEvent& e);
 class DepartureEvent : public TeamEvent
 {
 	public:
-		DepartureEvent(DateTime time, Team* team, Task* task) : TeamEvent(time, team), task(task) {}
+		DepartureEvent(DateTime time, Team& team, Task& task) : TeamEvent(time, team), task(task) {}
 		void process(list<Event*>& events);
 		void output(ostream& out) const;
 	public:
-		Task* task;
+		Task& task;
 };
 
 ostream& operator<<(ostream& out, const DepartureEvent& e);
