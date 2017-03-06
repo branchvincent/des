@@ -50,7 +50,7 @@ class Agent
 {
 //	Friend class
 
-	friend class Team;
+	// friend class Team;
 
 //	Public member functions
 
@@ -64,9 +64,21 @@ class Agent
 
 	//	Inspectors
 
-		// const string& getName() const {return name;}
-		bool isIdle() const {return currTask == NULL;}
+		// Team* team() const {return _team;}
+		// string& name() {return _name;}
+		// const vector<TaskType*>& taskTypes() const {return _taskTypes;}
+		// Queue& queue() {return _queue;}
+		// Task* currTask() {return _currTask;}
+
+		const Team* team() const {return _team;}
+		string name() {return _name;}
+		vector<TaskType*> taskTypes() const {return _taskTypes;}
+		Queue queue() {return _queue;}
+		Task currTask() {return *_currTask;}
+
+		bool isIdle() const {return _currTask == NULL;}
 		bool isBusy() const {return !isIdle();}
+		void validate() const;
 		// int getQueueSize() const {return queue.size();}
 		// const Task& getCurrTask() const {return currTask;}
 		// const float& getDepTime() const;
@@ -74,6 +86,11 @@ class Agent
 		// const float getUtil(int i) {return stats.getUtil(i);}
 
 	//	Mutators
+
+		// void team(Team* team) {_team = team;}
+		// void name(string name) {_name = name;}
+		// void taskTypes(vector<TaskType*>& taskTypes) {_taskTypes = taskTypes;}
+		void currTask(Task* currTask) {_currTask = currTask;}
 
 		// void setTeam(Team* t) {team = t;}
 		// void addTask(Task* task);
@@ -102,12 +119,12 @@ class Agent
 
 //	Data members
 
-	public:
-		Team* team;
-        string name;
-		vector<TaskType*> taskTypes;	// types of tasks
-		Queue queue; 					// task queue
-		Task* currTask;             	// current task
+	private:
+		Team* _team;
+        string _name;
+		vector<TaskType*> _taskTypes;	// types of tasks
+		Queue _queue; 					// task queue
+		Task* _currTask;             	// current task
 		// Statistics& sharedStats;		// shared stats
        // Statistics stats;          	 	// local stats
 };

@@ -1,15 +1,31 @@
 #include <iostream>
 #include <string>
-#include "../src/Team.h"
-#include "../src/events/ArrivalEvent.h"
+#include <vector>
 
-#define ELPP_NO_DEFAULT_LOG_FILE
-#include "easylogging++.h"
-INITIALIZE_EASYLOGGINGPP
+// #include "../src/Team.h"
+// #include "../src/events/ArrivalEvent.h"
 
-float util::seed = rand();
-default_random_engine util::randNumGen = default_random_engine(util::seed);
-vector<float> util::TRAFFIC = {1,1,1};
+// #define ELPP_NO_DEFAULT_LOG_FILE
+// #include "easylogging++.h"
+// INITIALIZE_EASYLOGGINGPP
+//
+// float util::seed = rand();
+// default_random_engine util::randNumGen = default_random_engine(util::seed);
+// vector<float> util::TRAFFIC = {1,1,1};
+
+using namespace std;
+
+inline string toLower(string s)
+    {transform(s.begin(), s.end(), s.begin(), ::tolower); return s;}
+
+class Test
+{
+    public:
+        Test() : _x() {}
+        int* x() const {return _x;}
+    private:
+        int* _x;
+};
 
 /****************************************************************************
 *																			*
@@ -19,6 +35,11 @@ vector<float> util::TRAFFIC = {1,1,1};
 
 int main()
 {
-    Team t;
+    Test t;
+    int* x = t.x();
+    x = 7;
+
+    cout << t.x();
+
 	return 0;
 }

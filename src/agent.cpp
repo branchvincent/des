@@ -15,8 +15,8 @@
 #include "event.h"
 #include "shift.h"
 #include "utility.h"
-#include "easylogging++.h"
 #include "pugixml.h"
+#include "easylogging++.h"
 
 using namespace std;
 using pugi::xml_node;
@@ -29,33 +29,33 @@ using pugi::xml_node;
 *																			*
 ****************************************************************************/
 
-Agent::Agent(Team* team, const xml_node& data) : team(team), name(""),
-	taskTypes{}, queue(), currTask(NULL)
+Agent::Agent(Team* team, const xml_node& data) : _team(team), _name("Default"),
+	_taskTypes{}, _queue(), _currTask(NULL)
 {
 	LOG(DEBUG) << "Initializing agent at " << this;
 
 //	Name
 
 	LOG_IF(team == NULL, FATAL) << "NULL";
-	name = data.attribute("name").value();
-	LOG_IF(name == "", FATAL) << "XML Error: Could not read agent attribute 'name'";
+	_name = data.attribute("name").value();
+	LOG_IF(_name == "", FATAL) << "XML Error: Could not read agent attribute 'name'";
 
 //	Task types
 
-	string temp = data.attribute("task_ids").value();
-	LOG_IF(temp == "", FATAL) << "XML Error: Could not read agent attribute 'task_ids'";
-	vector<int> ids = util::toVector<int>(temp);
+	string ids_s = data.attribute("task_ids").value();
+	LOG_IF(ids_s == "", FATAL) << "XML Error: Could not read agent attribute 'task_ids'";
+	vector<int> ids = util::toVector<int>(ids_s);
 
-	int i = 0;
-	for (TaskType& type : team->taskTypes)
+	for (TaskType& type : team->taskTypes())
 	{
-		if (util::contains(ids, i++))
+		if (util::contains(ids, type.id()))
 		{
-			taskTypes.push_back(&type);
+			_taskTypes.push_back(&type);
 			type.addAgent(this);
 			LOG(DEBUG) << "Adding tasktype " << &type << " to agent " << this;
 		}
 	}
+	LOG_IF(_taskTypes.size() == 0, FATAL) << "Agent " << _name << " has not task types";
 
 	LOG(DEBUG) << "Initialized agent: \n" << *this << endl;
 }
@@ -91,6 +91,33 @@ Agent::Agent(Team* team, const xml_node& data) : team(team), name(""),
 
 /****************************************************************************
 *																			*
+*	Function:	validate													*
+*																			*
+*	Purpose:	To validate an agent										*
+*																			*
+****************************************************************************/
+
+void Agent::validate() const
+{
+//	Check team
+
+	LOG_IF(_team == NULL, FATAL) << "Agent " << _name << " not valid: team is null";
+	// LOG_IF(not util::contains(team->agents, *this), FATAL) << "Agent not valid: team does not contain self";
+
+//	Check task types
+
+	cout << _taskTypes.size();
+
+	for (const TaskType* type : _taskTypes)
+	{
+		LOG_IF(type == NULL, FATAL) << "Agent not valid: task type is null";
+//		LOG_IF(not util::contains(type->agents, this), FATAL) << "Agent not valid: task type does not contain self";
+		type->validate();
+	}
+}
+
+/****************************************************************************
+*																			*
 *	Function:	output														*
 *																			*
 *	Purpose:	To output an agent											*
@@ -99,10 +126,10 @@ Agent::Agent(Team* team, const xml_node& data) : team(team), name(""),
 
 void Agent::output(ostream& out) const
 {
-	out << "Agent " << name << endl;
-	out << "Team " << team << endl;
+	out << "Agent " << _name << endl;
+	out << "Team " << _team << endl;
 	// out << "Shift: " << shift << endl;
-	out << "Tasks: " << taskTypes;
+	out << "Tasks: " << _taskTypes;
 }
 
 /****************************************************************************

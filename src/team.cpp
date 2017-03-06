@@ -40,37 +40,33 @@ using pugi::xml_node;
 *																			*
 ****************************************************************************/
 
-Team::Team(const xml_node& data) : shift()
+Team::Team(const xml_node& data) : _name("Default"), _agents{}, _taskTypes{}, _shift(),
+	_arrivingTasks{}, _events{}
 {
 	LOG(DEBUG) << "Initializing team at " << this;
 
-//	Team
+//	Name
 
-	string name = util::toLower(data.attribute("name").value());
-	LOG_IF(name == "", FATAL) << "XML Error: Could not read team attribute 'name'";
+	_name = util::toLower(data.attribute("name").value());
+	LOG_IF(_name == "", FATAL) << "XML Error: Could not read team attribute 'name'";
 
 //	Task types
 
 	for (const xml_node& type : data.child("tasks"))
-	{
 		if ((string)type.name() == "task")
-		{
-			taskTypes.emplace_back(this, type);
-		}
-	}
+			_taskTypes.emplace_back(type);
+	LOG_IF(_taskTypes.size() == 0, FATAL) << "Team " << _name << " has not task types";
 
 //	Agents
 
 	for (const xml_node& agent : data.child("agents"))
-	{
 		if ((string)agent.name() == "agent")
-		{
-		 	agents.emplace_back(this, agent);
-		}
-	}
+		 	_agents.emplace_back(this, agent);
+	LOG_IF(_agents.size() == 0, FATAL) << "Team " << _name << " has no agents";
 
 //	Initialize task arrivals
 
+	validate();
 	initArrivingTasks();
 	initEvents();
 
@@ -79,6 +75,7 @@ Team::Team(const xml_node& data) : shift()
 				// << " agents and " << taskTypes.size() << " task types";
 	// LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
 }
+
 
 // Team::Team(Shift shift)
 // 	: name("DefaultTeam"), agents{Agent()}, taskTypes{TaskType(),TaskType()}, shift(shift)
@@ -106,28 +103,48 @@ Team::Team(const xml_node& data) : shift()
 // 	initEvents();
 // }
 
-list<Event*> Team::getEvents() {return events;}
+// list<Event*> Team::getEvents() {return _events;}
+
+/****************************************************************************
+*																			*
+*	Function:	validate													*
+*																			*
+*	Purpose:	To validate a team											*
+*																			*
+****************************************************************************/
 
 void Team::validate() const
 {
+//	Convert task types to pointers
+
+	// vector<Agent*> agent_ps;
+	// agent_ps.reserve(agents.size());
+	// for (const Agent& agent : agents)
+	// 	agent_ps.push_back(&agent);
+
 //	Tasks
 
-	for (const TaskType& type : taskTypes)
+	for (const TaskType& type : _taskTypes)
 	{
-		LOG_IF(type.team != this, FATAL) << "Team not valid: incorrect team for tasktype "
-			<< &type << ". Expected " << this << " but received " << type.team;
-		for (const Agent* agent: type.agents)
+		for (const Agent* agent: type.agents())
 		{
-			// LOG_IF(not util::contains(agents, agent), FATAL) << "Team not valid: incorrect agent in tasktype";
+			// LOG_IF(not util::contains(agent_ps, agent), FATAL) << "Team not valid: incorrect agent in tasktype";
+			// LOG_IF(not util::contains(agents, *agent), FATAL) << "Team not valid: task type's agents does not contain self";
+			agent->validate();
 		}
 	}
 
 //	Agents
 
-	for (const Agent& agent : agents)
+	for (const Agent& agent : _agents)
 	{
-		LOG_IF(agent.team != this, FATAL) << "Team not valid: incorrect team for agent "
-			<< &agent << ". Expected " << this << " but received " << agent.team;
+		LOG_IF(agent.team() != this, FATAL) << "Team not valid: incorrect team for agent "
+			<< &agent << ". Expected " << this << " but received " << agent.team();
+		for (const TaskType* type: agent.taskTypes())
+		{
+			// LOG_IF(not util::contains(taskTypes, *type), FATAL) << "Team not valid: agent's task types does not contain self";
+			type->validate();
+		}
 	}
 }
 // void Team::addTask(Task* task)
@@ -140,14 +157,14 @@ void Team::validate() const
 
 Agent* Team::chooseAgent(vector<Agent*> subteam)
 {
-	int index = 0;
+	 int index = 0;
 
-	for (int i = 1; i < subteam.size(); i++)
-	{
-		if (subteam[i]->queue.size() < subteam[index]->queue.size())
-			index = i;
-	}
-	return subteam[index];
+	 for (int i = 1; i < subteam.size(); i++)
+	 {
+	 	if (subteam[i]->queue().size() < subteam[index]->queue().size())
+	 		index = i;
+	 }
+	 return subteam[index];
 }
 
 
@@ -155,12 +172,12 @@ void Team::reset()
 {
 //	Reset
 
-	for (TaskType& taskType : taskTypes)
+	for (TaskType& taskType : _taskTypes)
 	{
 		taskType.reset();
 	}
-	arrivingTasks.clear();
-	events.clear();
+	_arrivingTasks.clear();
+	_events.clear();
 
 //	Reinitialize task arrivals
 
@@ -173,29 +190,29 @@ void Team::initArrivingTasks()
 //	TODO: merge
 //	TODO: incorporate shift start
 
-	DateTime start = shift.getStart();
-	DateTime stop = shift.getStop();
+	DateTime start = _shift.getStart();
+	DateTime stop = _shift.getStop();
 
-	for (TaskType& taskType : taskTypes)
+	for (TaskType& taskType : _taskTypes)
 	{
 		Task task = taskType.genTask();
 
-		while (task.arrival < stop)
+		while (task.arrival() < stop)
 		{
-			arrivingTasks.push_back(task);
+			_arrivingTasks.push_back(task);
 			task = taskType.genTask();
 		}
 	}
-	arrivingTasks.sort();
+	_arrivingTasks.sort();
 }
 
 void Team::initEvents()
 {
 // 	Get events
 
-	for (Task& t : arrivingTasks)
+	for (Task& t : _arrivingTasks)
 	{
-		events.push_back(new ArrivalEvent(t.arrival, this, &t));
+		_events.push_back(new ArrivalEvent(t.arrival(), this, &t));
 	}
 }
 
@@ -209,20 +226,20 @@ void Team::initEvents()
 
 void Team::output(ostream& out) const
 {
-	out << "Team " << name << endl;
-	out << "Task types: " << taskTypes << endl;
+	out << "Team " << _name << endl;
+	out << "Task types: " << _taskTypes << endl;
 	out << "Agents: ";
 
-	bool first = true;
-	for (const auto& agent : agents)
-	{
-		if (first)
-		{
-			out << agent.name;
-			first = false;
-		}
-		else out << ", " << agent.name;
-	}
+	// bool first = true;
+	// for (const auto& agent : _agents)
+	// {
+	// 	if (first)
+	// 	{
+	// 		out << agent.name();
+	// 		first = false;
+	// 	}
+	// 	else out << ", " << agent.name();
+	// }
 }
 
 /****************************************************************************

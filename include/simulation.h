@@ -25,8 +25,6 @@ using namespace std;
 using pugi::xml_document;
 using pugi::xml_node;
 
-// Helper functions and definitions
-
 bool cmpEvents(Event* t1, Event* t2) {return (*t1) < (*t2);}
 
 /****************************************************************************
@@ -62,7 +60,6 @@ class Simulation
 	private:
 		Options opts;				// command line options
 		ez::ezProgressBar bar;		// progress bar
-		// Parameters parameters;		// simulation parameters
 		vector<Team> teams;			// trains
 		list<Event*> events;		// event list
 		// Stats stats;				// TODO: statistics
@@ -101,19 +98,9 @@ Simulation::Simulation(Options opts) : opts(opts)
 		if ((string)team.name() == "team")
 		{
 			teams.emplace_back(team);
-			teams.back().validate();
+//			teams.back().validate();
 		}
 	}
-
-	// for (int i = 0; i < teams.size(); i++)
-	// 	teams[i].validate();
-	//
-	// for (const Team& team : teams)
-	// {
-	// 	team.validate();
-	// }
-	// teams.push_back(Team());
-	// teams.push_back(Team(Shift("01-01 12:00", "01-02 3:00")));
 }
 
 /****************************************************************************
@@ -157,24 +144,37 @@ void Simulation::run(int rep)
 
 	for (Team& ti : teams)
 	{
-		events.merge(ti.getEvents());
+		events.merge(ti.events());
 	}
 	events.sort(cmpEvents);
 
 //	Process events
 
 	Event* e;
+	DateTime t, t_prev = 0;
+	int processCount = 0;
 
-	while (!events.empty())
+	while (not events.empty())
 	{
+	//	Check time
+
 		e = events.front();
+		t = e->time;
+		LOG_IF(t_prev > t, FATAL) << "Events not in chronological order";
+		// LOG(DEBUG) << "Processing event at " << t;
+
+	//	Process
+
 		e->process(events);
 		events.pop_front();
+		t_prev = t;
+		processCount++;
 	}
 
 //	TODO: Might need to clear agents for next rep
 
-	LOG(INFO) << "Rep " << rep + 1 << " of " << opts.reps << " completed";
+	LOG(INFO) << "Rep " << rep + 1 << " of " << opts.reps << " completed "
+		<< "(" << processCount << " events processed)";
 }
 
 /****************************************************************************

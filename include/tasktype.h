@@ -47,22 +47,37 @@ class TaskType
 
 	//	Constructors
 
-		TaskType();
-		TaskType(Team* team, const xml_node& data);
-		TaskType(string name, int priority, bool isAffectedByTraffic,
-			Distribution interarrival, Distribution service, Distribution expiration, Team* team);
+		// TaskType();
+		TaskType(const xml_node& data);
+		// TaskType(Team* team, const xml_node& data);
+		// TaskType(string name, int priority, bool isAffectedByTraffic,
+//			Distribution interarrival, Distribution service, Distribution expiration, Team* team);
 		// TaskType(string name, vector<int> priority, vector<bool> isAffectedByTraffic,
 		// 	vector<Distribution> interarrival, vector<Distribution> service,
 		// 	vector<Distribution> expiration);
 
 	//	Inspectors
 
-		// const string& getName() const;
-		// vector<int> getPriority() const;
-		// vector<bool> getIsAffectedByTraffic() const;
-		// vector<Distribution> getInterarrival() const;
-		// vector<Distribution> getService() const;
-		// vector<Distribution> getExpiration() const;
+		string& name() {return _name;}
+		int& id() {return _id;}
+		vector<Agent*>& agents() {return _agents;}
+		const vector<Agent*>& agents() const {return _agents;}
+		int& priority() {return _priority;}
+		bool& isAffectedByTraffic() {return _isAffectedByTraffic;}
+		Distribution& interarrival() {return _interarrival;}
+		Distribution& service() {return _service;}
+		Distribution& expiration() {return _expiration;}
+		float& lastArrival() {return _lastArrival;}
+
+		//  string& name() const {return _name;}
+		//  int& id() const {return _id;}
+		//  vector<Agent*>& agents() const {return _agents;}
+		//  int& priority() const {return _priority;}
+		//  bool& isAffectedByTraffic() const {return _isAffectedByTraffic;}
+		//  Distribution& interarrival() {return _interarrival;}
+		//  Distribution& service() {return _service;}
+		//  Distribution& expiration() {return _expiration;}
+		//  float& lastArrival() {return _lastArrival;}
 
 		void addAgent(Agent* agent);
 		// void setTeam(Team* t) {team = t;}
@@ -71,9 +86,9 @@ class TaskType
 		// float randInterarrival(int phase);
 		// float randService(int phase);
 		// float randExpiration(int phase);
-		float randInterarrival();
-		float randService();
-		float randExpiration();
+		float randInterarrival() {return _interarrival.rand();}
+		float randService() {return _service.rand();}
+		float randExpiration() {return _expiration.rand();}
 
 	//	Mutators
 
@@ -85,6 +100,7 @@ class TaskType
 
 		void reset();
 		Task genTask();
+		void validate() const;
         void output(ostream& out) const;
 		// void copy(const TaskType& t);
 
@@ -99,16 +115,16 @@ class TaskType
 
 //	Data members
 
-	public:
-		Team* team;
-		vector<Agent*> agents;
-		string name;
-		int priority;
-		bool isAffectedByTraffic;
-		Distribution interarrival;
-		Distribution service;
-		Distribution expiration;
-		float lastArrival;
+	private:
+		string _name;
+		int _id;
+		vector<Agent*> _agents;
+		int _priority;
+		bool _isAffectedByTraffic;
+		Distribution _interarrival;
+		Distribution _service;
+		Distribution _expiration;
+		float _lastArrival;
 };
 
 //	Operators

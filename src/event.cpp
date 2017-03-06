@@ -33,45 +33,45 @@ using namespace std;
 
 void ArrivalEvent::process(list<Event*>& events)
 {
-	LOG_IF(task == NULL, FATAL) << "Tried to process null task";
-	// task->start(time);
-	// team->addTask(task);
-
-//	Get subteam
-
-	LOG(DEBUG) << time << ": Team " << team << "=> Task " << task << " arriving of type " << task->taskType;
-	vector<Agent*> subteam = task->taskType->agents;
-	LOG(DEBUG) << "Subteam" << subteam;
-	LOG_IF(subteam.size() == 0, FATAL) << "Subteam is empty";
-
-//	Choose agent from subteam
-
-	Agent* agent = chooseAgent(subteam);
-	LOG(DEBUG) << "Chosen agent " << agent;
-	task->setAgent(agent);
-
-//	Start task or enqueue
-
-	if (agent->isIdle())
-	{
-	//	Update current task
-
-		agent->currTask = task;
-		task->start(time);
-
-	//	Insert new departure event
-
-		list<Event*>::iterator it = events.begin();
-		DepartureEvent d = DepartureEvent(task->departure, team, task);
-		while (it != events.end() and **it <= d) it++;
-		events.insert(it, new DepartureEvent(task->departure, team, task));
-	}
-	else
-	{
-		string name = agent->name;
-		LOG(DEBUG) << "Agent " << name << " at " << agent << " enqueued task";
-//		agent->queue.push(task);
-	}
+// 	LOG_IF(task == NULL, FATAL) << "Tried to process null task";
+// 	// task->start(time);
+// 	// team->addTask(task);
+//
+// //	Get subteam
+//
+// 	LOG(DEBUG) << time << ": Team " << team << "=> Task " << task << " arriving of type " << task->type();
+// 	vector<Agent*> subteam = task->type()->agents();
+// 	LOG(DEBUG) << "Subteam" << subteam;
+// 	LOG_IF(subteam.size() == 0, FATAL) << "Subteam is empty";
+//
+// //	Choose agent from subteam
+//
+// 	Agent* agent = chooseAgent(subteam);
+// 	LOG(DEBUG) << "Chosen agent " << agent;
+// 	task->setAgent(agent);
+//
+// //	Start task or enqueue
+//
+// 	if (agent->isIdle())
+// 	{
+// 	//	Update current task
+//
+// 		agent->currTask(task);
+// 		task->start(time);
+//
+// 	//	Insert new departure event
+//
+// 		list<Event*>::iterator it = events.begin();
+// 		DepartureEvent d = DepartureEvent(task->departure(), team, task);
+// 		while (it != events.end() and **it <= d) it++;
+// 		events.insert(it, new DepartureEvent(task->departure(), team, task));
+// 	}
+// 	else
+// 	{
+// 		string name = agent->name();
+// 		LOG(DEBUG) << "Agent " << name << " at " << agent << " enqueued task";
+// //		agent->queue.push(task);
+// 	}
 }
 
 /****************************************************************************
@@ -89,7 +89,7 @@ Agent* ArrivalEvent::chooseAgent(vector<Agent*> subteam)
 
 	for (int i = 1; i < subteam.size(); i++)
 	{
-		if (subteam[i]->queue.size() < subteam[index]->queue.size())
+		if (subteam[i]->queue().size() < subteam[index]->queue().size())
 			index = i;
 	}
 
@@ -132,33 +132,28 @@ ostream& operator<<(ostream& out, const ArrivalEvent& e) {e.output(out); return 
 
 void DepartureEvent::process(list<Event*>& events)
 {
-	if (task == NULL)
-	{
-		LOG(ERROR) << "Tried to process null task";
-		return;
-	}
-
-	LOG(INFO) << time << ": Team " << team << "=> Task " << task << " departing";
-	task->finish(time);
-	Agent* agent = task->agent;
-	ASSERT(agent != NULL, "NULL");
-	agent->currTask = NULL;
-
-//	LOG(DEBUG) << agent;
-
-	if (!agent->queue.empty())
-	{
-		agent->currTask = agent->queue.top();
-		agent->queue.pop();
-		Task* newTask = agent->currTask;
-		newTask->start(time);
-
-		list<Event*>::iterator it = events.begin();
-		DepartureEvent d = DepartureEvent(newTask->departure, team, newTask);
-		while (it != events.end() and **it <= d) it++;
-		events.insert(it, new DepartureEvent(newTask->departure, team, newTask));
-		// LOG(DEBUG) << "Inserting departure at " << newTask->departure;
-	}
+// 	LOG_IF(task == NULL, FATAL) << "Tried to process null task";
+// 	LOG(DEBUG) << time << ": Team " << team << "=> Task " << task << " departing";
+// 	task->finish(time);
+// 	const Agent* agent = task->agent();
+// 	ASSERT(agent != NULL, "NULL");
+// //	agent->currTask(NULL);
+//
+// //	LOG(DEBUG) << agent;
+// 
+//	if (!agent->queue().empty())
+//	{
+//		agent->currTask = agent->queue.top();
+//		agent->queue.pop();
+//		Task* newTask = agent->currTask;
+//		newTask->start(time);
+//
+//		list<Event*>::iterator it = events.begin();
+//		DepartureEvent d = DepartureEvent(newTask->departure, team, newTask);
+//		while (it != events.end() and **it <= d) it++;
+//		events.insert(it, new DepartureEvent(newTask->departure, team, newTask));
+//		// LOG(DEBUG) << "Inserting departure at " << newTask->departure;
+//	}
 	// list<Event*>::iterator it = events.begin();
 	// DepartureEvent d = DepartureEvent(task->departure, team, task);
 	// while (**it < d) it++;

@@ -17,7 +17,6 @@ INITIALIZE_EASYLOGGINGPP
 using namespace std;
 
 // Extern variables
-
 int util::seed = 0;
 default_random_engine util::randNumGen = default_random_engine(0);
 

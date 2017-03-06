@@ -44,17 +44,32 @@ class Task
 
 		//TODO: add name
 		// Task(TaskType& type, int priority, DateTime arrival, float service, DateTime expiration);
-		Task();
-		Task(int priority, DateTime arrival, float service, DateTime expiration, TaskType* taskType);
+		// Task();
+		Task(int priority, DateTime arrival, float service, DateTime expiration, TaskType* type);
 
 	//	Inspectors
 
-		// const TaskType& getType() const {return type;}
-		// const int& getPriority() const {return priority;}
-		// const DateTime& getArrival() const {return arrival;}
-		// const DateTime& getDeparture() const {return departure;}
-		// const DateTime& getExpiration() const {return expiration;}
-		// const float& getWaitTime() const {return wait;}
+		// const TaskType* type() const {return _type;}
+		// const Agent* agent() const {return _agent;}
+		// const int& priority() const {return _priority;}
+		// const DateTime& arrival() const {return _arrival;}
+		// const float& service() const {return _service;}
+		// const DateTime& departure() const {return _departure;}
+		// const DateTime& expiration() const {return _expiration;}
+		// const float& wait() const {return _wait;}
+		// // const DateTime& lastEvent() const {return _lastEvent;}
+		// const string& status() const {return _status;}
+
+		 TaskType* type() {return _type;}
+		 const Agent* agent() const {return _agent;}
+		 int priority() {return _priority;}
+		 DateTime arrival() {return _arrival;}
+		 float service() {return _service;}
+		 DateTime departure() {return _departure;}
+		 DateTime expiration() {return _expiration;}
+		 float wait() {return _wait;}
+		// const DateTime& lastEvent() const {return _lastEvent;}
+		 string status() {return _status;}
 
 	//	Mutators
 
@@ -66,7 +81,7 @@ class Task
 
 	//	Other member functions
 
-		void setAgent(Agent* a) {agent = a;}
+		void setAgent(Agent* a) {_agent = a;}
 		void output(ostream& out) const;
 		bool higherPriority(const Task& task) const;
 		bool arrivesBefore(const Task& task) const;
@@ -74,16 +89,16 @@ class Task
 //	Data members
 
 	public:
-		TaskType* taskType;		// type of task
-		Agent* agent;			// current agent
-		int priority;			// priority level
-		DateTime arrival;		// arrival time (sec)
-		float service; 			// service time (sec)
-		DateTime departure;		// depature time (sec)
-		DateTime expiration;	// expiration time (sec)
-        float wait;      		// wait time (sec)
-		DateTime lastEvent;		// time of last event (sec)
-		string status;			// current status
+		TaskType* _type;		// type of task
+		Agent* _agent;			// current agent
+		int _priority;			// priority level
+		DateTime _arrival;		// arrival time (sec)
+		float _service; 		// service time (sec)
+		DateTime _departure;	// depature time (sec)
+		DateTime _expiration;	// expiration time (sec)
+        float _wait;      		// wait time (sec)
+		DateTime _lastEvent;	// time of last event (sec)
+		string _status;			// current status
 };
 
 //	Operators

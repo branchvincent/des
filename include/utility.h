@@ -77,6 +77,9 @@ namespace util
     template <class T> bool contains(const vector<T>& vec, const T& data)
         {return find(vec.begin(), vec.end(), data) != vec.end();}
 
+    // template <class T> bool contains(const vector<T*>& vec, const T* data)
+    //     {return find_if(vec.begin(), vec.end(), data) != vec.end();}
+
     template <class T, class P> bool contains(const map<T,P>& m, const T& key)
         {return m.find(key) != m.end();}
 

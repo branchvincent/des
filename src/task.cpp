@@ -30,25 +30,25 @@ enum Status {PREMATURE, WAITING, IN_PROGRESS, COMPLETE};
 *																			*
 ****************************************************************************/
 
-Task::Task() : taskType(NULL), agent(NULL), priority(0), arrival(DateTime()), service(1),
-    departure(DateTime()),
-    expiration(DateTime()),
-    wait(0),
-    lastEvent(arrival),
-    status("premature")
-{}
+// Task::Task() : _type(NULL), _agent(NULL), _priority(0), _arrival(DateTime()), service(1),
+//     departure(DateTime()),
+//     expiration(DateTime()),
+//     wait(0),
+//     lastEvent(arrival),
+//     status("premature")
+// {}
 
-Task::Task(int priority, DateTime arrival, float service, DateTime expiration, TaskType* taskType) :
-    taskType(taskType),
-    agent(NULL),
-    priority(priority),
-    arrival(arrival),
-    service(service),
-    departure(expiration),
-    expiration(expiration),
-	wait(0),
-    lastEvent(arrival),
-	status("premature")
+Task::Task(int priority, DateTime arrival, float service, DateTime expiration, TaskType* type) :
+    _type(type),
+    _agent(NULL),
+    _priority(priority),
+    _arrival(arrival),
+    _service(service),
+    _departure(expiration),
+    _expiration(expiration),
+	_wait(0),
+    _lastEvent(arrival),
+	_status("premature")
 {}
 
 // Task::Task(TaskType& type, int priority, DateTime arrival, float service, DateTime expiration) :
@@ -111,7 +111,7 @@ Task::Task(int priority, DateTime arrival, float service, DateTime expiration, T
 
 void Task::start(DateTime time)
 {
-	if (status == "waiting")
+	if (_status == "waiting")
 	{
 		resume(time);
 	}
@@ -119,10 +119,10 @@ void Task::start(DateTime time)
 	{
         LOG(DEBUG) << time << ": Task " << this << " starting"; //" (ETA " << time+service << ")";
 		// ASSERT(status == "premature" && time >= arrival, "Task cannot be started before arrival");
-		wait += time - arrival;
-        departure = time + service;
-		lastEvent = time;
-		status = "in progress";
+		_wait += time - _arrival;
+        _departure = time + _service;
+		_lastEvent = time;
+		_status = "in progress";
 	}
 }
 
@@ -137,12 +137,12 @@ void Task::start(DateTime time)
 void Task::pause(DateTime time)
 {
     LOG(INFO) << time << ": Task pausing";
-	ASSERT(status == "in progress", "Task not in progress cannot be paused");
-	service -= time - lastEvent;
-	ASSERT(service > 0, "Paused task has finished");
-    departure = expiration;
-	lastEvent = time;
-	status = "waiting";
+	ASSERT(_status == "in progress", "Task not in progress cannot be paused");
+	_service -= time - _lastEvent;
+	ASSERT(_service > 0, "Paused task has finished");
+    _departure = _expiration;
+	_lastEvent = time;
+	_status = "waiting";
 }
 
 /****************************************************************************
@@ -156,11 +156,11 @@ void Task::pause(DateTime time)
 void Task::resume(DateTime time)
 {
     LOG(DEBUG) << time << ": Task resuming";
-	ASSERT(status == "waiting", "Task not waiting cannot be resumed");
-	wait += time - lastEvent;
-    departure = time + service;
-	lastEvent = time;
-	status = "in progress";
+	ASSERT(_status == "waiting", "Task not waiting cannot be resumed");
+	_wait += time - _lastEvent;
+    _departure = time + _service;
+	_lastEvent = time;
+	_status = "in progress";
 }
 
 /****************************************************************************
@@ -174,12 +174,12 @@ void Task::resume(DateTime time)
 void Task::finish(DateTime time)
 {
     // LOG(INFO) << time << ": Task finishing";
-	LOG_IF(status != "in progress", ERROR) << "Task not in progress cannot be finished: status = " << status;
-	service -= time - lastEvent;
+	LOG_IF(_status != "in progress", ERROR) << "Task not in progress cannot be finished: status = " << _status;
+	_service -= time - _lastEvent;
 //	ASSERT(service == 0, "Task has not finished " << service);
-	LOG_IF(service >= 1, ERROR) << "Task has not finished: " << service << " left";
-	lastEvent = time;
-	status = "complete";
+	LOG_IF(_service >= 1, ERROR) << "Task has not finished: " << _service << " left";
+	_lastEvent = time;
+	_status = "complete";
 }
 
 /****************************************************************************
@@ -193,16 +193,16 @@ void Task::finish(DateTime time)
 void Task::expire(DateTime time)
 {
     LOG(INFO) << time << ": Task expiring";
-	ASSERT(time == expiration, "Task has not expired yet");
-	ASSERT(status == "in progress" or status == "waiting", "Task not in progress nor waiting cannot expire");
+	ASSERT(time == _expiration, "Task has not expired yet");
+	ASSERT(_status == "in progress" or _status == "waiting", "Task not in progress nor waiting cannot expire");
 
-	if (status == "in progress")
-		service -= time - lastEvent;
-	else if (status == "waiting")
-		wait += time - lastEvent;
+	if (_status == "in progress")
+		_service -= time - _lastEvent;
+	else if (_status == "waiting")
+		_wait += time - _lastEvent;
 
-	ASSERT(service > 0, "Task has actually finished");
-    status = "complete";
+	ASSERT(_service > 0, "Task has actually finished");
+    _status = "complete";
 }
 
 /****************************************************************************
@@ -216,11 +216,11 @@ void Task::expire(DateTime time)
 void Task::output(ostream& out) const
 {
     // cout << "Type: " << type.name << ", ";
-	out << "Priority: " << priority << ", ";
-	out << "Arrival: " << arrival << ", ";
-	out << "Service: " << service <<  ", ";
-	out << "Departure: " << departure << ", ";
-	out << "Expiration: " << expiration;
+	out << "Priority: " << _priority << ", ";
+	out << "Arrival: " << _arrival << ", ";
+	out << "Service: " << _service <<  ", ";
+	out << "Departure: " << _departure << ", ";
+	out << "Expiration: " << _expiration;
 }
 
 /****************************************************************************
@@ -233,13 +233,13 @@ void Task::output(ostream& out) const
 
 bool Task::higherPriority(const Task& task) const
 {
-	if (this->priority == task.priority)
-		return this->expiration < task.expiration;
+	if (this->_priority == task._priority)
+		return this->_expiration < task._expiration;
 	else
-		return this->priority > task.priority;
+		return this->_priority > task._priority;
 }
 
-bool Task::arrivesBefore(const Task& task) const {return arrival < task.arrival;}
+bool Task::arrivesBefore(const Task& task) const {return _arrival < task._arrival;}
 
 //	Operators
 

@@ -48,10 +48,25 @@ class Team
 	//	Constructor
 
 		Team(const xml_node& data);
+		// Team(const Team& t);
 		// Team(Shift shift = Shift());
 		// Team(string name, vector<Agent> agents, vector<TaskType> taskTypes);
 
 	// 	Inspector
+
+		// const string& name() const {return _name;}
+		// const vector<Agent>& agents() const {return _agents;}
+		// const vector<TaskType>& taskTypes() const {return _taskTypes;}
+		// const Shift& shift() {return _shift;}
+		// const list<Task>& arrivingTasks() {return _arrivingTasks;}
+		// const list<Event*>& events() {return _events;}
+
+		string name() {return _name;}
+	    vector<Agent> agents()  {return _agents;}
+	    vector<TaskType> taskTypes()  {return _taskTypes;}
+	    Shift& shift() {return _shift;}
+	    list<Task> arrivingTasks() {return _arrivingTasks;}
+	    list<Event*> events() {return _events;}
 
         // int getQueueSize() const {return ops[0].getQueueSize();}
         // Task getNextTask();
@@ -63,7 +78,7 @@ class Team
 
         // void startPhase(int phase);
         // optional<Event> getNextEvent();
-        list<Event*> getEvents();
+        // list<Event*> getEvents();
         // void addTask(Task* task);
 
         // void arrive(Task* task);
@@ -90,16 +105,15 @@ class Team
 
 	public:
         // Statistics stats;
-		string name;
-        vector<Agent> agents;
-		vector<TaskType> taskTypes;
-
-		Shift shift;
-		list<Task> arrivingTasks;
+		string _name;
+        vector<Agent> _agents;
+		vector<TaskType> _taskTypes;
+		Shift _shift;
+		list<Task> _arrivingTasks;
 		// vector<Phase> phases;
         // int phase;
         // string status;
-        list<Event*> events;
+        list<Event*> _events;
 		// Team supervisor;
 };
 
