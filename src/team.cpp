@@ -40,22 +40,15 @@ using pugi::xml_node;
 *																			*
 ****************************************************************************/
 
-Team::Team(const xml_node& data) : _name("Default"), _agents{}, _taskTypes{}, _shift(),
+Team::Team(const xml_node& data, Shift shift) : _name("Default"), _shift(shift), _agents{}, _taskTypes{},
 	_arrivingTasks{}, _events{}
 {
 	LOG(DEBUG) << "Initializing team at " << this;
 
 //	Name
 
-	_name = util::toLower(data.attribute("name").value());
+	_name = util::toLower(data.attribute("type").value());
 	LOG_IF(_name == "", FATAL) << "XML Error: Could not read team attribute 'name'";
-
-//	Task types
-
-	for (const xml_node& type : data.child("tasks"))
-		if ((string)type.name() == "task")
-			_taskTypes.emplace_back(*this, type);
-	LOG_IF(_taskTypes.size() == 0, FATAL) << "Team " << _name << " has not task types";
 
 //	Agents
 
@@ -64,16 +57,40 @@ Team::Team(const xml_node& data) : _name("Default"), _agents{}, _taskTypes{}, _s
 		 	_agents.emplace_back(*this, agent);
 	LOG_IF(_agents.size() == 0, FATAL) << "Team " << _name << " has no agents";
 
+//	Task types
+
+	for (const xml_node& type : data.child("tasks"))
+		if ((string)type.name() == "task")
+			_taskTypes.emplace_back(*this, type);
+	LOG_IF(_taskTypes.size() == 0, FATAL) << "Team " << _name << " has not task types";
+
 //	Initialize task arrivals
+
+	// for ()
+	// {
+	// 	if (util::contains(agents[i].taskTypeIds(), )
+	// }
+
+	for (TaskType& type : _taskTypes)
+	{
+		for (int i = 0; i < _agents.size(); i++)
+		{
+			if (util::contains(_agents[i].taskTypeIds(), type.id()))
+			{
+				type.addAgentId(i);
+				LOG(DEBUG) << "Adding tasktype " << type.name() << " to agent " << _agents[i].name();
+			}
+		}
+	}
 
 	validate();
 	initArrivingTasks();
 	initEvents();
 
-	LOG(DEBUG) << "Initialized team\n" << *this << endl << "at " << this;
-	// LOG(INFO) 	<< "Initialized team " << name << " with " << agents.size()
-				// << " agents and " << taskTypes.size() << " task types";
-	// LOG(INFO) << "Start: " << shift.getStart() << " Stop: " << shift.getStop();
+	// LOG(DEBUG) << "Initialized team\n" << *this << endl << "at " << this;
+	LOG(INFO) 	<< "Initialized team " << _name << " with " << _agents.size()
+				<< " agents and " << _taskTypes.size() << " task types";
+	LOG(INFO) << "Start: " << _shift.getStart() << " Stop: " << _shift.getStop();
 }
 
 
@@ -174,13 +191,11 @@ void Team::initArrivingTasks()
 
 	for (TaskType& taskType : _taskTypes)
 	{
-		Task task = taskType.genTask();
+		_arrivingTasks.push_back(taskType.genTask());
 
-		while (task.arrival() < stop)
-		{
-			_arrivingTasks.push_back(task);
-			task = taskType.genTask();
-		}
+		while (_arrivingTasks.back().arrival() < stop)
+			_arrivingTasks.push_back(taskType.genTask());
+		_arrivingTasks.pop_back();
 	}
 	_arrivingTasks.sort();
 }
@@ -191,7 +206,7 @@ void Team::initEvents()
 
 	for (Task& t : _arrivingTasks)
 	{
-		_events.push_back(new ArrivalEvent(t.arrival(), this, &t));
+		_events.push_back(new ArrivalEvent(t.arrival(), *this, t));
 	}
 }
 

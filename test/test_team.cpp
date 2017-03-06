@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-
+#include "../include/shift.h"
 // #include "../src/Team.h"
 // #include "../src/events/ArrivalEvent.h"
 
@@ -35,11 +35,13 @@ class Test
 
 int main()
 {
-    Test t;
-    int* x = t.x();
-    x = 7;
+    Shift s;
+    cout << s;
 
-    cout << t.x();
+    Shift s2;
+    cout << s2;
+
+    
 
 	return 0;
 }

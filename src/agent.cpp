@@ -46,18 +46,17 @@ Agent::Agent(Team& team, const xml_node& data) : _team(team), _name("Default"),
 	LOG_IF(ids == "", FATAL) << "XML Error: Could not read agent attribute 'task_ids'";
 	_taskTypeIds = util::toVector<int>(ids);
 
-	// for (TaskType& type : team->taskTypes())
-	// {
-	// 	if (util::contains(ids, type.id()))
-	// 	{
-	// 		_taskTypes.push_back(&type);
-	// 		type.addAgent(this);
-	// 		LOG(DEBUG) << "Adding tasktype " << &type << " to agent " << this;
-	// 	}
-	// }
+//	for (TaskType& type : team.taskTypes())
+//	{
+//		if (util::contains(_taskTypeIds, type.id()))
+//		{
+//			type.addAgentId(this);
+//			LOG(DEBUG) << "Adding tasktype " << type.id() << " to agent " << this;
+//		}
+//	}
 	LOG_IF(_taskTypeIds.size() == 0, FATAL) << "Agent " << _name << " has not task types";
 
-	LOG(DEBUG) << "Initialized agent: \n" << *this << endl;
+	LOG(DEBUG) << "Initialized agent: \n" << *this;
 }
 
 vector<TaskType> Agent::taskTypes() const {return util::subset(_team.taskTypes(), _taskTypeIds);}
@@ -127,9 +126,9 @@ void Agent::validate() const
 void Agent::output(ostream& out) const
 {
 	out << "Agent " << _name << endl;
-	out << "Team " << _team << endl;
+	// out << "Team " << _team << endl;
 	// out << "Shift: " << shift << endl;
-//	out << "Tasks: " << _taskTypes;
+	out << "Tasks: " << _taskTypeIds;
 }
 
 /****************************************************************************

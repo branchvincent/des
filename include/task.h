@@ -61,7 +61,8 @@ class Task
 		// const string& status() const {return _status;}
 
 		 TaskType& type() {return _type;}
-		//  const Agent* agent() const {return _agent;}
+		 Agent& agent() const {ASSERT(_agent != NULL, "Agent is null"); return *_agent;}
+//		 Agent& agent() const {return *_agent;}
 		 int priority() {return _priority;}
 		 DateTime arrival() {return _arrival;}
 		 float service() {return _service;}

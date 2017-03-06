@@ -16,6 +16,7 @@
 #include "task.h"
 #include "team.h"
 #include "event.h"
+#include "batch.h"
 #include "optionparser.h"
 #include "ezprogressbar.h"
 #include "easylogging++.h"
@@ -52,6 +53,7 @@ class Simulation
 //  Private member functions
 
     private:
+	void loadTeams(const xml_node& data);
 		void run(int rep);
 		void reset();
 
@@ -60,6 +62,7 @@ class Simulation
 	private:
 		Options opts;				// command line options
 		ez::ezProgressBar bar;		// progress bar
+		vector<Batch> batches;		// groups of teams
 		vector<Team> teams;			// trains
 		list<Event*> events;		// event list
 		// Stats stats;				// TODO: statistics
@@ -80,7 +83,6 @@ ostream& operator<<(ostream& out, const Simulation& s) {s.output(out); return ou
 Simulation::Simulation(Options opts) : opts(opts)
 {
 //	TODO: Perform assertions (i.e. duration of simulation and traffic)
-
 	LOG(INFO) << "Initializing simulation";
 	bar = ez::ezProgressBar(opts.reps);
 
@@ -91,11 +93,62 @@ Simulation::Simulation(Options opts) : opts(opts)
  	LOG_IF(not result, FATAL) << "Failed to read input file '" << opts.in
 		<< "': " << result.description();
 
-//	Read xml
+//	Load batches and teams
 
-	for (const xml_node& team : doc.child("teams"))
-		if ((string)team.name() == "team")
-			teams.emplace_back(team);
+	// for (const xml_node& batch : doc.child("batches"))
+	// 	if ((string)batch.name() == "batch")
+	// 		batches.emplace_back(batch);
+
+	loadTeams(doc);
+}
+
+void Simulation::loadTeams(const xml_node& data)
+{
+//	Define batches
+
+	for (const xml_node& batch : data.child("batches"))
+		if ((string)batch.name() == "batch")
+			batches.emplace_back(batch);
+
+//	Add teams
+
+	xml_node t;
+	xml_node p ;
+
+	for (Batch& batch : batches)
+	{
+	//	Find teams
+
+		for (const xml_node& team : data.child("teams"))
+		{
+			if ((string)team.name() == "team" and util::toLower(team.attribute("type").value()) == batch.type)
+			{
+				t = team;
+			}
+			else if ((string)team.name() == "team" and util::toLower(team.attribute("type").value()) == batch.partnerType)
+			{
+				p = team;
+			}
+		}
+
+	//	Create teams
+
+		LOG_IF(t == data, FATAL) << "Team " << batch.type << " not found";
+		LOG_IF(p == data, FATAL) << "Team " << batch.partnerType << " not found";
+		for (int i = 0; i < batch.count; i++)
+		{
+			teams.emplace_back(t, batch.shift);
+		}
+	}
+
+	LOG(INFO) << "Initialized " << teams.size() << " teams";
+	// for (const xml_node& team : doc.child("teams"))
+	// 	if ((string)team.name() == "team")
+	// 		teams.emplace_back(team);
+
+	// for (const xml_node& team : doc.child("teams"))
+	// 	if ((string)team.name() == "team")
+	// 		teams.emplace_back(team);
 }
 
 /****************************************************************************

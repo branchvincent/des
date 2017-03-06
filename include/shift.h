@@ -43,6 +43,7 @@ class Shift
 		const DateTime& getStop() const {return stop;}
 		const time_t& getDuration() const {return duration;}
         // float getHours() const {return duration/3600.;}
+		// Shift& operator=(const Shift& s);
 
 	//	Other member functions
 
@@ -87,5 +88,13 @@ Shift::Shift(string t1, string t2) : start(t1), stop(t2)
 	ASSERT(start < stop, "Shift cannot end before it begins");
 	duration = stop - start;
 }
+
+// Shift& Shift::operator=(const Shift& s)
+// {
+// 	start = s.getStart();
+// 	stop = s.getStop();
+// 	duration = stop-start;
+// 	return *this;
+// }
 
 #endif

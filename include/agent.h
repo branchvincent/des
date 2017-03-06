@@ -73,8 +73,9 @@ class Agent
 //		Team team() {return _team;}
 		string name() {return _name;}
 		vector<TaskType> taskTypes() const;
-		Queue queue() {return _queue;}
-		Task currTask() {return *_currTask;}
+		vector<int> taskTypeIds() const {return _taskTypeIds;}
+		Queue& queue() {return _queue;}
+		Task& currTask() {return *_currTask;}
 
 		bool isIdle() const {return _currTask == NULL;}
 		bool isBusy() const {return !isIdle();}

@@ -5,15 +5,14 @@
 </parameters> -->
 
 <batches>
-    <batch name="Trains">
-        <team type="Train" num="17"/>
-        <shift start="01-01 9:00" stop="01-01 17:00"></shift>
-        <traffic>m,m,m,m,m,m,m,m,m</traffic>
+    <batch>
+        <team type="train" partner="dispatch" num="1"/>
+        <shift start="01-01 9:05" stop="01-01 17:05"></shift>
     </batch>
 </batches>
 
 <teams>
-    <team name="Train">
+    <team type="train">
         <!-- Agents -->
         <agents>
             <agent name="engineer" task_ids="0,1"/>

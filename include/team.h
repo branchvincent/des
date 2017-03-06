@@ -47,7 +47,7 @@ class Team
 
 	//	Constructor
 
-		Team(const xml_node& data);
+		Team(const xml_node& data, Shift shift);
 		// Team(const Team& t);
 		// Team(Shift shift = Shift());
 		// Team(string name, vector<Agent> agents, vector<TaskType> taskTypes);
@@ -106,9 +106,9 @@ class Team
 	public:
         // Statistics stats;
 		string _name;
+		Shift _shift;
         vector<Agent> _agents;
 		vector<TaskType> _taskTypes;
-		Shift _shift;
 		list<Task> _arrivingTasks;
         list<Event*> _events;
 		// Team supervisor;
