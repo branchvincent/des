@@ -8,4 +8,4 @@ g++ -std=c++11 -o SHOW runSim.cpp
 ```
 
 ## Deployment
-The program is deployed online [here](http://apps.hal.pratt.duke.edu/show) and the front-end source code is available [here](https://github.com/branchvincent/show-web).
+The program is deployed [online](http://apps.hal.pratt.duke.edu/show) and the front-end source code is available [here](https://github.com/branchvincent/show-web).
